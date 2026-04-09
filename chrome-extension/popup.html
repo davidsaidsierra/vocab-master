@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    /* ── Base ─────────────────────────────────────── */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 340px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 16px;
+    }
+
+    /* ── Header ──────────────────────────────────── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #1e293b;
+    }
+    .header h1 {
+      font-size: 14px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a78bfa, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      margin-left: auto;
+    }
+    .header .dot.online { background: #10b981; }
+
+    /* ── Form ────────────────────────────────────── */
+    label {
+      display: block;
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+    }
+    textarea { resize: vertical; min-height: 44px; }
+
+    .row { display: flex; gap: 8px; }
+    .row > * { flex: 1; }
+
+    /* ── Button ──────────────────────────────────── */
+    .btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+    }
+    .btn-primary:hover { box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Success state ───────────────────────────── */
+    .success {
+      text-align: center;
+      padding: 20px 0;
+      animation: fadeIn 0.3s ease;
+    }
+    .success .check { font-size: 36px; margin-bottom: 8px; }
+    .success p { font-size: 13px; color: #94a3b8; }
+    .success .word { color: #a78bfa; font-weight: 600; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Error ────────────────────────────────────── */
+    .error {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>✦ VocabMaster</h1>
+    <div class="dot" id="status-dot" title="Checking connection…"></div>
+  </div>
+
+  <div id="form-view">
+    <div class="error" id="error-msg"></div>
+
+    <label>Word / Phrase</label>
+    <input type="text" id="word" placeholder="e.g. serendipity">
+
+    <label>Translation</label>
+    <input type="text" id="translation" placeholder="e.g. serendipia" autofocus>
+
+    <label>Example (optional)</label>
+    <textarea id="example" rows="2" placeholder="Use it in a sentence…"></textarea>
+
+    <div class="row">
+      <div>
+        <label>Category</label>
+        <select id="category">
+          <option value="">None</option>
+        </select>
+      </div>
+      <div>
+        <label>Difficulty</label>
+        <select id="difficulty">
+          <option value="1">1 — Easy</option>
+          <option value="2">2</option>
+          <option value="3" selected>3 — Medium</option>
+          <option value="4">4</option>
+          <option value="5">5 — Hard</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="save-btn">Save to VocabMaster</button>
+  </div>
+
+  <div id="success-view" style="display:none">
+    <div class="success">
+      <div class="check">✅</div>
+      <p><span class="word" id="saved-word"></span> saved!</p>
+      <p style="margin-top:6px; font-size:11px;">You can close this or add another.</p>
+      <button class="btn btn-primary" id="add-another" style="margin-top:12px;">Add Another</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

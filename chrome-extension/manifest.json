@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "VocabMaster — Word Capture",
+  "version": "1.0.0",
+  "description": "Select any word on a page or PDF and send it to VocabMaster with one click.",
+  "permissions": ["contextMenus", "storage", "activeTab"],
+  "host_permissions": ["http://127.0.0.1:8000/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "VocabMaster"
+  }
+}
