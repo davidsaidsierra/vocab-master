@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8000/api";
+const API = "https://vocab-master-re2t.onrender.com/api";
 
 const $ = (sel) => document.querySelector(sel);
 const wordInput       = $("#word");
@@ -12,24 +12,42 @@ const statusDot       = $("#status-dot");
 const formView        = $("#form-view");
 const successView     = $("#success-view");
 
+// ── API Key ─────────────────────────────────────────────────
+async function getApiKey() {
+  const data = await chrome.storage.local.get("api_key");
+  if (data.api_key) return data.api_key;
+  const key = prompt("Ingresa tu API Key de VocabMaster:");
+  if (key) {
+    await chrome.storage.local.set({ api_key: key });
+    return key;
+  }
+  return "";
+}
+
+function apiHeaders(key) {
+  return { "Content-Type": "application/json", "X-API-Key": key };
+}
+
 // ── Check if VocabMaster server is running ──────────────────
 async function checkConnection() {
   try {
-    const res = await fetch(`${API}/stats/overview`);
+    const key = await getApiKey();
+    const res = await fetch(`${API}/stats/overview`, { headers: apiHeaders(key) });
     if (res.ok) {
       statusDot.classList.add("online");
       statusDot.title = "Connected to VocabMaster";
       return true;
     }
   } catch {}
-  statusDot.title = "Cannot reach VocabMaster — is the server running?";
+  statusDot.title = "Cannot reach VocabMaster";
   return false;
 }
 
 // ── Load categories from API ────────────────────────────────
 async function loadCategories() {
   try {
-    const res = await fetch(`${API}/categories/`);
+    const key = await getApiKey();
+    const res = await fetch(`${API}/categories/`, { headers: apiHeaders(key) });
     const cats = await res.json();
     cats.forEach((c) => {
       const opt = document.createElement("option");
@@ -72,9 +90,10 @@ saveBtn.addEventListener("click", async () => {
       difficulty: parseInt(difficultySelect.value),
     };
 
+    const key = await getApiKey();
     const res = await fetch(`${API}/words/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: apiHeaders(key),
       body: JSON.stringify(body),
     });
 
