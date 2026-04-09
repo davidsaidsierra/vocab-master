@@ -2,11 +2,27 @@
 
 const BASE = '/api';
 
+function getApiKey() {
+    return localStorage.getItem('vocab_api_key') || '';
+}
+
 async function request(path, options = {}) {
     const res = await fetch(`${BASE}${path}`, {
-        headers: { 'Content-Type': 'application/json' },
         ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': getApiKey(),
+            ...(options.headers || {}),
+        },
     });
+    if (res.status === 401) {
+        const key = prompt('Ingresa tu API Key para acceder:');
+        if (key) {
+            localStorage.setItem('vocab_api_key', key);
+            return request(path, options);
+        }
+        throw new Error('API Key requerida');
+    }
     if (res.status === 204) return null;
     if (!res.ok) {
         const err = await res.json().catch(() => ({ detail: 'Error desconocido' }));
