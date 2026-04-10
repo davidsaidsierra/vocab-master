@@ -126,10 +126,11 @@ function renderLookup(data, body, phonetic, opts, close) {
     // Hook "Use this" buttons
     if (opts.onPickMeaning) {
         body.querySelectorAll('.use-meaning').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const meaning = meanings[parseInt(btn.dataset.idx)];
-                opts.onPickMeaning(meaning, data);
-                toast('Campos rellenados');
+            const meaning = meanings[parseInt(btn.dataset.idx)];
+            btn.addEventListener('click', async () => {
+                btn.disabled = true;
+                btn.textContent = '…';
+                await opts.onPickMeaning(meaning, data);
                 close();
             });
         });

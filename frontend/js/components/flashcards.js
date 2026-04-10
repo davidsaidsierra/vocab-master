@@ -6,6 +6,7 @@ let currentIndex = 0;
 let isFlipped = false;
 let sessionCorrect = 0;
 let sessionIncorrect = 0;
+let isReverseMode = false;  // false = EN→ES (normal), true = ES→EN (reverse)
 
 export async function render(container) {
     sessionCorrect = 0;
@@ -69,6 +70,20 @@ export async function render(container) {
                         Start Practice
                     </button>
                 </div>
+
+                <!-- Mode toggle -->
+                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-800/60">
+                    <span class="text-xs text-slate-500">Study mode:</span>
+                    <div class="flex rounded-lg overflow-hidden border border-slate-700" style="font-size:0.75rem">
+                        <button id="mode-normal" class="mode-btn active px-3 py-1.5 font-medium transition-colors" style="background:rgba(139,92,246,0.2);color:#a78bfa">
+                            🇬🇧 EN → ES
+                        </button>
+                        <button id="mode-reverse" class="mode-btn px-3 py-1.5 font-medium transition-colors" style="color:#64748b">
+                            🇪🇸 ES → EN
+                        </button>
+                    </div>
+                    <span class="text-xs text-slate-600" id="mode-label">See the word, recall the translation</span>
+                </div>
                 <p class="text-xs text-slate-600 mt-2" id="word-count-label">Loading…</p>
             </div>
 
@@ -87,15 +102,14 @@ export async function render(container) {
                 <div class="flashcard-container mb-6">
                     <div class="flashcard" id="flashcard">
                         <div class="flashcard-face flashcard-front">
-                            <p class="text-xs text-indigo-300 mb-3 uppercase tracking-wider">What does this mean?</p>
+                            <p class="text-xs mb-3 uppercase tracking-wider" id="card-front-label" style="color:#a5b4fc">What does this mean?</p>
                             <p class="text-3xl font-bold mb-3" id="card-word"></p>
-                            <!-- Example visible below the word -->
-                            <p class="text-sm text-indigo-200/80 italic px-4 text-center leading-relaxed" id="card-example-hint"></p>
-                            <p class="text-sm text-indigo-300/60 mt-4" id="card-hint"></p>
-                            <p class="text-xs text-indigo-400/50 mt-6">Click · Space to reveal</p>
+                            <p class="text-sm italic px-4 text-center leading-relaxed" id="card-example-hint" style="color:rgba(199,210,254,0.8)"></p>
+                            <p class="text-sm mt-4" id="card-hint" style="color:rgba(165,180,252,0.6)"></p>
+                            <p class="text-xs mt-6" id="card-front-tip" style="color:rgba(165,180,252,0.5)">Click · Space to reveal</p>
                         </div>
                         <div class="flashcard-face flashcard-back">
-                            <p class="text-xs text-emerald-300 mb-2 uppercase tracking-wider">Translation</p>
+                            <p class="text-xs text-emerald-300 mb-2 uppercase tracking-wider" id="card-back-label">Translation</p>
                             <p class="text-2xl font-bold mb-3" id="card-translation"></p>
                             <p class="text-sm text-emerald-200/70 italic mb-2" id="card-example"></p>
                             <p class="text-xs text-emerald-200/50" id="card-definition"></p>
@@ -146,6 +160,23 @@ export async function render(container) {
     const emptyState       = container.querySelector('#empty-state');
     const flashcard        = container.querySelector('#flashcard');
     const ratingPanel      = container.querySelector('#rating-panel');
+    const modeNormalBtn    = container.querySelector('#mode-normal');
+    const modeReverseBtn   = container.querySelector('#mode-reverse');
+    const modeLabel        = container.querySelector('#mode-label');
+
+    // ── Mode toggle ─────────────────────────────────────
+    function setMode(reverse) {
+        isReverseMode = reverse;
+        modeNormalBtn.style.background  = reverse ? '' : 'rgba(139,92,246,0.2)';
+        modeNormalBtn.style.color       = reverse ? '#64748b' : '#a78bfa';
+        modeReverseBtn.style.background = reverse ? 'rgba(236,72,153,0.2)' : '';
+        modeReverseBtn.style.color      = reverse ? '#f472b6' : '#64748b';
+        modeLabel.textContent = reverse
+            ? 'See the translation, recall the English word'
+            : 'See the word, recall the translation';
+    }
+    modeNormalBtn.addEventListener('click',  () => setMode(false));
+    modeReverseBtn.addEventListener('click', () => setMode(true));
 
     // ── Show/hide custom days input ─────────────────────
     filterDays.addEventListener('change', () => {
@@ -276,13 +307,32 @@ export async function render(container) {
         const w = practiceWords[currentIndex];
         const total = practiceWords.length;
         const pct   = Math.round((currentIndex / total) * 100);
+        const cat   = w.category_name ? `${w.category_icon} ${w.category_name}` : '';
 
-        container.querySelector('#card-word').textContent = w.word;
-        container.querySelector('#card-example-hint').textContent = w.example ? `"${w.example}"` : '';
-        container.querySelector('#card-hint').textContent = w.category_name ? `${w.category_icon} ${w.category_name}` : '';
-        container.querySelector('#card-translation').textContent = w.translation;
-        container.querySelector('#card-example').textContent = w.example ? `"${w.example}"` : '';
-        container.querySelector('#card-definition').textContent = w.definition || '';
+        if (!isReverseMode) {
+            // ── Normal: front = English word ────────────────
+            container.querySelector('#card-front-label').textContent = 'What does this mean?';
+            container.querySelector('#card-word').textContent = w.word;
+            container.querySelector('#card-example-hint').textContent = w.example ? `"${w.example}"` : '';
+            container.querySelector('#card-hint').textContent = cat;
+            // Back = Spanish translation
+            container.querySelector('#card-back-label').textContent = 'Translation';
+            container.querySelector('#card-translation').textContent = w.translation;
+            container.querySelector('#card-example').textContent = w.example ? `"${w.example}"` : '';
+            container.querySelector('#card-definition').textContent = w.definition || '';
+        } else {
+            // ── Reverse: front = Spanish translation ─────────
+            container.querySelector('#card-front-label').textContent = '¿Cómo se dice en inglés?';
+            container.querySelector('#card-word').textContent = w.translation;
+            container.querySelector('#card-example-hint').textContent = '';
+            container.querySelector('#card-hint').textContent = cat;
+            // Back = English word + example
+            container.querySelector('#card-back-label').textContent = 'English word';
+            container.querySelector('#card-translation').textContent = w.word;
+            container.querySelector('#card-example').textContent = w.example ? `"${w.example}"` : '';
+            container.querySelector('#card-definition').textContent = w.definition || '';
+        }
+
         container.querySelector('#card-notes').textContent = w.notes ? `📝 ${w.notes}` : '';
         container.querySelector('#review-progress').textContent = `${currentIndex + 1} / ${total}`;
         container.querySelector('#session-score').textContent = `✓ ${sessionCorrect}  ✗ ${sessionIncorrect}`;

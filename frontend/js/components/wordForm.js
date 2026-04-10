@@ -80,16 +80,13 @@ export async function render(container) {
         openLookupModal(w, {
             onPickMeaning: (meaning, full) => {
                 const form = container.querySelector('#word-form');
-                // Always set translation
                 if (meaning.translation_es) form.translation.value = meaning.translation_es;
-                // Only overwrite definition/example if empty, to respect user input
-                if (meaning.definition_en && !form.definition.value.trim()) {
+                if (meaning.definition_en && !form.definition.value.trim())
                     form.definition.value = meaning.definition_en;
-                }
                 const firstExample = (meaning.examples && meaning.examples[0]) || null;
-                if (firstExample && !form.example.value.trim()) {
+                if (firstExample && !form.example.value.trim())
                     form.example.value = firstExample.en;
-                }
+                toast('Campos rellenados ✓');
             }
         });
     });

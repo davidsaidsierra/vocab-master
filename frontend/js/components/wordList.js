@@ -98,7 +98,19 @@ export async function render(container) {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 const word = allWords.find(w => w.id === parseInt(btn.dataset.id));
-                if (word) openLookupModal(word.word);
+                if (!word) return;
+                openLookupModal(word.word, {
+                    onPickMeaning: async (meaning) => {
+                        const firstEx = (meaning.examples && meaning.examples[0]) || null;
+                        await api.words.update(word.id, {
+                            translation: meaning.translation_es || word.translation,
+                            definition:  meaning.definition_en  || word.definition || null,
+                            example:     firstEx ? firstEx.en   : (word.example || null),
+                        });
+                        toast(`"${word.word}" guardada ✓`);
+                        loadWords();
+                    }
+                });
             });
         });
 
