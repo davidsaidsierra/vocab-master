@@ -74,40 +74,52 @@ export async function render(container) {
 
             <!-- ── Flashcard area (hidden until Start) ── -->
             <div id="review-area" class="hidden">
-                <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center justify-between mb-2">
                     <span class="text-sm text-slate-400" id="review-progress"></span>
-                    <span class="text-xs text-slate-600" id="session-score"></span>
+                    <span class="text-xs text-slate-500" id="session-score"></span>
+                </div>
+
+                <!-- Progress bar -->
+                <div class="progress-bar mb-5">
+                    <div class="progress-fill" id="review-progress-bar" style="width:0%"></div>
                 </div>
 
                 <div class="flashcard-container mb-6">
                     <div class="flashcard" id="flashcard">
                         <div class="flashcard-face flashcard-front">
                             <p class="text-xs text-indigo-300 mb-3 uppercase tracking-wider">What does this mean?</p>
-                            <p class="text-3xl font-bold" id="card-word"></p>
-                            <p class="text-xs text-indigo-300/40 italic mt-2" id="card-example-hint"></p>
+                            <p class="text-3xl font-bold mb-3" id="card-word"></p>
+                            <!-- Example visible below the word -->
+                            <p class="text-sm text-indigo-200/80 italic px-4 text-center leading-relaxed" id="card-example-hint"></p>
                             <p class="text-sm text-indigo-300/60 mt-4" id="card-hint"></p>
-                            <p class="text-xs text-indigo-400/40 mt-6">Click to reveal</p>
+                            <p class="text-xs text-indigo-400/50 mt-6">Click · Space to reveal</p>
                         </div>
                         <div class="flashcard-face flashcard-back">
                             <p class="text-xs text-emerald-300 mb-2 uppercase tracking-wider">Translation</p>
                             <p class="text-2xl font-bold mb-3" id="card-translation"></p>
-                            <p class="text-sm text-emerald-200/60 italic" id="card-example"></p>
-                            <p class="text-xs text-emerald-200/40 mt-2" id="card-definition"></p>
+                            <p class="text-sm text-emerald-200/70 italic mb-2" id="card-example"></p>
+                            <p class="text-xs text-emerald-200/50" id="card-definition"></p>
+                            <p class="text-xs text-emerald-300/40 mt-2 italic" id="card-notes"></p>
                         </div>
                     </div>
                 </div>
 
                 <div id="rating-panel" class="hidden">
-                    <p class="text-xs text-slate-500 text-center mb-3">Did you know it?</p>
+                    <p class="text-xs text-slate-500 text-center mb-3">Did you know it? <span class="text-slate-600">(← / →)</span></p>
                     <div class="flex gap-4">
                         <button class="binary-btn binary-incorrect" id="btn-incorrect">
                             <span class="text-2xl">✗</span>
                             <span>Incorrect</span>
+                            <span class="text-xs opacity-50">←</span>
                         </button>
                         <button class="binary-btn binary-correct" id="btn-correct">
                             <span class="text-2xl">✓</span>
                             <span>Correct</span>
+                            <span class="text-xs opacity-50">→</span>
                         </button>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button class="text-xs text-slate-600 hover:text-slate-400 transition-colors" id="btn-skip">⏭ Skip word</button>
                     </div>
                 </div>
             </div>
@@ -204,17 +216,39 @@ export async function render(container) {
         showCard();
     });
 
-    // ── Flip on click ───────────────────────────────────
-    flashcard.addEventListener('click', () => {
+    // ── Flip on click / Space ───────────────────────────
+    function flipCard() {
         if (isFlipped) return;
         isFlipped = true;
         flashcard.classList.add('flipped');
         ratingPanel.classList.remove('hidden');
-    });
+    }
+    flashcard.addEventListener('click', flipCard);
+
+    // ── Keyboard shortcuts ──────────────────────────────
+    function onKeyDown(e) {
+        if (reviewArea.classList.contains('hidden')) return;
+        if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); flipCard(); }
+        if (isFlipped) {
+            if (e.key === 'ArrowRight') { e.preventDefault(); submitAnswer(4); }
+            if (e.key === 'ArrowLeft')  { e.preventDefault(); submitAnswer(1); }
+        }
+    }
+    document.addEventListener('keydown', onKeyDown);
 
     // ── Binary feedback buttons ─────────────────────────
     container.querySelector('#btn-correct').addEventListener('click', () => submitAnswer(4));
     container.querySelector('#btn-incorrect').addEventListener('click', () => submitAnswer(1));
+
+    // ── Skip button ─────────────────────────────────────
+    container.querySelector('#btn-skip').addEventListener('click', () => {
+        currentIndex++;
+        if (currentIndex >= practiceWords.length) { showSessionComplete(); return; }
+        isFlipped = false;
+        flashcard.classList.remove('flipped');
+        ratingPanel.classList.add('hidden');
+        showCard();
+    });
 
     async function submitAnswer(quality) {
         const word = practiceWords[currentIndex];
@@ -240,17 +274,26 @@ export async function render(container) {
 
     function showCard() {
         const w = practiceWords[currentIndex];
+        const total = practiceWords.length;
+        const pct   = Math.round((currentIndex / total) * 100);
+
         container.querySelector('#card-word').textContent = w.word;
         container.querySelector('#card-example-hint').textContent = w.example ? `"${w.example}"` : '';
         container.querySelector('#card-hint').textContent = w.category_name ? `${w.category_icon} ${w.category_name}` : '';
         container.querySelector('#card-translation').textContent = w.translation;
         container.querySelector('#card-example').textContent = w.example ? `"${w.example}"` : '';
         container.querySelector('#card-definition').textContent = w.definition || '';
-        container.querySelector('#review-progress').textContent = `${currentIndex + 1} / ${practiceWords.length}`;
+        container.querySelector('#card-notes').textContent = w.notes ? `📝 ${w.notes}` : '';
+        container.querySelector('#review-progress').textContent = `${currentIndex + 1} / ${total}`;
         container.querySelector('#session-score').textContent = `✓ ${sessionCorrect}  ✗ ${sessionIncorrect}`;
+        container.querySelector('#review-progress-bar').style.width = `${pct}%`;
     }
 
+    // Remove keyboard listener when navigating away
+    window.addEventListener('hashchange', () => document.removeEventListener('keydown', onKeyDown), { once: true });
+
     function showSessionComplete() {
+        document.removeEventListener('keydown', onKeyDown);
         const total = sessionCorrect + sessionIncorrect;
         const pct = total > 0 ? Math.round((sessionCorrect / total) * 100) : 0;
         reviewArea.innerHTML = `
