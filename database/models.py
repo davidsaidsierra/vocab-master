@@ -52,3 +52,20 @@ class Review(Base):
     reviewed_at = Column(DateTime, default=_utcnow)
 
     word = relationship("Word", back_populates="reviews")
+
+
+class WordLookup(Base):
+    """
+    Cache of AI-generated contextual lookups.
+    One row per unique (lowercased) word/phrase.
+    `data` stores the raw JSON returned by the Gemini service so we never
+    need to call the AI twice for the same word.
+    """
+    __tablename__ = "word_lookups"
+
+    id = Column(Integer, primary_key=True, index=True)
+    word = Column(String(200), nullable=False, unique=True, index=True)
+    data = Column(Text, nullable=False)  # JSON-encoded lookup payload
+    source = Column(String(50), default="gemini")
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)

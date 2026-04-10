@@ -1,5 +1,6 @@
 import * as api from '../api.js';
 import { starsHTML, masteryColor, formatDate, truncate, toast } from '../utils/helpers.js';
+import { openLookupModal } from './lookupModal.js';
 
 let categoriesCache = [];
 
@@ -69,6 +70,7 @@ export async function render(container) {
                             <p class="text-sm text-slate-400">${w.translation}</p>
                         </div>
                         <div class="flex gap-1">
+                            <button class="btn-edit text-xs lookup-word" data-id="${w.id}" title="Ver significados">🔍</button>
                             <button class="btn-edit text-xs edit-word" data-id="${w.id}" title="Edit">✏️</button>
                             <button class="btn-danger text-xs delete-word" data-id="${w.id}" title="Delete">✕</button>
                         </div>
@@ -90,6 +92,15 @@ export async function render(container) {
                 </div>
             `;
         }).join('');
+
+        // ── Lookup handlers ─────────────────────────────────
+        grid.querySelectorAll('.lookup-word').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const word = allWords.find(w => w.id === parseInt(btn.dataset.id));
+                if (word) openLookupModal(word.word);
+            });
+        });
 
         // ── Edit handlers ───────────────────────────────────
         grid.querySelectorAll('.edit-word').forEach(btn => {

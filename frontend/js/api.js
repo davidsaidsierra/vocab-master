@@ -66,3 +66,9 @@ export const stats = {
     activity:     (days = 30) => request(`/stats/activity?days=${days}`),
     distribution: () => request('/stats/mastery-distribution'),
 };
+
+// ── Lookup (AI contextual translation) ──────────────────────
+export const lookup = {
+    get:        (word) => request(`/lookup/${encodeURIComponent(word.trim().toLowerCase())}`),
+    invalidate: (word) => request(`/lookup/${encodeURIComponent(word.trim().toLowerCase())}`, { method: 'DELETE' }),
+};

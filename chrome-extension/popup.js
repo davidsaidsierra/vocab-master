@@ -1,4 +1,6 @@
-const API = "https://vocab-master-re2t.onrender.com/api";
+const API_LOCAL  = "http://127.0.0.1:8000/api";
+const API_REMOTE = "https://vocab-master-re2t.onrender.com/api";
+let API = API_REMOTE; // resolved in checkConnection
 
 const $ = (sel) => document.querySelector(sel);
 const wordInput       = $("#word");
@@ -7,10 +9,20 @@ const exampleInput    = $("#example");
 const categorySelect  = $("#category");
 const difficultySelect = $("#difficulty");
 const saveBtn         = $("#save-btn");
+const lookupBtn       = $("#lookup-btn");
+const lookupPanel     = $("#lookup-panel");
 const errorMsg        = $("#error-msg");
 const statusDot       = $("#status-dot");
 const formView        = $("#form-view");
 const successView     = $("#success-view");
+
+function escHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
 // ── API Key ─────────────────────────────────────────────────
 async function getApiKey() {
@@ -29,13 +41,29 @@ function apiHeaders(key) {
 }
 
 // ── Check if VocabMaster server is running ──────────────────
+// Tries local first (fast, no cold-start), falls back to Render.
 async function checkConnection() {
+  const key = await getApiKey();
+  // 1. Try local
   try {
-    const key = await getApiKey();
-    const res = await fetch(`${API}/stats/overview`, { headers: apiHeaders(key) });
+    const res = await fetch(`${API_LOCAL}/stats/overview`, {
+      headers: apiHeaders(key),
+      signal: AbortSignal.timeout(1500),
+    });
     if (res.ok) {
+      API = API_LOCAL;
       statusDot.classList.add("online");
-      statusDot.title = "Connected to VocabMaster";
+      statusDot.title = "Connected (local)";
+      return true;
+    }
+  } catch {}
+  // 2. Fallback to Render
+  try {
+    const res = await fetch(`${API_REMOTE}/stats/overview`, { headers: apiHeaders(key) });
+    if (res.ok) {
+      API = API_REMOTE;
+      statusDot.classList.add("online");
+      statusDot.title = "Connected (Render)";
       return true;
     }
   } catch {}
@@ -66,6 +94,87 @@ async function loadCapturedWord() {
     chrome.storage.local.remove(["capturedWord", "capturedAt"]);
     translationInput.focus();
   }
+}
+
+// ── Lookup (AI contextual translation) ─────────────────────
+lookupBtn.addEventListener("click", async () => {
+  const word = wordInput.value.trim();
+  if (!word) {
+    showError("Escribe una palabra primero.");
+    wordInput.focus();
+    return;
+  }
+
+  lookupBtn.disabled = true;
+  lookupPanel.classList.add("visible");
+  lookupPanel.innerHTML = `<div class="lookup-loading">Buscando significados…</div>`;
+
+  try {
+    const key = await getApiKey();
+    const res = await fetch(`${API}/lookup/${encodeURIComponent(word.toLowerCase())}`, {
+      headers: apiHeaders(key),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    renderLookup(data);
+  } catch (err) {
+    lookupPanel.innerHTML = `<div class="lookup-error">⚠️ ${escHtml(err.message)}</div>`;
+  } finally {
+    lookupBtn.disabled = false;
+  }
+});
+
+function renderLookup(data) {
+  const meanings = data.meanings || [];
+  const phrases  = data.common_phrases || [];
+
+  if (meanings.length === 0 && phrases.length === 0) {
+    lookupPanel.innerHTML = `<div class="lookup-error">Sin resultados.</div>`;
+    return;
+  }
+
+  const badge = data.cached ? "💾" : "✨";
+  let html = `<h4>${badge} ${escHtml(data.word)} ${data.phonetic ? `<span style="color:#64748b;font-weight:normal">${escHtml(data.phonetic)}</span>` : ""}</h4>`;
+
+  meanings.forEach((m, i) => {
+    const ex = (m.examples && m.examples[0]) || null;
+    html += `
+      <div class="lookup-meaning" data-idx="${i}" data-type="meaning">
+        <div><span class="pos">${escHtml(m.part_of_speech || "")}</span><span class="tr">${escHtml(m.translation_es)}</span></div>
+        ${m.definition_en ? `<div style="color:#cbd5e1;margin-top:2px">${escHtml(m.definition_en)}</div>` : ""}
+        ${ex ? `<div class="ex">"${escHtml(ex.en)}" — ${escHtml(ex.es)}</div>` : ""}
+      </div>
+    `;
+  });
+
+  if (phrases.length) {
+    html += `<h4 style="margin-top:8px">Frases comunes</h4>`;
+    phrases.forEach((p) => {
+      html += `
+        <div class="lookup-meaning">
+          <div><span class="tr">${escHtml(p.phrase)}</span> — <span style="color:#94a3b8">${escHtml(p.meaning_es)}</span></div>
+          ${p.example_en ? `<div class="ex">"${escHtml(p.example_en)}"</div>` : ""}
+        </div>
+      `;
+    });
+  }
+
+  html += `<div style="text-align:center;margin-top:6px;color:#64748b;font-size:10px">Click en un significado para usarlo</div>`;
+  lookupPanel.innerHTML = html;
+
+  // Click → fill fields with the chosen meaning
+  lookupPanel.querySelectorAll('.lookup-meaning[data-type="meaning"]').forEach((el) => {
+    el.addEventListener("click", () => {
+      const m = meanings[parseInt(el.dataset.idx)];
+      if (m.translation_es) translationInput.value = m.translation_es;
+      const ex = (m.examples && m.examples[0]) || null;
+      if (ex && !exampleInput.value.trim()) exampleInput.value = ex.en;
+      lookupPanel.classList.remove("visible");
+    });
+  });
 }
 
 // ── Save word ───────────────────────────────────────────────
@@ -120,6 +229,8 @@ $("#add-another").addEventListener("click", () => {
   translationInput.value = "";
   exampleInput.value = "";
   difficultySelect.value = "3";
+  lookupPanel.classList.remove("visible");
+  lookupPanel.innerHTML = "";
   formView.style.display = "block";
   successView.style.display = "none";
   wordInput.focus();
@@ -141,6 +252,8 @@ function showError(msg) {
 }
 
 // ── Init ────────────────────────────────────────────────────
-checkConnection();
-loadCategories();
-loadCapturedWord();
+// checkConnection must resolve first so API points to the right server.
+checkConnection().then(() => {
+  loadCategories();
+  loadCapturedWord();
+});

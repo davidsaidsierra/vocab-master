@@ -76,3 +76,30 @@ class ReviewOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ── Lookup (AI-powered contextual translation) ─────────────
+class LookupExample(BaseModel):
+    en: str
+    es: str
+
+class LookupMeaning(BaseModel):
+    part_of_speech: str = ""
+    translation_es: str = ""
+    definition_en: str = ""
+    definition_es: str = ""
+    examples: list[LookupExample] = []
+
+class LookupPhrase(BaseModel):
+    phrase: str
+    meaning_es: str = ""
+    example_en: str = ""
+    example_es: str = ""
+
+class LookupOut(BaseModel):
+    word: str
+    phonetic: str = ""
+    meanings: list[LookupMeaning] = []
+    common_phrases: list[LookupPhrase] = []
+    cached: bool = False  # true if served from DB cache
+    source: str = "gemini"

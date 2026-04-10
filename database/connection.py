@@ -27,5 +27,5 @@ def get_db():
 
 
 def init_db():
-    from database.models import Word, Category, Review  # noqa: F401
+    from database.models import Word, Category, Review, WordLookup  # noqa: F401
     Base.metadata.create_all(bind=engine)

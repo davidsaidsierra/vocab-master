@@ -1,5 +1,6 @@
 import * as api from '../api.js';
 import { toast } from '../utils/helpers.js';
+import { openLookupModal } from './lookupModal.js';
 
 export async function render(container) {
     const cats = await api.categories.list();
@@ -11,7 +12,11 @@ export async function render(container) {
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm text-slate-400 mb-1">Word / Phrase *</label>
-                        <input type="text" name="word" class="form-input" placeholder="e.g. serendipity" required>
+                        <div class="flex gap-2">
+                            <input type="text" name="word" class="form-input flex-1" placeholder="e.g. serendipity" required>
+                            <button type="button" id="lookup-btn" class="btn-secondary" title="Buscar significados con IA" style="padding:0.75rem 0.9rem">🔍</button>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Escribe la palabra y pulsa 🔍 para ver todos sus significados y auto-rellenar los campos.</p>
                     </div>
                     <div>
                         <label class="block text-sm text-slate-400 mb-1">Translation *</label>
@@ -61,6 +66,33 @@ export async function render(container) {
             </div>
         </div>
     `;
+
+    // ── Lookup button (AI contextual translation) ──────────
+    const lookupBtn = container.querySelector('#lookup-btn');
+    const wordInput = container.querySelector('[name="word"]');
+    lookupBtn.addEventListener('click', () => {
+        const w = wordInput.value.trim();
+        if (!w) {
+            toast('Escribe una palabra primero', 'error');
+            wordInput.focus();
+            return;
+        }
+        openLookupModal(w, {
+            onPickMeaning: (meaning, full) => {
+                const form = container.querySelector('#word-form');
+                // Always set translation
+                if (meaning.translation_es) form.translation.value = meaning.translation_es;
+                // Only overwrite definition/example if empty, to respect user input
+                if (meaning.definition_en && !form.definition.value.trim()) {
+                    form.definition.value = meaning.definition_en;
+                }
+                const firstExample = (meaning.examples && meaning.examples[0]) || null;
+                if (firstExample && !form.example.value.trim()) {
+                    form.example.value = firstExample.en;
+                }
+            }
+        });
+    });
 
     // Difficulty stars interaction
     const starsContainer = container.querySelector('#difficulty-stars');

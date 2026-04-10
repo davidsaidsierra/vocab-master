@@ -87,6 +87,64 @@
     .btn-primary:hover { box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4); }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* ── Word row with lookup button ────────────── */
+    .word-row { display: flex; gap: 6px; margin-bottom: 10px; }
+    .word-row input { margin-bottom: 0; }
+    .btn-lookup {
+      padding: 0 12px;
+      background: rgba(139, 92, 246, 0.15);
+      border: 1px solid rgba(139, 92, 246, 0.35);
+      border-radius: 8px;
+      color: #a78bfa;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .btn-lookup:hover { background: rgba(139, 92, 246, 0.25); }
+    .btn-lookup:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── Lookup results panel ───────────────────── */
+    .lookup-panel {
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      max-height: 280px;
+      overflow-y: auto;
+      font-size: 12px;
+      display: none;
+    }
+    .lookup-panel.visible { display: block; }
+    .lookup-panel h4 {
+      font-size: 11px;
+      color: #a78bfa;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+    .lookup-meaning {
+      padding: 6px 8px;
+      background: #1e293b;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .lookup-meaning:hover { border-color: #8b5cf6; }
+    .lookup-meaning .pos {
+      display: inline-block;
+      font-size: 10px;
+      color: #64748b;
+      margin-right: 6px;
+      text-transform: uppercase;
+    }
+    .lookup-meaning .tr { color: #a78bfa; font-weight: 600; }
+    .lookup-meaning .ex { color: #94a3b8; font-style: italic; margin-top: 2px; }
+    .lookup-loading { text-align: center; padding: 10px; color: #64748b; }
+    .lookup-error { color: #f87171; padding: 6px; text-align: center; }
+
     /* ── Success state ───────────────────────────── */
     .success {
       text-align: center;
@@ -123,7 +181,12 @@
     <div class="error" id="error-msg"></div>
 
     <label>Word / Phrase</label>
-    <input type="text" id="word" placeholder="e.g. serendipity">
+    <div class="word-row">
+      <input type="text" id="word" placeholder="e.g. serendipity">
+      <button class="btn-lookup" id="lookup-btn" title="Buscar significados con IA">🔍</button>
+    </div>
+
+    <div class="lookup-panel" id="lookup-panel"></div>
 
     <label>Translation</label>
     <input type="text" id="translation" placeholder="e.g. serendipia" autofocus>
