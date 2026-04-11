@@ -21,7 +21,7 @@ export async function render(container) {
                         <label class="block text-xs text-slate-500 mb-1">Color</label>
                         <div class="flex gap-2 flex-wrap" id="color-picker">
                             ${PRESET_COLORS.map((c, i) => `
-                                <button type="button" class="w-8 h-8 rounded-full border-2 transition-transform color-opt ${i === 0 ? 'border-white scale-110' : 'border-transparent'}" style="background:${c}" data-color="${c}"></button>
+                                <button type="button" class="w-8 h-8 rounded-full transition-transform color-opt ${i === 0 ? 'is-selected' : ''}" style="background:${c};border:2px solid ${i === 0 ? '#1d1d1f' : 'transparent'};${i === 0 ? 'transform:scale(1.1);' : ''}" data-color="${c}"></button>
                             `).join('')}
                         </div>
                         <input type="hidden" name="color" value="${PRESET_COLORS[0]}">
@@ -30,7 +30,7 @@ export async function render(container) {
                         <label class="block text-xs text-slate-500 mb-1">Icon</label>
                         <div class="flex gap-2 flex-wrap" id="icon-picker">
                             ${PRESET_ICONS.map((ic, i) => `
-                                <button type="button" class="w-9 h-9 rounded-lg text-lg flex items-center justify-center transition-all icon-opt ${i === 0 ? 'bg-slate-700 ring-2 ring-brand-500' : 'bg-slate-800'}" data-icon="${ic}">${ic}</button>
+                                <button type="button" class="w-9 h-9 rounded-lg text-lg flex items-center justify-center transition-all icon-opt" style="background:${i === 0 ? 'var(--accent-soft)' : 'var(--bg-hover)'};border:1px solid ${i === 0 ? 'var(--accent)' : 'var(--border)'}" data-icon="${ic}">${ic}</button>
                             `).join('')}
                         </div>
                         <input type="hidden" name="icon" value="${PRESET_ICONS[0]}">
@@ -52,9 +52,12 @@ export async function render(container) {
     colorPicker.addEventListener('click', (e) => {
         const btn = e.target.closest('.color-opt');
         if (!btn) return;
-        colorPicker.querySelectorAll('.color-opt').forEach(b => { b.classList.remove('border-white', 'scale-110'); b.classList.add('border-transparent'); });
-        btn.classList.add('border-white', 'scale-110');
-        btn.classList.remove('border-transparent');
+        colorPicker.querySelectorAll('.color-opt').forEach(b => {
+            b.style.border = '2px solid transparent';
+            b.style.transform = 'scale(1)';
+        });
+        btn.style.border = '2px solid #1d1d1f';
+        btn.style.transform = 'scale(1.1)';
         colorInput.value = btn.dataset.color;
     });
 
@@ -64,9 +67,12 @@ export async function render(container) {
     iconPicker.addEventListener('click', (e) => {
         const btn = e.target.closest('.icon-opt');
         if (!btn) return;
-        iconPicker.querySelectorAll('.icon-opt').forEach(b => { b.classList.remove('bg-slate-700', 'ring-2', 'ring-brand-500'); b.classList.add('bg-slate-800'); });
-        btn.classList.add('bg-slate-700', 'ring-2', 'ring-brand-500');
-        btn.classList.remove('bg-slate-800');
+        iconPicker.querySelectorAll('.icon-opt').forEach(b => {
+            b.style.background = 'var(--bg-hover)';
+            b.style.border = '1px solid var(--border)';
+        });
+        btn.style.background = 'var(--accent-soft)';
+        btn.style.border = '1px solid var(--accent)';
         iconInput.value = btn.dataset.icon;
     });
 

@@ -66,7 +66,7 @@ export async function render(container) {
                 <div class="word-card" style="--card-accent:${w.category_color || '#8b5cf6'}">
                     <div class="flex items-start justify-between mb-2">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-100">${w.word}</h3>
+                            <h3 class="text-lg font-bold" style="color:var(--text-primary)">${w.word}</h3>
                             <p class="text-sm text-slate-400">${w.translation}</p>
                         </div>
                         <div class="flex gap-1">

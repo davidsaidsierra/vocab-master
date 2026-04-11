@@ -56,9 +56,9 @@ export async function render(container) {
 function statCard(label, value, from, to, icon) {
     return `
         <div class="stat-card" style="--stat-from:${from};--stat-to:${to}">
-            <div class="text-2xl mb-1">${icon}</div>
+            <div class="text-2xl mb-3">${icon}</div>
             <div class="text-3xl font-bold">${value}</div>
-            <div class="text-sm opacity-80">${label}</div>
+            <div class="text-sm">${label}</div>
         </div>
     `;
 }
@@ -97,7 +97,7 @@ function renderDistributionChart(data) {
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'bottom', labels: { color: '#94a3b8', padding: 16, font: { size: 12 } } },
+                legend: { position: 'bottom', labels: { color: '#6e6e73', padding: 16, font: { size: 12 } } },
             },
         },
     });
@@ -124,15 +124,15 @@ function renderActivityChart(data) {
             datasets: [{
                 label: 'Reviews',
                 data: last30.map(d => d.count),
-                backgroundColor: 'rgba(139, 92, 246, 0.6)',
+                backgroundColor: 'rgba(0, 113, 227, 0.55)',
                 borderRadius: 4,
             }],
         },
         options: {
             responsive: true,
             scales: {
-                x: { ticks: { color: '#475569', maxRotation: 45, font: { size: 10 } }, grid: { display: false } },
-                y: { ticks: { color: '#475569', stepSize: 1 }, grid: { color: 'rgba(148,163,184,0.06)' }, beginAtZero: true },
+                x: { ticks: { color: '#86868b', maxRotation: 45, font: { size: 10 } }, grid: { display: false } },
+                y: { ticks: { color: '#86868b', stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.05)' }, beginAtZero: true },
             },
             plugins: { legend: { display: false } },
         },

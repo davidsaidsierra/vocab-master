@@ -1,15 +1,17 @@
 // ── SPA Router ───────────────────────────────────────────────
-import { render as renderDashboard }   from './components/dashboard.js';
-import { render as renderWordList }    from './components/wordList.js';
-import { render as renderWordForm }    from './components/wordForm.js';
-import { render as renderFlashcards }  from './components/flashcards.js';
-import { render as renderCategories }  from './components/categoriesPage.js';
+import { render as renderDashboard }    from './components/dashboard.js';
+import { render as renderWordList }     from './components/wordList.js';
+import { render as renderWordForm }     from './components/wordForm.js';
+import { render as renderFlashcards }   from './components/flashcards.js';
+import { render as renderCategories }   from './components/categoriesPage.js';
+import { render as renderQuickSummary } from './components/quickSummary.js';
 
 const routes = {
     '/dashboard':  renderDashboard,
     '/words':      renderWordList,
     '/add':        renderWordForm,
     '/review':     renderFlashcards,
+    '/summary':    renderQuickSummary,
     '/categories': renderCategories,
 };
 

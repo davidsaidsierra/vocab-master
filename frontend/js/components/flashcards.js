@@ -158,7 +158,7 @@ export async function render(container) {
             <div id="empty-state" class="hidden">
                 <div class="empty-state card">
                     <div class="text-5xl mb-4">📭</div>
-                    <p class="text-lg font-medium text-slate-300">No words found</p>
+                    <p class="text-lg font-medium text-slate-700">No words found</p>
                     <p class="text-sm text-slate-500 mt-2">No words match your filters.<br>Try a wider range or add more words.</p>
                 </div>
             </div>
@@ -283,9 +283,6 @@ export async function render(container) {
         isFlipped = true;
         flashcard.classList.add('flipped');
         ratingPanel.classList.remove('hidden');
-        // Auto-pronounce the English word on flip
-        const w = practiceWords[currentIndex];
-        if (w) speak(w.word, 'en-US');
     }
     flashcard.addEventListener('click', flipCard);
 
