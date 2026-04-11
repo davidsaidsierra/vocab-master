@@ -11,6 +11,7 @@ try:
 except ImportError:
     pass  # python-dotenv is optional; env vars can also be set externally
 
+from pathlib import Path
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,6 +20,9 @@ from fastapi.responses import FileResponse
 from database.connection import init_db
 from api import words, categories, reviews, stats, lookup
 from api.auth import verify_api_key
+
+BASE_DIR = Path(__file__).parent
+FRONTEND_DIR = BASE_DIR / "frontend"
 
 
 @asynccontextmanager
@@ -45,12 +49,12 @@ app.include_router(stats.router,      dependencies=[Depends(verify_api_key)])
 app.include_router(lookup.router,     dependencies=[Depends(verify_api_key)])
 
 # ── Serve frontend ──────────────────────────────────────────
-app.mount("/static", StaticFiles(directory="frontend"), name="static")
+app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
 
 @app.get("/")
 def index():
-    return FileResponse("frontend/index.html")
+    return FileResponse(str(FRONTEND_DIR / "index.html"))
 
 
 if __name__ == "__main__":

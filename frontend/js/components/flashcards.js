@@ -1,6 +1,16 @@
 import * as api from '../api.js';
 import { toast } from '../utils/helpers.js';
 
+// ── Web Speech API pronunciation ──────────────────────────────
+function speak(text, lang = 'en-US') {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utt = new SpeechSynthesisUtterance(text);
+    utt.lang = lang;
+    utt.rate = 0.9;
+    window.speechSynthesis.speak(utt);
+}
+
 let practiceWords = [];
 let currentIndex = 0;
 let isFlipped = false;
@@ -103,14 +113,20 @@ export async function render(container) {
                     <div class="flashcard" id="flashcard">
                         <div class="flashcard-face flashcard-front">
                             <p class="text-xs mb-3 uppercase tracking-wider" id="card-front-label" style="color:#a5b4fc">What does this mean?</p>
-                            <p class="text-3xl font-bold mb-3" id="card-word"></p>
+                            <div class="flex items-center justify-center gap-2 mb-3">
+                                <p class="text-3xl font-bold" id="card-word"></p>
+                                <button id="btn-speak-front" title="Pronounce" style="background:none;border:none;cursor:pointer;font-size:1.2rem;opacity:0.5;padding:0 0.2rem" tabindex="-1">🔊</button>
+                            </div>
                             <p class="text-sm italic px-4 text-center leading-relaxed" id="card-example-hint" style="color:rgba(199,210,254,0.8)"></p>
                             <p class="text-sm mt-4" id="card-hint" style="color:rgba(165,180,252,0.6)"></p>
                             <p class="text-xs mt-6" id="card-front-tip" style="color:rgba(165,180,252,0.5)">Click · Space to reveal</p>
                         </div>
                         <div class="flashcard-face flashcard-back">
                             <p class="text-xs text-emerald-300 mb-2 uppercase tracking-wider" id="card-back-label">Translation</p>
-                            <p class="text-2xl font-bold mb-3" id="card-translation"></p>
+                            <div class="flex items-center justify-center gap-2 mb-3">
+                                <p class="text-2xl font-bold" id="card-translation"></p>
+                                <button id="btn-speak-back" title="Pronounce" style="background:none;border:none;cursor:pointer;font-size:1.1rem;opacity:0.5;padding:0 0.2rem" tabindex="-1">🔊</button>
+                            </div>
                             <p class="text-sm text-emerald-200/70 italic mb-2" id="card-example"></p>
                             <p class="text-xs text-emerald-200/50" id="card-definition"></p>
                             <p class="text-xs text-emerald-300/40 mt-2 italic" id="card-notes"></p>
@@ -247,12 +263,29 @@ export async function render(container) {
         showCard();
     });
 
+    // ── Speaker buttons ─────────────────────────────────
+    container.querySelector('#btn-speak-front').addEventListener('click', e => {
+        e.stopPropagation();
+        const w = practiceWords[currentIndex];
+        if (!w) return;
+        speak(isReverseMode ? w.translation : w.word, isReverseMode ? 'es-ES' : 'en-US');
+    });
+    container.querySelector('#btn-speak-back').addEventListener('click', e => {
+        e.stopPropagation();
+        const w = practiceWords[currentIndex];
+        if (!w) return;
+        speak(isReverseMode ? w.word : w.word, 'en-US');
+    });
+
     // ── Flip on click / Space ───────────────────────────
     function flipCard() {
         if (isFlipped) return;
         isFlipped = true;
         flashcard.classList.add('flipped');
         ratingPanel.classList.remove('hidden');
+        // Auto-pronounce the English word on flip
+        const w = practiceWords[currentIndex];
+        if (w) speak(w.word, 'en-US');
     }
     flashcard.addEventListener('click', flipCard);
 
@@ -339,8 +372,11 @@ export async function render(container) {
         container.querySelector('#review-progress-bar').style.width = `${pct}%`;
     }
 
-    // Remove keyboard listener when navigating away
-    window.addEventListener('hashchange', () => document.removeEventListener('keydown', onKeyDown), { once: true });
+    // Remove keyboard listener and stop speech when navigating away
+    window.addEventListener('hashchange', () => {
+        document.removeEventListener('keydown', onKeyDown);
+        window.speechSynthesis?.cancel();
+    }, { once: true });
 
     function showSessionComplete() {
         document.removeEventListener('keydown', onKeyDown);
