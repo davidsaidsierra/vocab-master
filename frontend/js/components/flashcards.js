@@ -71,6 +71,15 @@ export async function render(container) {
                             <option value="1-1">⭐ Only (1)</option>
                         </select>
                     </div>
+                    <div class="flex-1 min-w-[150px]">
+                        <label class="block text-xs text-slate-500 mb-1">Mastery level</label>
+                        <select id="review-filter-mastery" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
+                            <option value="">All levels</option>
+                            <option value="25">🔴 Worst (0–25%)</option>
+                            <option value="50">🟠 Struggling (0–50%)</option>
+                            <option value="74">🟡 Below average (0–74%)</option>
+                        </select>
+                    </div>
                     <!-- Custom days input (hidden by default) -->
                     <div class="flex-1 min-w-[100px] hidden" id="custom-days-wrapper">
                         <label class="block text-xs text-slate-500 mb-1">How many days?</label>
@@ -168,6 +177,7 @@ export async function render(container) {
     const filterCat        = container.querySelector('#review-filter-cat');
     const filterDays       = container.querySelector('#review-filter-days');
     const filterDiff       = container.querySelector('#review-filter-difficulty');
+    const filterMastery    = container.querySelector('#review-filter-mastery');
     const customWrapper    = container.querySelector('#custom-days-wrapper');
     const customInput      = container.querySelector('#custom-days-input');
     const startBtn         = container.querySelector('#start-review-btn');
@@ -222,6 +232,11 @@ export async function render(container) {
             params.difficulty_min = min;
             params.difficulty_max = max;
         }
+
+        if (filterMastery.value !== '') {
+            params.mastery_max = filterMastery.value;
+        }
+
         return params;
     }
 
@@ -237,6 +252,7 @@ export async function render(container) {
 
     filterCat.addEventListener('change', updateWordCount);
     filterDiff.addEventListener('change', updateWordCount);
+    filterMastery.addEventListener('change', updateWordCount);
     customInput.addEventListener('input', updateWordCount);
     await updateWordCount();
 

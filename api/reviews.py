@@ -66,6 +66,7 @@ def get_practice_words(
     days: int | None = Query(None, description="Only words added in the last N days (0 = today)"),
     difficulty_min: int | None = Query(None, ge=1, le=5, description="Min difficulty (1-5)"),
     difficulty_max: int | None = Query(None, ge=1, le=5, description="Max difficulty (1-5)"),
+    mastery_max: int | None = Query(None, ge=0, le=100, description="Only words with mastery ≤ this value (0-100)"),
     db: Session = Depends(get_db),
 ):
     """Return ALL words matching filters — for free practice regardless of schedule."""
@@ -75,7 +76,6 @@ def get_practice_words(
         q = q.filter(Word.category_id == category_id)
 
     if days is not None:
-        # days=0 → only today, days=1 → last 2 calendar days, etc.
         now = datetime.now(timezone.utc)
         cutoff = (now - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
         q = q.filter(Word.created_at >= cutoff)
@@ -85,7 +85,13 @@ def get_practice_words(
     if difficulty_max is not None:
         q = q.filter(Word.difficulty <= difficulty_max)
 
-    words = q.order_by(Word.created_at.desc()).all()
+    if mastery_max is not None:
+        q = q.filter(Word.mastery_level <= mastery_max)
+        # Sort worst first so the hardest words come up early
+        words = q.order_by(Word.mastery_level.asc()).all()
+    else:
+        words = q.order_by(Word.created_at.desc()).all()
+
     return [_word_to_out(w) for w in words]
 
 
