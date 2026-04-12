@@ -155,7 +155,7 @@ const CONNECTORS = [
         items: [
             { word: 'however',          use: 'But, on the other hand', example: 'I tried; <strong>however</strong>, I failed.' },
             { word: 'nevertheless',     use: 'Despite that',           example: 'It rained; <strong>nevertheless</strong>, we went out.' },
-            { word: ‘on the other hand’, use: ‘In contrast’,           example: "On one hand it’s cheap; <strong>on the other hand</strong>, it’s slow." },
+            { word: 'on the other hand', use: 'In contrast',           example: "On one hand it's cheap; <strong>on the other hand</strong>, it's slow." },
             { word: 'although',         use: 'Even though',            example: '<strong>Although</strong> it was cold, we walked.' },
         ],
     },
