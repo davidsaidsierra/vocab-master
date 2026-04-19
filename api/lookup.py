@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from api.schemas import LookupOut
 from database.connection import get_db
 from database.models import WordLookup
-from services import gemini
+from services import word_lookup
 
 router = APIRouter(prefix="/api/lookup", tags=["lookup"])
 
@@ -51,14 +51,12 @@ def lookup(
             data = {}
         return _build_out(word_lc, data, cached=True, source=row.source or "gemini")
 
-    # ── 2. Gemini call ──────────────────────────────────────
+    # ── 2. Gemini (with Groq fallback) ──────────────────────
     try:
-        data = gemini.lookup_word(word_lc)
+        data, source = word_lookup.lookup_word(word_lc)
     except RuntimeError as exc:
-        # Configuration / auth / network
         raise HTTPException(503, f"Servicio de traducción no disponible: {exc}") from exc
     except ValueError as exc:
-        # JSON parse error
         raise HTTPException(502, f"Respuesta inválida del modelo: {exc}") from exc
     except Exception as exc:  # pragma: no cover
         raise HTTPException(500, f"Error inesperado: {exc}") from exc
@@ -68,7 +66,7 @@ def lookup(
         row = WordLookup(
             word=word_lc,
             data=json.dumps(data, ensure_ascii=False),
-            source="gemini",
+            source=source,
         )
         db.add(row)
         db.commit()
@@ -76,7 +74,7 @@ def lookup(
         db.rollback()
         # Non-fatal: still return the result even if caching failed.
 
-    return _build_out(word_lc, data, cached=False, source="gemini")
+    return _build_out(word_lc, data, cached=False, source=source)
 
 
 @router.delete("/{word}", status_code=204)

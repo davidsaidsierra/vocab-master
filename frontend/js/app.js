@@ -5,14 +5,16 @@ import { render as renderWordForm }     from './components/wordForm.js';
 import { render as renderFlashcards }   from './components/flashcards.js';
 import { render as renderCategories }   from './components/categoriesPage.js';
 import { render as renderQuickSummary } from './components/quickSummary.js';
+import { render as renderEnglishClass } from './components/englishClass.js';
 
 const routes = {
-    '/dashboard':  renderDashboard,
-    '/words':      renderWordList,
-    '/add':        renderWordForm,
-    '/review':     renderFlashcards,
-    '/summary':    renderQuickSummary,
-    '/categories': renderCategories,
+    '/dashboard':    renderDashboard,
+    '/words':        renderWordList,
+    '/add':          renderWordForm,
+    '/review':       renderFlashcards,
+    '/summary':      renderQuickSummary,
+    '/categories':   renderCategories,
+    '/english-class': renderEnglishClass,
 };
 
 const app = document.getElementById('app');
