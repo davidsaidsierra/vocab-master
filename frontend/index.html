@@ -2,8 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light only">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>VocabMaster</title>
     <!-- Critical inline styles (run before any cached CSS) -->
     <style>
@@ -27,13 +30,36 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/css/styles.css?v=2">
+    <link rel="stylesheet" href="/static/css/styles.css?v=3">
 </head>
 <body class="min-h-screen flex">
 
-    <!-- ── Sidebar ──────────────────────────────────────── -->
+    <!-- ── Mobile Header ──────────────────────────────────────── -->
+    <header id="mobile-header">
+        <button id="hamburger-btn" aria-label="Abrir menú">
+            <svg id="hamburger-icon" width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+        <span class="mobile-header-title">✦ VocabMaster</span>
+        <button id="view-toggle-btn" aria-label="Cambiar vista" title="Cambiar entre vista móvil y escritorio">
+            <!-- Desktop icon (shown in mobile mode) -->
+            <svg id="icon-desktop" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <!-- Mobile icon (shown in desktop mode) -->
+            <svg id="icon-mobile" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+        </button>
+    </header>
+
+    <!-- ── Sidebar overlay (mobile) ───────────────────────────── -->
+    <div id="sidebar-overlay"></div>
+
+    <!-- ── Sidebar ──────────────────────────────────────────────── -->
     <nav id="sidebar" class="w-64 flex flex-col fixed h-full z-30">
-        <div class="p-6" style="border-bottom:1px solid var(--border)">
+        <div class="p-6 sidebar-brand" style="border-bottom:1px solid var(--border)">
             <h1 class="text-xl font-bold">
                 ✦ VocabMaster
             </h1>
@@ -74,12 +100,36 @@
         </div>
     </nav>
 
-    <!-- ── Main content ─────────────────────────────────── -->
+    <!-- ── Main content ─────────────────────────────────────────── -->
     <main id="app" class="flex-1 ml-64 p-8 overflow-y-auto">
         <!-- Pages are rendered here by the JS router -->
     </main>
 
-    <!-- ── JavaScript modules ───────────────────────────── -->
+    <!-- ── Bottom Navigation (mobile) ─────────────────────────── -->
+    <nav id="bottom-nav">
+        <a href="#/dashboard" class="bottom-nav-item active" data-page="dashboard">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+            <span>Home</span>
+        </a>
+        <a href="#/words" class="bottom-nav-item" data-page="words">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+            <span>Words</span>
+        </a>
+        <a href="#/add" class="bottom-nav-item bottom-nav-add" data-page="add">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span>Add</span>
+        </a>
+        <a href="#/review" class="bottom-nav-item" data-page="review">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            <span>Review</span>
+        </a>
+        <a href="#/english-class" class="bottom-nav-item" data-page="english-class">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222"/></svg>
+            <span>Class</span>
+        </a>
+    </nav>
+
+    <!-- ── JavaScript modules ───────────────────────────────────── -->
     <script type="module" src="/static/js/app.js"></script>
 </body>
 </html>
