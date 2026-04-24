@@ -592,3 +592,324 @@ h1, h2, h3, h4 {
 @media (max-width: 768px) {
     .qs-grid { grid-template-columns: 1fr; }
 }
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE / MOBILE — aditivo, no rompe nada del desktop
+   Reglas clave:
+     - Todo nuevo elemento (#mobile-header, #bottom-nav, etc.)
+       arranca con display:none
+     - Se muestra sólo cuando corresponda vía media query o clase
+       body.force-mobile / body.force-desktop
+   ══════════════════════════════════════════════════════════════ */
+
+#mobile-header,
+#sidebar-overlay,
+#bottom-nav,
+#floating-view-toggle {
+    display: none;
+}
+
+/* ── Mobile header ─────────────────────────────────────────── */
+#mobile-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 56px;
+    z-index: 40;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+}
+.mh-title {
+    font-weight: 700;
+    font-size: 1rem;
+    background: linear-gradient(135deg, #1d1d1f, #4a4a4f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+#hamburger-btn, .mh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: var(--bg-hover);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    color: var(--text-primary);
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+}
+#hamburger-btn:hover, .mh-btn:hover { background: #e5e5ea; }
+
+/* ── Sidebar overlay ───────────────────────────────────────── */
+#sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.38);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 29;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+#sidebar-overlay.visible {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Bottom navigation ─────────────────────────────────────── */
+#bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 62px;
+    z-index: 40;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-top: 1px solid var(--border);
+    align-items: stretch;
+    justify-content: space-around;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bn-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    flex: 1;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    font-size: 0.62rem;
+    font-weight: 500;
+    padding: 0.4rem 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.15s;
+}
+.bn-item.active { color: var(--accent); }
+.bn-item svg { transition: transform 0.15s; }
+.bn-item.active svg { transform: scale(1.1); }
+.bn-add svg {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    padding: 5px;
+    width: 32px;
+    height: 32px;
+}
+
+/* ── Floating view toggle (desktop) ────────────────────────── */
+#floating-view-toggle {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    z-index: 25;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 0.95rem;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-family: inherit;
+    transition: box-shadow 0.2s, color 0.2s;
+}
+#floating-view-toggle:hover {
+    box-shadow: var(--shadow-lg);
+    color: var(--text-primary);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   MOBILE mode: se activa cuando
+     - el viewport es ≤ 768px  Y  body NO tiene .force-desktop
+     - O body tiene .force-mobile
+   ══════════════════════════════════════════════════════════════ */
+
+/* Reglas comunes (reutilizadas por ambos modos) */
+.vm-mobile-active #mobile-header { display: flex !important; }
+.vm-mobile-active #bottom-nav    { display: flex !important; }
+.vm-mobile-active #floating-view-toggle { display: none !important; }
+.vm-mobile-active #sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    top: 0;
+    height: 100%;
+    z-index: 30;
+}
+.vm-mobile-active #sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-xl);
+}
+.vm-mobile-active #app {
+    margin-left: 0 !important;
+    padding: 1rem !important;
+    padding-top: calc(56px + 1rem) !important;
+    padding-bottom: calc(62px + 1rem) !important;
+}
+/* Stack Tailwind grid responsive classes */
+.vm-mobile-active .sm\:grid-cols-2,
+.vm-mobile-active .md\:grid-cols-2,
+.vm-mobile-active .md\:grid-cols-3,
+.vm-mobile-active .md\:grid-cols-4,
+.vm-mobile-active .lg\:grid-cols-2,
+.vm-mobile-active .lg\:grid-cols-3,
+.vm-mobile-active .lg\:grid-cols-4,
+.vm-mobile-active .xl\:grid-cols-2,
+.vm-mobile-active .xl\:grid-cols-3,
+.vm-mobile-active .xl\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+}
+/* Keep tiny 2-col internal grids (stats inside word cards) */
+.vm-mobile-active .grid.grid-cols-2.gap-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+.vm-mobile-active .flashcard { min-height: 280px; }
+.vm-mobile-active .flashcard-face { padding: 1.75rem 1.25rem; }
+.vm-mobile-active .btn-primary,
+.vm-mobile-active .btn-secondary {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+}
+.vm-mobile-active .binary-btn { padding: 1rem 0.75rem; }
+.vm-mobile-active .form-input { padding: 0.875rem 1rem; font-size: 1rem; }
+.vm-mobile-active .toast {
+    bottom: calc(62px + 1rem);
+    right: 1rem;
+    left: 1rem;
+    text-align: center;
+}
+.vm-mobile-active h1.text-3xl { font-size: 1.5rem !important; }
+.vm-mobile-active h2.text-2xl { font-size: 1.25rem !important; }
+
+/* Activación automática por viewport (cuando NO hay force-desktop) */
+@media (max-width: 768px) {
+    body:not(.force-desktop) #mobile-header { display: flex; }
+    body:not(.force-desktop) #bottom-nav    { display: flex; }
+    body:not(.force-desktop) #floating-view-toggle { display: none; }
+    body:not(.force-desktop) #sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        top: 0;
+        height: 100%;
+        z-index: 30;
+    }
+    body:not(.force-desktop) #sidebar.open {
+        transform: translateX(0);
+        box-shadow: var(--shadow-xl);
+    }
+    body:not(.force-desktop) #app {
+        margin-left: 0 !important;
+        padding: 1rem !important;
+        padding-top: calc(56px + 1rem) !important;
+        padding-bottom: calc(62px + 1rem) !important;
+    }
+    body:not(.force-desktop) .sm\:grid-cols-2,
+    body:not(.force-desktop) .md\:grid-cols-2,
+    body:not(.force-desktop) .md\:grid-cols-3,
+    body:not(.force-desktop) .md\:grid-cols-4,
+    body:not(.force-desktop) .lg\:grid-cols-2,
+    body:not(.force-desktop) .lg\:grid-cols-3,
+    body:not(.force-desktop) .lg\:grid-cols-4,
+    body:not(.force-desktop) .xl\:grid-cols-2,
+    body:not(.force-desktop) .xl\:grid-cols-3,
+    body:not(.force-desktop) .xl\:grid-cols-4 {
+        grid-template-columns: 1fr !important;
+    }
+    body:not(.force-desktop) .grid.grid-cols-2.gap-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    body:not(.force-desktop) .flashcard { min-height: 280px; }
+    body:not(.force-desktop) .flashcard-face { padding: 1.75rem 1.25rem; }
+    body:not(.force-desktop) .btn-primary,
+    body:not(.force-desktop) .btn-secondary {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+    body:not(.force-desktop) .binary-btn { padding: 1rem 0.75rem; }
+    body:not(.force-desktop) .form-input { padding: 0.875rem 1rem; font-size: 1rem; }
+    body:not(.force-desktop) .toast {
+        bottom: calc(62px + 1rem);
+        right: 1rem;
+        left: 1rem;
+        text-align: center;
+    }
+    body:not(.force-desktop) h1.text-3xl { font-size: 1.5rem !important; }
+    body:not(.force-desktop) h2.text-2xl { font-size: 1.25rem !important; }
+}
+
+/* Activación forzada (para previsualizar desde desktop) */
+body.force-mobile #mobile-header { display: flex !important; }
+body.force-mobile #bottom-nav    { display: flex !important; }
+body.force-mobile #floating-view-toggle { display: none !important; }
+body.force-mobile #sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    top: 0;
+    height: 100%;
+    z-index: 30;
+}
+body.force-mobile #sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-xl);
+}
+body.force-mobile #app {
+    margin-left: 0 !important;
+    padding: 1rem !important;
+    padding-top: calc(56px + 1rem) !important;
+    padding-bottom: calc(62px + 1rem) !important;
+    max-width: 480px;
+    margin-right: auto;
+}
+body.force-mobile .sm\:grid-cols-2,
+body.force-mobile .md\:grid-cols-2,
+body.force-mobile .md\:grid-cols-3,
+body.force-mobile .md\:grid-cols-4,
+body.force-mobile .lg\:grid-cols-2,
+body.force-mobile .lg\:grid-cols-3,
+body.force-mobile .lg\:grid-cols-4,
+body.force-mobile .xl\:grid-cols-2,
+body.force-mobile .xl\:grid-cols-3,
+body.force-mobile .xl\:grid-cols-4 {
+    grid-template-columns: 1fr !important;
+}
+body.force-mobile .grid.grid-cols-2.gap-3 {
+    grid-template-columns: repeat(2, 1fr) !important;
+}
+body.force-mobile .flashcard { min-height: 280px; }
+body.force-mobile .flashcard-face { padding: 1.75rem 1.25rem; }
+body.force-mobile .btn-primary,
+body.force-mobile .btn-secondary { padding: 0.875rem 1.5rem; font-size: 1rem; }
+body.force-mobile .binary-btn { padding: 1rem 0.75rem; }
+body.force-mobile .form-input { padding: 0.875rem 1rem; font-size: 1rem; }
+body.force-mobile .toast {
+    bottom: calc(62px + 1rem);
+    right: 1rem;
+    left: 1rem;
+    text-align: center;
+}
+
+/* Floating toggle: visible en desktop natural y también cuando
+   se fuerza desktop desde un celular */
+@media (min-width: 769px) {
+    body:not(.force-mobile) #floating-view-toggle {
+        display: inline-flex;
+    }
+}
+body.force-desktop #floating-view-toggle {
+    display: inline-flex !important;
+}
