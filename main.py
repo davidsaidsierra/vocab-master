@@ -64,20 +64,4 @@ def index():
 
 if __name__ == "__main__":
     import uvicorn
-    import socket
-
-    # Print the local IP so you can open the site from a phone/tablet on the
-    # same WiFi (e.g. http://192.168.1.50:8000)
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        local_ip = s.getsockname()[0]
-        s.close()
-        print(f"\n  ✦ VocabMaster corriendo en:")
-        print(f"     PC      →  http://localhost:8000")
-        print(f"     Móvil   →  http://{local_ip}:8000\n")
-    except Exception:
-        pass
-
-    # host="0.0.0.0" accepts connections from any device on your local network
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
