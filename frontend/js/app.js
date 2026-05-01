@@ -6,6 +6,7 @@ import { render as renderFlashcards }   from './components/flashcards.js';
 import { render as renderCategories }   from './components/categoriesPage.js';
 import { render as renderQuickSummary } from './components/quickSummary.js';
 import { render as renderEnglishClass } from './components/englishClass.js';
+import { render as renderWriting }      from './components/writingChallenge.js';
 
 const routes = {
     '/dashboard':    renderDashboard,
@@ -15,6 +16,7 @@ const routes = {
     '/summary':      renderQuickSummary,
     '/categories':   renderCategories,
     '/english-class': renderEnglishClass,
+    '/writing':      renderWriting,
 };
 
 const app = document.getElementById('app');

@@ -72,3 +72,9 @@ export const lookup = {
     get:        (word) => request(`/lookup/${encodeURIComponent(word.trim().toLowerCase())}`),
     invalidate: (word) => request(`/lookup/${encodeURIComponent(word.trim().toLowerCase())}`, { method: 'DELETE' }),
 };
+
+// ── Writing Challenge (AI text correction) ──────────────────
+export const writing = {
+    words:  (count = 4) => request(`/writing/words?count=${count}`),
+    submit: (data) => request('/writing/submit', { method: 'POST', body: JSON.stringify(data) }),
+};

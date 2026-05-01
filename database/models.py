@@ -54,6 +54,23 @@ class Review(Base):
     word = relationship("Word", back_populates="reviews")
 
 
+class WritingChallenge(Base):
+    """
+    Each row is one Writing Challenge submission corrected by the AI.
+    Used to enforce a daily quota (max 10/day) and to keep history.
+    """
+    __tablename__ = "writing_challenges"
+
+    id = Column(Integer, primary_key=True, index=True)
+    grammar_topic = Column(String(200), nullable=False)
+    target_words = Column(Text, nullable=False)        # JSON: ["word1", "word2", ...]
+    user_text = Column(Text, nullable=False)
+    correction = Column(Text, nullable=False)          # JSON: full Groq response
+    words_used_correctly = Column(Text, nullable=True) # JSON: ["word1"]
+    grammar_used_correctly = Column(Integer, default=0)  # 0/1 (bool)
+    created_at = Column(DateTime, default=_utcnow, index=True)
+
+
 class WordLookup(Base):
     """
     Cache of AI-generated contextual lookups.

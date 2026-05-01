@@ -103,3 +103,41 @@ class LookupOut(BaseModel):
     common_phrases: list[LookupPhrase] = []
     cached: bool = False  # true if served from DB cache
     source: str = "gemini"
+
+
+# ── Writing Challenge ──────────────────────────────────────
+class WritingChallengeWord(BaseModel):
+    id: int
+    word: str
+    translation: str
+    mastery_level: float
+
+class WritingWordsOut(BaseModel):
+    words: list[WritingChallengeWord]
+    daily_used: int
+    daily_limit: int
+
+class WritingSubmitIn(BaseModel):
+    grammar_topic: str
+    grammar_hint: str = ""
+    target_word_ids: list[int] = []
+    target_words: list[str] = []
+    user_text: str
+
+class WritingError(BaseModel):
+    original: str = ""
+    fix: str = ""
+    type: str = ""
+    explanation_es: str = ""
+
+class WritingSubmitOut(BaseModel):
+    corrected: str
+    errors: list[WritingError] = []
+    words_used_correctly: list[str] = []
+    grammar_used_correctly: bool = False
+    grammar_feedback_es: str = ""
+    encouragement_es: str = ""
+    score: int = 0
+    mastery_boosts: list[dict] = []  # [{word_id, word, old, new}]
+    daily_used: int = 0
+    daily_limit: int = 10

@@ -1,6 +1,6 @@
 // ── English Class — weekly summary of in-class topics ────────
 
-const WEEKS = [
+export const WEEKS = [
     {
         label: 'Week of April 13 – 17, 2026',
         topics: [
