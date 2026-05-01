@@ -133,6 +133,261 @@ const WEEKS = [
             },
         ],
     },
+    // ── Semana 2 ────────────────────────────────────────────
+    {
+        label: 'Week of April 20 – 24, 2026',
+        topics: [
+            // ── 1. Narrative Tenses ─────────────────────────
+            {
+                icon: '📖',
+                title: 'Narrative Tenses',
+                subtitle: 'Tiempos verbales para dar estructura y contexto a historias del pasado',
+                intro: 'Se utilizan para dar estructura, contexto y detalle a las historias o anécdotas en el pasado.',
+                groups: [
+                    {
+                        name: 'Past Simple',
+                        color: '#0071e3',
+                        tagline: 'Pasado Simple — eventos principales en orden cronológico',
+                        items: [
+                            { role: 'Uso',     example: 'Para los eventos principales de una historia en orden cronológico.' },
+                            { role: 'Ejemplo', example: 'She <strong>opened</strong> the door, <strong>looked</strong> at us and <strong>went</strong> into her room.' },
+                        ],
+                    },
+                    {
+                        name: 'Past Continuous',
+                        color: '#34c759',
+                        tagline: 'Pasado Continuo — escenario o acción en progreso',
+                        items: [
+                            { role: 'Uso',     example: 'Para establecer el escenario al principio de una historia o describir una acción en progreso en un momento específico.' },
+                            { role: 'Ejemplo', example: 'It <strong>was getting</strong> dark, and I <strong>was walking</strong> to the pub when…' },
+                        ],
+                    },
+                    {
+                        name: 'Past Perfect Simple',
+                        color: '#af52de',
+                        tagline: 'Pasado Perfecto Simple — acción anterior a otro evento pasado',
+                        items: [
+                            { role: 'Uso',     example: 'Para acciones que ocurrieron <em>antes</em> de otro evento pasado.' },
+                            { role: 'Ejemplo', example: 'He noticed that I <strong>had cleaned</strong> the car.' },
+                        ],
+                    },
+                    {
+                        name: 'Past Perfect Continuous',
+                        color: '#ff9500',
+                        tagline: 'Pasado Perfecto Continuo — énfasis en la duración antes de otro evento',
+                        items: [
+                            { role: 'Uso',     example: 'Para enfatizar la duración de una acción que ocurría antes de otro evento pasado.' },
+                            { role: 'Ejemplo', example: 'I <strong>had been waiting</strong> for him for an hour before he arrived.' },
+                        ],
+                    },
+                ],
+            },
+
+            // ── 2. Future in the Past ───────────────────────
+            {
+                icon: '⏳',
+                title: 'Future in the Past',
+                subtitle: 'Futuro en el Pasado — planes, intenciones o predicciones hechas en el pasado',
+                intro: 'Se utiliza para hablar de planes, intenciones o predicciones que se hicieron en un punto del pasado.',
+                groups: [
+                    {
+                        name: 'Would',
+                        color: '#0071e3',
+                        tagline: 'Basado en "will" — predicciones o promesas desde el pasado',
+                        items: [
+                            { role: 'Uso',     example: 'Para predicciones o promesas desde una perspectiva pasada.' },
+                            { role: 'Ejemplo', example: 'We thought he <strong>would win</strong> the election.' },
+                        ],
+                    },
+                    {
+                        name: 'Was / Were going to',
+                        color: '#34c759',
+                        tagline: 'Basado en "be going to" — planes o intenciones previas',
+                        items: [
+                            { role: 'Uso',     example: 'Para planes o intenciones previas, a menudo los que no se cumplieron.' },
+                            { role: 'Ejemplo', example: 'We <strong>were going to have</strong> a drink, but the boss made us stay.' },
+                        ],
+                    },
+                    {
+                        name: 'Past Continuous',
+                        color: '#af52de',
+                        tagline: 'Basado en "present continuous" — arreglos ya programados',
+                        items: [
+                            { role: 'Uso',     example: 'Para arreglos o citas ya programadas en el pasado.' },
+                            { role: 'Ejemplo', example: 'She <strong>was getting</strong> married soon and wanted me to be her bridesmaid.' },
+                        ],
+                    },
+                    {
+                        name: 'Would be + -ing',
+                        color: '#ff9500',
+                        tagline: 'Basado en "future continuous" — acción en progreso vista desde el pasado',
+                        items: [
+                            { role: 'Uso',     example: 'Para una acción que estaría en progreso en un momento del futuro visto desde el pasado.' },
+                            { role: 'Ejemplo', example: "She told her mother that she <strong>wouldn't be going</strong> home that summer." },
+                        ],
+                    },
+                    {
+                        name: 'Would have + past participle',
+                        color: '#ff2d55',
+                        tagline: 'Basado en "future perfect" — acción esperada como terminada',
+                        items: [
+                            { role: 'Uso',     example: 'Para una acción que se esperaba que estuviera terminada en un punto específico.' },
+                            { role: 'Ejemplo', example: 'He said he <strong>would have finished</strong> the book in two weeks.' },
+                        ],
+                    },
+                ],
+            },
+
+            // ── 3. Expresiones Idiomáticas de Futuro Próximo ─
+            {
+                icon: '⚡',
+                title: 'Near Future Idiomatic Expressions',
+                subtitle: 'Expresiones Idiomáticas de Futuro Próximo — estructuras avanzadas',
+                intro: 'Estructuras avanzadas para describir eventos que estaban a punto de suceder en el pasado.',
+                groups: [
+                    {
+                        name: 'Was / Were about to + infinitive',
+                        color: '#0071e3',
+                        tagline: 'Estar a punto de',
+                        items: [
+                            { role: 'Ejemplo', example: 'I <strong>was about to confess</strong> what I had done.' },
+                        ],
+                    },
+                    {
+                        name: 'Was / Were on the brink/verge of + -ing',
+                        color: '#34c759',
+                        tagline: 'Estar al borde de / a punto de (énfasis en la inmediatez)',
+                        items: [
+                            { role: 'Ejemplo', example: 'I <strong>was on the verge of saying</strong> something, but I kept quiet.' },
+                        ],
+                    },
+                    {
+                        name: 'Was / Were due to + infinitive',
+                        color: '#af52de',
+                        tagline: 'Algo programado o previsto por horario',
+                        items: [
+                            { role: 'Ejemplo', example: 'He <strong>was due to leave</strong> the country on Saturday.' },
+                        ],
+                    },
+                    {
+                        name: 'Was / Were to + infinitive',
+                        color: '#ff9500',
+                        tagline: 'Obligaciones o eventos destinados a suceder',
+                        items: [
+                            { role: 'Ejemplo', example: 'The victim <strong>was to arrive</strong> home for his wedding on March 22.' },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
+
+    // ── Semana 3 ────────────────────────────────────────────
+    {
+        label: 'Week of April 27 – May 1, 2026',
+        topics: [
+            // ── 1. Review of Future Tenses ──────────────────
+            {
+                icon: '🔮',
+                title: 'Review of Future Tenses',
+                subtitle: 'Repaso de Tiempos Futuros — planes, predicciones y estados futuros',
+                intro: 'En este nivel, se espera que utilices los diferentes aspectos del futuro para hablar de planes, predicciones y estados futuros con precisión.',
+                groups: [
+                    {
+                        name: 'Future Simple — will + base form',
+                        color: '#0071e3',
+                        tagline: 'Predicciones basadas en opiniones o decisiones instantáneas',
+                        items: [
+                            { role: 'Uso',     example: 'Predicciones basadas en opiniones o decisiones instantáneas.' },
+                            { role: 'Ejemplo', example: 'I <strong>will eat</strong> dinner.' },
+                        ],
+                    },
+                    {
+                        name: 'Future Continuous — will be + -ing',
+                        color: '#34c759',
+                        tagline: 'Acciones en progreso en un momento específico del futuro',
+                        items: [
+                            { role: 'Uso',     example: 'Acciones que estarán en progreso en un momento específico del futuro.' },
+                            { role: 'Ejemplo', example: 'He <strong>will be drinking</strong> tea.' },
+                        ],
+                    },
+                    {
+                        name: 'Future Perfect — will have + past participle',
+                        color: '#af52de',
+                        tagline: 'Acciones terminadas antes de un punto determinado en el futuro',
+                        items: [
+                            { role: 'Uso',     example: 'Acciones que habrán terminado antes de un punto determinado en el futuro.' },
+                            { role: 'Ejemplo', example: 'With this solution, we <strong>will have reduced</strong> pollution by 2030.' },
+                        ],
+                    },
+                    {
+                        name: 'Future Perfect Continuous — will have been + -ing',
+                        color: '#ff9500',
+                        tagline: 'Duración de una acción hasta un punto en el futuro',
+                        items: [
+                            { role: 'Uso',     example: 'Para enfatizar la duración de una acción hasta un punto en el futuro.' },
+                            { role: 'Ejemplo', example: 'They <strong>will have been watching</strong> TV.' },
+                        ],
+                    },
+                ],
+            },
+
+            // ── 2. Inversion with Negative Adverbials ───────
+            {
+                icon: '🔄',
+                title: 'Inversion with Negative Adverbials',
+                subtitle: 'Inversión Negativa — estructura C1 para énfasis y formalidad',
+                intro: 'Estructura de nivel C1 que invierte el orden sujeto–auxiliar después de frases negativas o restrictivas para añadir énfasis o formalidad. Estructura: Frase Negativa + Verbo Auxiliar + Sujeto + Verbo Principal.',
+                groups: [
+                    {
+                        name: 'Hardly / Barely / Scarcely / No sooner',
+                        color: '#0071e3',
+                        tagline: 'Apenas / Ni bien',
+                        items: [
+                            { role: 'Ejemplo', example: '<strong>Hardly had I closed</strong> my eyes when the alarm went off.' },
+                            { role: 'Ejemplo', example: '<strong>No sooner had the shop opened</strong> its doors than it went bankrupt.' },
+                        ],
+                    },
+                    {
+                        name: 'Only',
+                        color: '#34c759',
+                        tagline: 'Solo si / Solo cuando',
+                        items: [
+                            { role: 'Ejemplo', example: '<strong>Only when I sleep can I forget</strong> about the incident.' },
+                            { role: 'Ejemplo', example: '<strong>Only now can I understand</strong> what really happened.' },
+                        ],
+                    },
+                    {
+                        name: 'Not only / Not since',
+                        color: '#af52de',
+                        tagline: 'No solo / Ni una vez',
+                        items: [
+                            { role: 'Ejemplo', example: '<strong>Not only did she pass</strong> the exam, but she also got the highest score.' },
+                            { role: 'Ejemplo', example: '<strong>Not since I was a child have I had</strong> such a great time.' },
+                        ],
+                    },
+                    {
+                        name: 'Never / Rarely / Seldom / Little',
+                        color: '#ff9500',
+                        tagline: 'Nunca / Rara vez / Poco',
+                        items: [
+                            { role: 'Ejemplo', example: '<strong>Never have I seen</strong> such a breathtaking performance.' },
+                            { role: 'Ejemplo', example: '<strong>Little did they know</strong> that their lives were about to change.' },
+                        ],
+                    },
+                    {
+                        name: 'Prohibición e Imposibilidad',
+                        color: '#ff2d55',
+                        tagline: 'Under no circumstances / In no way',
+                        items: [
+                            { role: 'Ejemplo', example: '<strong>Under no circumstances should you share</strong> your password.' },
+                            { role: 'Ejemplo', example: '<strong>In no way does this decision reflect</strong> the opinions of the team.' },
+                        ],
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 // ── Helpers ────────────────────────────────────────────────
