@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from database.connection import init_db
-from api import words, categories, reviews, stats, lookup, writing
+from api import words, categories, reviews, stats, lookup, writing, grammar
 from api.auth import verify_api_key
 
 BASE_DIR = Path(__file__).parent
@@ -48,6 +48,7 @@ app.include_router(reviews.router,    dependencies=[Depends(verify_api_key)])
 app.include_router(stats.router,      dependencies=[Depends(verify_api_key)])
 app.include_router(lookup.router,     dependencies=[Depends(verify_api_key)])
 app.include_router(writing.router,    dependencies=[Depends(verify_api_key)])
+app.include_router(grammar.router,    dependencies=[Depends(verify_api_key)])
 
 # ── Serve frontend ──────────────────────────────────────────
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")

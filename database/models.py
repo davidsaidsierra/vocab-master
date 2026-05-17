@@ -86,3 +86,23 @@ class WordLookup(Base):
     source = Column(String(50), default="gemini")
     created_at = Column(DateTime, default=_utcnow)
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
+
+
+class GrammarTopic(Base):
+    """
+    Sección del knowledge base de gramática (238 en total).
+    Importada una vez vía scripts/import_grammar_kb.py y usada como
+    reference_material en el prompt V2 del Writing Challenge.
+    """
+    __tablename__ = "grammar_topics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    slug = Column(String(200), nullable=False, unique=True, index=True)
+    section_number = Column(Integer, nullable=False, index=True)
+    title = Column(String(200), nullable=False)
+    level = Column(String(10), nullable=True)       # A1/A2/B1/B2/C1 o NULL
+    category = Column(String(100), nullable=True)   # "conditionals", "past tenses", ...
+    content_md = Column(Text, nullable=False)
+    keywords = Column(Text, nullable=True)          # space-separated, lowercased
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)

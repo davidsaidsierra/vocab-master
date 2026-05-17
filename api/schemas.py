@@ -120,6 +120,7 @@ class WritingWordsOut(BaseModel):
 class WritingSubmitIn(BaseModel):
     grammar_topic: str
     grammar_hint: str = ""
+    grammar_topic_slug: str | None = None  # if set, triggers KB-grounded V2 flow
     target_word_ids: list[int] = []
     target_words: list[str] = []
     user_text: str
@@ -129,15 +130,52 @@ class WritingError(BaseModel):
     fix: str = ""
     type: str = ""
     explanation_es: str = ""
+    reference_quote: str = ""
+
+class VocabularySuggestion(BaseModel):
+    word: str
+    reason_es: str = ""
+    example_en: str = ""
+
+class GrammarTopicUsage(BaseModel):
+    used: str = "no"  # "yes" | "no" | "partial"
+    variant_used: str = ""
+    explanation_es: str = ""
 
 class WritingSubmitOut(BaseModel):
     corrected: str
     errors: list[WritingError] = []
     words_used_correctly: list[str] = []
-    grammar_used_correctly: bool = False
+    grammar_used_correctly: bool = False  # derived from grammar_topic_usage; kept for back-compat
+    grammar_topic_usage: GrammarTopicUsage = GrammarTopicUsage()
     grammar_feedback_es: str = ""
     encouragement_es: str = ""
     score: int = 0
     mastery_boosts: list[dict] = []  # [{word_id, word, old, new}]
+    vocabulary_suggestions: list[VocabularySuggestion] = []
     daily_used: int = 0
     daily_limit: int = 10
+
+
+# ── Grammar topics ──────────────────────────────────────────
+class GrammarTopicSummary(BaseModel):
+    id: int
+    slug: str
+    section_number: int
+    title: str
+    level: str | None = None
+    category: str | None = None
+
+    class Config:
+        from_attributes = True
+
+class GrammarTopicFull(GrammarTopicSummary):
+    content_md: str
+    keywords: str | None = None
+
+class GrammarTopicsOut(BaseModel):
+    topics: list[GrammarTopicSummary]
+
+class GrammarCategoryCount(BaseModel):
+    category: str | None = None
+    count: int

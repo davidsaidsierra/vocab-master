@@ -17,7 +17,7 @@ try:
 except ImportError:
     Groq = None  # type: ignore
 
-from services.prompts import LOOKUP_PROMPT, WRITING_CHALLENGE_PROMPT
+from services.prompts import LOOKUP_PROMPT, WRITING_CHALLENGE_PROMPT, WRITING_CHALLENGE_PROMPT_V2
 
 
 _MODEL_NAME = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
@@ -126,4 +126,78 @@ def correct_writing(
     data.setdefault("grammar_feedback_es", "")
     data.setdefault("encouragement_es", "¡Sigue así!")
     data.setdefault("score", 0)
+    # Synthesize grammar_topic_usage from V1's boolean so the frontend's new
+    # badge code works identically for V1 and V2 flows.
+    data.setdefault("grammar_topic_usage", {
+        "used": "yes" if data.get("grammar_used_correctly") else "no",
+        "variant_used": "",
+        "explanation_es": "",
+    })
+    return data
+
+
+def correct_writing_v2(
+    *,
+    topic_title: str,
+    topic_content_md: str,
+    target_words: list[str],
+    user_text: str,
+) -> dict[str, Any]:
+    """
+    KB-grounded Writing Challenge correction. Single round-trip.
+    Same shape as `correct_writing()` plus `reference_quote` per error and
+    a top-level `vocabulary_suggestions` list.
+    """
+    client = _ensure_client()
+    prompt = WRITING_CHALLENGE_PROMPT_V2.format(
+        topic_title=topic_title.strip(),
+        reference_material=topic_content_md.strip(),
+        target_words=", ".join(target_words) if target_words else "(none)",
+        user_text=user_text.strip(),
+    )
+
+    resp = client.chat.completions.create(
+        model=_MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+        temperature=0.3,
+    )
+
+    text = (resp.choices[0].message.content or "").strip()
+    if not text:
+        raise RuntimeError("Groq devolvió una respuesta vacía")
+
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
+
+    if not isinstance(data, dict):
+        raise ValueError("Groq no devolvió un objeto JSON")
+
+    data.setdefault("corrected", user_text)
+    data.setdefault("errors", [])
+    data.setdefault("words_used_correctly", [])
+    data.setdefault("grammar_feedback_es", "")
+    data.setdefault("encouragement_es", "¡Sigue así!")
+    data.setdefault("score", 0)
+    data.setdefault("vocabulary_suggestions", [])
+
+    # Normalize grammar_topic_usage; derive grammar_used_correctly bool for back-compat.
+    gtu = data.get("grammar_topic_usage")
+    if not isinstance(gtu, dict):
+        gtu = {}
+    gtu.setdefault("used", "no")
+    gtu.setdefault("variant_used", "")
+    gtu.setdefault("explanation_es", "")
+    if gtu["used"] not in ("yes", "no", "partial"):
+        gtu["used"] = "no"
+    data["grammar_topic_usage"] = gtu
+    # Back-compat: True if the topic was used at all (yes or partial).
+    data["grammar_used_correctly"] = gtu["used"] in ("yes", "partial")
+
+    # Ensure each error has reference_quote (default to empty if model omits).
+    for e in data.get("errors", []):
+        if isinstance(e, dict):
+            e.setdefault("reference_quote", "")
     return data

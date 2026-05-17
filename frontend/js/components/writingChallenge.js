@@ -9,10 +9,11 @@
 //
 // Rate-limited a 10 envíos/día por el backend.
 
-import { writing as api } from '../api.js';
+import { writing as api, words as wordsApi } from '../api.js';
 import { WEEKS } from './englishClass.js';
+import { openPicker } from './grammarPicker.js';
 
-const MAX_CHARS = 1500;
+const MAX_CHARS = 5000;
 const STORAGE_KEY = 'vocabmaster_writing_state';
 
 // ── Helpers ────────────────────────────────────────────────
@@ -67,7 +68,9 @@ function clearState() {
 // ── State (per-render) ─────────────────────────────────────
 let state = {
     topic: null,        // { icon, title, subtitle, intro, groups, weekLabel }
+    topicSlug: null,    // si está set, submit dispara V2 flow (KB-grounded)
     words: [],          // [{ id, word, translation, mastery_level }]
+    existingWordsLc: new Set(),  // lowercased words ya guardadas, para dedup de vocab suggestions
     dailyUsed: 0,
     dailyLimit: 10,
     text: '',
@@ -75,6 +78,26 @@ let state = {
     result: null,       // backend response after submit
     error: '',
 };
+
+// Convierte un GrammarTopic del KB al shape que esperan topicCardHTML / topicToHint.
+// La intro se sintetiza de las primeras líneas del content_md (sin markdown ruidoso).
+function kbTopicToCardShape(kb) {
+    const stripped = String(kb.content_md || '')
+        .replace(/\*\*/g, '')
+        .replace(/\*/g, '')
+        .replace(/`/g, '')
+        .replace(/^#+\s*/gm, '')
+        .trim();
+    const intro = stripped.split('\n').filter(l => l.trim()).slice(0, 2).join(' ').slice(0, 280);
+    return {
+        icon: '📚',
+        title: kb.title,
+        subtitle: [kb.category, kb.level].filter(Boolean).join(' · '),
+        intro,
+        groups: [],
+        weekLabel: `Knowledge Base · Sección ${String(kb.section_number).padStart(3, '0')}`,
+    };
+}
 
 // ── Render ─────────────────────────────────────────────────
 function badgeColors(score) {
@@ -163,14 +186,37 @@ function resultHTML(r) {
                 <span class="wc-err-fix">${escapeHtml(e.fix || '')}</span>
             </div>
             ${e.explanation_es ? `<div class="wc-err-exp">${escapeHtml(e.explanation_es)}</div>` : ''}
+            ${e.reference_quote ? `<div class="wc-reference-quote">📖 ${escapeHtml(e.reference_quote)}</div>` : ''}
         </div>
     `).join('') || '<p style="color:var(--text-secondary);font-size:0.9rem;margin:0">¡Sin errores! 🎉</p>';
+
+    const vocabSuggestionsHTML = (r.vocabulary_suggestions || []).map(v => {
+        const exists = state.existingWordsLc.has(String(v.word || '').trim().toLowerCase());
+        return `
+            <div class="wc-vocab-item">
+                <div class="wc-vocab-info">
+                    <strong>${escapeHtml(v.word || '')}</strong>
+                    ${v.reason_es ? `<div class="wc-vocab-reason">${escapeHtml(v.reason_es)}</div>` : ''}
+                    ${v.example_en ? `<div class="wc-vocab-example">${escapeHtml(v.example_en)}</div>` : ''}
+                </div>
+                ${exists
+                    ? `<span class="wc-vocab-saved">✓ ya guardada</span>`
+                    : `<button class="btn-ghost wc-vocab-add" data-word="${escapeHtml(v.word || '')}" data-example="${escapeHtml(v.example_en || '')}">+ Agregar</button>`
+                }
+            </div>
+        `;
+    }).join('');
 
     const wordsUsed = (r.words_used_correctly || []).map(w =>
         `<span class="wc-chip wc-chip-ok">${escapeHtml(w)}</span>`
     ).join('') || '<span style="color:var(--text-tertiary);font-size:0.85rem">— ninguna —</span>';
 
-    const grammarOk = r.grammar_used_correctly;
+    const gtu = r.grammar_topic_usage || { used: r.grammar_used_correctly ? 'yes' : 'no', variant_used: '', explanation_es: '' };
+    const usageBadge = (() => {
+        if (gtu.used === 'yes')     return '<span class="wc-pill wc-pill-ok">✓ usada</span>';
+        if (gtu.used === 'partial') return '<span class="wc-pill wc-pill-partial">~ variante usada</span>';
+        return '<span class="wc-pill wc-pill-warn">no usada</span>';
+    })();
     const boosts = (r.mastery_boosts || []).map(b =>
         `<li><strong>${escapeHtml(b.word)}</strong>: ${Math.round(b.old)} → <strong style="color:#34c759">${Math.round(b.new)}</strong></li>`
     ).join('');
@@ -196,8 +242,10 @@ function resultHTML(r) {
 
             <div class="wc-grid-2">
                 <div class="wc-section">
-                    <h4>Gramática objetivo ${grammarOk ? '<span class="wc-pill wc-pill-ok">✓ usada</span>' : '<span class="wc-pill wc-pill-warn">no usada</span>'}</h4>
-                    <p class="wc-feedback">${escapeHtml(r.grammar_feedback_es || '')}</p>
+                    <h4>Gramática objetivo ${usageBadge}</h4>
+                    ${gtu.variant_used ? `<div class="wc-variant">Variante: <code>${escapeHtml(gtu.variant_used)}</code></div>` : ''}
+                    ${gtu.explanation_es ? `<p class="wc-feedback">${escapeHtml(gtu.explanation_es)}</p>` : ''}
+                    ${r.grammar_feedback_es && r.grammar_feedback_es !== gtu.explanation_es ? `<p class="wc-feedback">${escapeHtml(r.grammar_feedback_es)}</p>` : ''}
                 </div>
                 <div class="wc-section">
                     <h4>Palabras usadas correctamente</h4>
@@ -209,6 +257,13 @@ function resultHTML(r) {
                 <div class="wc-section wc-boosts">
                     <h4>📈 Mastery boost</h4>
                     <ul>${boosts}</ul>
+                </div>
+            ` : ''}
+
+            ${vocabSuggestionsHTML ? `
+                <div class="wc-section wc-vocab-suggestions">
+                    <h4>💡 Vocabulario sugerido <span class="wc-tag">de tu texto</span></h4>
+                    ${vocabSuggestionsHTML}
                 </div>
             ` : ''}
 
@@ -247,6 +302,7 @@ function pageHTML() {
                 <textarea id="wc-textarea" class="wc-textarea" placeholder="Escribe aquí (60–150 palabras). Trata de usar la estructura gramatical y las palabras objetivo..." maxlength="${MAX_CHARS}" ${state.loading ? 'disabled' : ''}>${escapeHtml(state.text)}</textarea>
                 <div class="wc-actions">
                     <button id="wc-shuffle" class="btn-ghost" ${state.loading ? 'disabled' : ''}>🎲 Cambiar tema</button>
+                    <button id="wc-pick"    class="btn-ghost" ${state.loading ? 'disabled' : ''}>📚 Elegir del KB</button>
                     <button id="wc-submit" class="btn-primary" ${submitDisabled ? 'disabled' : ''}>
                         ${state.loading ? 'Corrigiendo…' : (limitReached ? 'Límite diario alcanzado' : 'Corregir con IA')}
                     </button>
@@ -290,12 +346,59 @@ function bindHandlers() {
     if (submit) submit.addEventListener('click', onSubmit);
     if (shuffle) shuffle.addEventListener('click', onShuffle);
     if (newBtn)  newBtn.addEventListener('click', onNewChallenge);
+
+    const pickBtn = document.getElementById('wc-pick');
+    if (pickBtn) pickBtn.addEventListener('click', onPickFromKB);
+
+    // "+ Agregar" en vocabulary suggestions
+    document.querySelectorAll('.wc-vocab-add').forEach(btn => {
+        btn.addEventListener('click', () => onAddVocab(btn));
+    });
+}
+
+async function onPickFromKB() {
+    try {
+        const kbTopic = await openPicker();
+        if (!kbTopic) return;
+        state.topic = kbTopicToCardShape(kbTopic);
+        state.topicSlug = kbTopic.slug;
+        state.error = '';
+        saveState({ topic: state.topic, topicSlug: state.topicSlug, words: state.words, text: state.text });
+        rerender();
+    } catch (err) {
+        state.error = err && err.message ? err.message : 'Error al abrir el selector';
+        rerender();
+    }
+}
+
+async function onAddVocab(btn) {
+    const word = btn.getAttribute('data-word') || '';
+    const example = btn.getAttribute('data-example') || '';
+    if (!word.trim()) return;
+    btn.disabled = true;
+    btn.textContent = 'Agregando…';
+    try {
+        await wordsApi.create({
+            word: word.trim(),
+            translation: '',  // el usuario podrá traducirla luego desde Words
+            example: example || null,
+            notes: 'Sugerencia automática desde Writing Challenge',
+        });
+        state.existingWordsLc.add(word.trim().toLowerCase());
+        btn.outerHTML = `<span class="wc-vocab-saved">✓ guardada</span>`;
+    } catch (err) {
+        btn.disabled = false;
+        btn.textContent = '+ Agregar';
+        alert(err && err.message ? err.message : 'No se pudo guardar');
+    }
 }
 
 async function onShuffle() {
+    // Shuffle vuelve al flow V1: limpia el slug del KB para que submit no use V2.
     state.topic = pickRandomTopic(state.topic ? state.topic.title : null);
+    state.topicSlug = null;
     state.error = '';
-    saveState({ topic: state.topic, words: state.words, text: state.text });
+    saveState({ topic: state.topic, topicSlug: null, words: state.words, text: state.text });
     rerender();
 }
 
@@ -304,6 +407,7 @@ async function onNewChallenge() {
     state.text = '';
     state.error = '';
     state.topic = pickRandomTopic(state.topic ? state.topic.title : null);
+    state.topicSlug = null;
     clearState();
     rerender();
     await refreshWords();
@@ -322,6 +426,7 @@ async function onSubmit() {
         target_words: state.words.map(w => w.word),
         user_text: state.text.trim(),
     };
+    if (state.topicSlug) payload.grammar_topic_slug = state.topicSlug;
 
     try {
         const result = await api.submit(payload);
@@ -355,11 +460,25 @@ async function refreshWords() {
     rerender();
 }
 
+async function loadExistingWords() {
+    // Carga las palabras del usuario una vez al montar, para marcar
+    // "✓ ya guardada" en vocabulary_suggestions sin requerir backend dedup.
+    try {
+        const list = await wordsApi.list();
+        const arr = Array.isArray(list) ? list : (list && list.words) || [];
+        state.existingWordsLc = new Set(arr.map(w => String(w.word || '').trim().toLowerCase()));
+    } catch (_) {
+        state.existingWordsLc = new Set();
+    }
+}
+
 export async function render(container) {
     rootContainer = container;
     state = {
         topic: null,
+        topicSlug: null,
         words: [],
+        existingWordsLc: new Set(),
         dailyUsed: 0,
         dailyLimit: 10,
         text: '',
@@ -372,6 +491,7 @@ export async function render(container) {
     const saved = loadState();
     if (saved && saved.topic) {
         state.topic = saved.topic;
+        state.topicSlug = saved.topicSlug || null;
         state.text = saved.text || '';
         state.words = saved.words || [];
     } else {
@@ -379,5 +499,5 @@ export async function render(container) {
     }
 
     rerender();
-    await refreshWords();
+    await Promise.all([refreshWords(), loadExistingWords()]);
 }

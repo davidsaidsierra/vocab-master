@@ -78,3 +78,13 @@ export const writing = {
     words:  (count = 4) => request(`/writing/words?count=${count}`),
     submit: (data) => request('/writing/submit', { method: 'POST', body: JSON.stringify(data) }),
 };
+
+// ── Grammar Knowledge Base ──────────────────────────────────
+export const grammar = {
+    topics:     (params = {}) => {
+        const qs = new URLSearchParams(params).toString();
+        return request(`/grammar/topics${qs ? '?' + qs : ''}`);
+    },
+    topic:      (slug) => request(`/grammar/topics/${encodeURIComponent(slug)}`),
+    categories: () => request('/grammar/categories'),
+};

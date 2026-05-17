@@ -24,14 +24,16 @@ from api.schemas import (
     WritingSubmitIn,
     WritingSubmitOut,
     WritingError,
+    VocabularySuggestion,
+    GrammarTopicUsage,
 )
 from database.connection import get_db
-from database.models import Word, WritingChallenge
+from database.models import Word, WritingChallenge, GrammarTopic
 from services import groq as groq_service
 
 router = APIRouter(prefix="/api/writing", tags=["writing"])
 
-DAILY_LIMIT = 10
+DAILY_LIMIT = 50
 MASTERY_BOOST = 5.0
 
 
@@ -102,8 +104,8 @@ def submit_writing(data: WritingSubmitIn, db: Session = Depends(get_db)):
     text = (data.user_text or "").strip()
     if not text:
         raise HTTPException(400, "El texto no puede estar vacío")
-    if len(text) > 1500:
-        raise HTTPException(400, "El texto es demasiado largo (max 1500 caracteres)")
+    if len(text) > 5000:
+        raise HTTPException(400, "El texto es demasiado largo (max 5000 caracteres)")
 
     used_today = _count_today(db)
     if used_today >= DAILY_LIMIT:
@@ -117,13 +119,33 @@ def submit_writing(data: WritingSubmitIn, db: Session = Depends(get_db)):
 
     target_words = [w.strip() for w in (data.target_words or []) if w.strip()]
 
-    try:
-        result = groq_service.correct_writing(
-            grammar_topic=data.grammar_topic or "General writing",
-            grammar_hint=data.grammar_hint or "",
-            target_words=target_words,
-            user_text=text,
+    # If a KB topic slug is provided, ground the correction in that topic's
+    # content_md via the V2 prompt. Otherwise keep the legacy V1 flow.
+    topic_row: GrammarTopic | None = None
+    if data.grammar_topic_slug:
+        topic_row = (
+            db.query(GrammarTopic)
+            .filter(GrammarTopic.slug == data.grammar_topic_slug)
+            .one_or_none()
         )
+        if topic_row is None:
+            raise HTTPException(404, f"Topic no encontrado: {data.grammar_topic_slug}")
+
+    try:
+        if topic_row is not None:
+            result = groq_service.correct_writing_v2(
+                topic_title=topic_row.title,
+                topic_content_md=topic_row.content_md,
+                target_words=target_words,
+                user_text=text,
+            )
+        else:
+            result = groq_service.correct_writing(
+                grammar_topic=data.grammar_topic or "General writing",
+                grammar_hint=data.grammar_hint or "",
+                target_words=target_words,
+                user_text=text,
+            )
     except RuntimeError as exc:
         raise HTTPException(503, f"Servicio AI no disponible: {exc}") from exc
     except ValueError as exc:
@@ -150,9 +172,10 @@ def submit_writing(data: WritingSubmitIn, db: Session = Depends(get_db)):
                         "new": new,
                     })
 
+    stored_topic = topic_row.title if topic_row else (data.grammar_topic or "General writing")
     try:
         challenge = WritingChallenge(
-            grammar_topic=data.grammar_topic or "General writing",
+            grammar_topic=stored_topic,
             target_words=json.dumps(target_words, ensure_ascii=False),
             user_text=text,
             correction=json.dumps(result, ensure_ascii=False),
@@ -173,17 +196,36 @@ def submit_writing(data: WritingSubmitIn, db: Session = Depends(get_db)):
                 fix=str(e.get("fix", "")),
                 type=str(e.get("type", "")),
                 explanation_es=str(e.get("explanation_es", "")),
+                reference_quote=str(e.get("reference_quote", "")),
             ))
+
+    vocab_suggestions = []
+    for v in result.get("vocabulary_suggestions", []) or []:
+        if isinstance(v, dict) and v.get("word"):
+            vocab_suggestions.append(VocabularySuggestion(
+                word=str(v.get("word", "")),
+                reason_es=str(v.get("reason_es", "")),
+                example_en=str(v.get("example_en", "")),
+            ))
+
+    gtu_raw = result.get("grammar_topic_usage") or {}
+    grammar_topic_usage = GrammarTopicUsage(
+        used=str(gtu_raw.get("used", "no") or "no"),
+        variant_used=str(gtu_raw.get("variant_used", "") or ""),
+        explanation_es=str(gtu_raw.get("explanation_es", "") or ""),
+    )
 
     return WritingSubmitOut(
         corrected=str(result.get("corrected", text)),
         errors=errors,
         words_used_correctly=[str(w) for w in used_correctly_raw if isinstance(w, str)],
         grammar_used_correctly=bool(result.get("grammar_used_correctly", False)),
+        grammar_topic_usage=grammar_topic_usage,
         grammar_feedback_es=str(result.get("grammar_feedback_es", "")),
         encouragement_es=str(result.get("encouragement_es", "¡Sigue así!")),
         score=int(result.get("score", 0) or 0),
         mastery_boosts=mastery_boosts,
+        vocabulary_suggestions=vocab_suggestions,
         daily_used=used_today + 1,
         daily_limit=DAILY_LIMIT,
     )
