@@ -123,6 +123,35 @@ Rules:
 """
 
 
+BATCH_ENRICH_PROMPT = """You are a Spanish-speaking English tutor. A student captured
+these English words quickly during class with only a rough offline translation.
+Enrich ALL of them in ONE response so each becomes a complete vocabulary card.
+
+Words (with their provisional translation, may be rough or empty):
+{words_block}
+
+Return ONLY a JSON object with this EXACT structure and nothing else:
+
+{{
+  "results": [
+    {{
+      "word": "the original word, lowercased",
+      "translation_es": "traducción principal pulida al español (1-3 palabras)",
+      "definition_en": "short English definition (max 15 words)",
+      "example_en": "one natural, conversational English sentence using the word",
+      "notes_es": "nota breve útil en español (matiz, registro, falso amigo); cadena vacía si no aporta"
+    }}
+  ]
+}}
+
+Rules:
+- Include EXACTLY one result per input word, in the same order, same lowercased spelling.
+- `translation_es` must be natural Latin American / neutral Spanish.
+- Examples must be real and conversational, not literary.
+- Return ONLY valid JSON. No markdown, no code fences, no extra text.
+"""
+
+
 LOOKUP_PROMPT = """You are a Spanish-speaking English tutor for a Spanish student
 learning English. The student asks for the full contextual meaning of the word
 or phrase: "{word}"

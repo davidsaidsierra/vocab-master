@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
@@ -26,6 +26,29 @@ def get_db():
         db.close()
 
 
+def _migrate_word_columns():
+    """
+    Añade columnas nuevas a `words` si faltan (la tabla ya existe en bases de
+    datos previas, así que create_all no las agrega). Idempotente y válido para
+    SQLite y Postgres. No borra ni altera datos existentes.
+    """
+    insp = inspect(engine)
+    if "words" not in insp.get_table_names():
+        return  # tabla aún no creada; create_all la crea ya con las columnas
+    existing = {c["name"] for c in insp.get_columns("words")}
+    to_add = []
+    if "needs_enrichment" not in existing:
+        to_add.append("ADD COLUMN needs_enrichment INTEGER DEFAULT 0")
+    if "source" not in existing:
+        to_add.append("ADD COLUMN source VARCHAR(20) DEFAULT 'manual'")
+    if not to_add:
+        return
+    with engine.begin() as conn:
+        for clause in to_add:
+            conn.execute(text(f"ALTER TABLE words {clause}"))
+
+
 def init_db():
-    from database.models import Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic  # noqa: F401
+    from database.models import Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic, DictionaryEntry  # noqa: F401
     Base.metadata.create_all(bind=engine)
+    _migrate_word_columns()

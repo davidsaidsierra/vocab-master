@@ -63,6 +63,27 @@ class WordOut(BaseModel):
         from_attributes = True
 
 
+class QuickWordCreate(BaseModel):
+    word: str
+    translation: str | None = None  # si falta, se resuelve del diccionario offline
+    category_id: int | None = None
+
+class QuickWordOut(BaseModel):
+    word: WordOut
+    pending_count: int  # palabras con needs_enrichment=1 tras esta captura
+
+class EnrichResult(BaseModel):
+    id: int
+    word: str
+    translation: str
+    definition: str | None = None
+    example: str | None = None
+
+class EnrichOut(BaseModel):
+    enriched: list[EnrichResult] = []
+    remaining_pending: int = 0
+
+
 # ── Reviews ─────────────────────────────────────────────────
 class ReviewCreate(BaseModel):
     word_id: int
@@ -155,6 +176,20 @@ class WritingSubmitOut(BaseModel):
     vocabulary_suggestions: list[VocabularySuggestion] = []
     daily_used: int = 0
     daily_limit: int = 10
+
+
+# ── Dictionary (offline EN→ES) ──────────────────────────────
+class DictSuggestion(BaseModel):
+    word: str
+    translation: str
+
+class DictSuggestOut(BaseModel):
+    suggestions: list[DictSuggestion] = []
+
+class DictTranslateOut(BaseModel):
+    word: str
+    translation: str = ""
+    found: bool = False
 
 
 # ── Grammar topics ──────────────────────────────────────────

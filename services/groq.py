@@ -17,7 +17,12 @@ try:
 except ImportError:
     Groq = None  # type: ignore
 
-from services.prompts import LOOKUP_PROMPT, WRITING_CHALLENGE_PROMPT, WRITING_CHALLENGE_PROMPT_V2
+from services.prompts import (
+    BATCH_ENRICH_PROMPT,
+    LOOKUP_PROMPT,
+    WRITING_CHALLENGE_PROMPT,
+    WRITING_CHALLENGE_PROMPT_V2,
+)
 
 
 _MODEL_NAME = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
@@ -78,6 +83,58 @@ def lookup_word(word: str) -> dict[str, Any]:
     data.setdefault("meanings", [])
     data.setdefault("common_phrases", [])
     return data
+
+
+def enrich_words_batch(words: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    Enriquece un lote de palabras de captura rápida en UNA sola llamada a Groq.
+
+    `words`: lista de {"word": str, "translation": str} (traducción provisional).
+    Devuelve una lista de dicts con: word, translation_es, definition_en,
+    example_en, notes_es. Si el modelo omite alguna, se rellena con defaults.
+    """
+    if not words:
+        return []
+
+    client = _ensure_client()
+    words_block = "\n".join(
+        f'- {w.get("word", "").strip()} ({(w.get("translation") or "").strip() or "sin traducción"})'
+        for w in words
+    )
+    prompt = BATCH_ENRICH_PROMPT.format(words_block=words_block)
+
+    resp = client.chat.completions.create(
+        model=_MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+        temperature=0.3,
+    )
+
+    text = (resp.choices[0].message.content or "").strip()
+    if not text:
+        raise RuntimeError("Groq devolvió una respuesta vacía")
+
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
+
+    results = data.get("results") if isinstance(data, dict) else None
+    if not isinstance(results, list):
+        raise ValueError("Groq no devolvió un array 'results'")
+
+    out: list[dict[str, Any]] = []
+    for item in results:
+        if not isinstance(item, dict):
+            continue
+        out.append({
+            "word": str(item.get("word", "")).strip().lower(),
+            "translation_es": str(item.get("translation_es", "")).strip(),
+            "definition_en": str(item.get("definition_en", "")).strip(),
+            "example_en": str(item.get("example_en", "")).strip(),
+            "notes_es": str(item.get("notes_es", "")).strip(),
+        })
+    return out
 
 
 def correct_writing(

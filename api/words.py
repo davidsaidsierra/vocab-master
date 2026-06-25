@@ -1,10 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from database.connection import get_db
-from database.models import Word
-from api.schemas import WordCreate, WordUpdate, WordOut
+from database.models import Word, DictionaryEntry
+from api.schemas import (
+    WordCreate, WordUpdate, WordOut,
+    QuickWordCreate, QuickWordOut, EnrichResult, EnrichOut,
+)
+from services import groq
 
 router = APIRouter(prefix="/api/words", tags=["words"])
+
+ENRICH_BATCH = 5  # palabras enriquecidas por llamada a la IA
+
+
+def _pending_count(db: Session) -> int:
+    return db.query(Word).filter(Word.needs_enrichment == 1).count()
 
 
 def _word_to_out(w: Word) -> WordOut:
@@ -36,6 +46,101 @@ def list_words(
         q = q.filter(Word.word.ilike(pattern) | Word.translation.ilike(pattern))
     words = q.order_by(Word.created_at.desc()).all()
     return [_word_to_out(w) for w in words]
+
+
+# ── Captura rápida (modo clase) ─────────────────────────────
+@router.post("/quick", response_model=QuickWordOut, status_code=201)
+def quick_add(data: QuickWordCreate, db: Session = Depends(get_db)):
+    """
+    Guarda una palabra al instante con traducción offline (sin IA) y la marca
+    como pendiente de enriquecer. Devuelve la palabra + cuántas pendientes hay.
+    """
+    word_lc = data.word.strip().lower()
+    if not word_lc:
+        raise HTTPException(400, "La palabra no puede estar vacía")
+
+    translation = (data.translation or "").strip()
+    if not translation:
+        entry = (
+            db.query(DictionaryEntry)
+            .filter(DictionaryEntry.word == word_lc)
+            .one_or_none()
+        )
+        translation = entry.translation if entry else ""
+
+    w = Word(
+        word=word_lc,
+        translation=translation,
+        category_id=data.category_id,
+        source="quick",
+        needs_enrichment=1,
+    )
+    db.add(w)
+    db.commit()
+    db.refresh(w)
+    return QuickWordOut(word=_word_to_out(w), pending_count=_pending_count(db))
+
+
+@router.get("/pending", response_model=list[WordOut])
+def list_pending(db: Session = Depends(get_db)):
+    """Palabras de captura rápida pendientes de enriquecer (más antiguas primero)."""
+    rows = (
+        db.query(Word)
+        .filter(Word.needs_enrichment == 1)
+        .order_by(Word.created_at.asc())
+        .all()
+    )
+    return [_word_to_out(w) for w in rows]
+
+
+@router.post("/enrich-pending", response_model=EnrichOut)
+def enrich_pending(db: Session = Depends(get_db)):
+    """
+    Toma hasta ENRICH_BATCH palabras pendientes (las más antiguas) y las completa
+    en UNA sola llamada a Groq: definición, ejemplo, notas, y traducción si faltaba.
+    """
+    batch = (
+        db.query(Word)
+        .filter(Word.needs_enrichment == 1)
+        .order_by(Word.created_at.asc())
+        .limit(ENRICH_BATCH)
+        .all()
+    )
+    if not batch:
+        return EnrichOut(enriched=[], remaining_pending=0)
+
+    payload = [{"word": w.word, "translation": w.translation} for w in batch]
+    try:
+        results = groq.enrich_words_batch(payload)
+    except RuntimeError as exc:
+        raise HTTPException(503, f"Servicio de IA no disponible: {exc}") from exc
+    except ValueError as exc:
+        raise HTTPException(502, f"Respuesta inválida del modelo: {exc}") from exc
+
+    by_word = {r["word"]: r for r in results}
+    enriched: list[EnrichResult] = []
+    for w in batch:
+        r = by_word.get(w.word)
+        if r:
+            if r.get("translation_es") and (not w.translation or w.source == "quick"):
+                w.translation = r["translation_es"]
+            if r.get("definition_en"):
+                w.definition = r["definition_en"]
+            if r.get("example_en"):
+                w.example = r["example_en"]
+            if r.get("notes_es"):
+                w.notes = r["notes_es"]
+        # Marcar como enriquecida aunque el modelo la haya omitido, para no
+        # reintentarla en bucle; queda editable a mano.
+        w.needs_enrichment = 0
+        w.source = "ai"
+        enriched.append(EnrichResult(
+            id=w.id, word=w.word, translation=w.translation,
+            definition=w.definition, example=w.example,
+        ))
+
+    db.commit()
+    return EnrichOut(enriched=enriched, remaining_pending=_pending_count(db))
 
 
 @router.get("/{word_id}", response_model=WordOut)

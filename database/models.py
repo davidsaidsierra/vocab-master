@@ -36,6 +36,8 @@ class Word(Base):
     ease_factor = Column(Float, default=2.5)         # SM-2
     interval = Column(Integer, default=0)            # days
     repetitions = Column(Integer, default=0)
+    needs_enrichment = Column(Integer, default=0)    # 0/1 — captura rápida pendiente de IA
+    source = Column(String(20), default="manual")    # manual | quick | ai
     created_at = Column(DateTime, default=_utcnow)
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
@@ -86,6 +88,22 @@ class WordLookup(Base):
     source = Column(String(50), default="gemini")
     created_at = Column(DateTime, default=_utcnow)
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
+
+
+class DictionaryEntry(Base):
+    """
+    Diccionario EN→ES local (offline), importado una sola vez vía
+    scripts/import_dictionary.py desde FreeDict (traducciones) + una lista de
+    frecuencia (rank). Alimenta el autocompletado por prefijo y la traducción
+    rápida en la captura de palabras, SIN llamar a la IA.
+    """
+    __tablename__ = "dictionary_entries"
+
+    id = Column(Integer, primary_key=True, index=True)
+    word = Column(String(200), nullable=False, unique=True, index=True)  # headword EN, lowercased
+    translation = Column(String(500), nullable=False)  # acepciones ES separadas por ", "
+    rank = Column(Integer, nullable=True, index=True)  # frecuencia (1 = más común); NULL si desconocida
+    created_at = Column(DateTime, default=_utcnow)
 
 
 class GrammarTopic(Base):

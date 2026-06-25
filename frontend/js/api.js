@@ -41,6 +41,15 @@ export const words = {
     create: (data) => request('/words/', { method: 'POST', body: JSON.stringify(data) }),
     update: (id, data) => request(`/words/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (id) => request(`/words/${id}`, { method: 'DELETE' }),
+    quick:  (data) => request('/words/quick', { method: 'POST', body: JSON.stringify(data) }),
+    pending: () => request('/words/pending'),
+    enrichPending: () => request('/words/enrich-pending', { method: 'POST' }),
+};
+
+// ── Dictionary (offline EN→ES: autocompletado + traducción rápida) ──────
+export const dictionary = {
+    suggest:   (q) => request(`/dictionary/suggest?q=${encodeURIComponent(q.trim())}&limit=5`),
+    translate: (word) => request(`/dictionary/translate/${encodeURIComponent(word.trim().toLowerCase())}`),
 };
 
 // ── Categories ───────────────────────────────────────────────

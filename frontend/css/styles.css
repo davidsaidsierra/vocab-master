@@ -1534,3 +1534,71 @@ body.force-desktop #floating-view-toggle {
     color: var(--text-tertiary);
     font-size: 0.85rem;
 }
+
+/* ── Autocompletado del diccionario (offline) ─────────────── */
+.dict-suggest {
+    position: absolute;
+    z-index: 50;
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    overflow-y: auto;
+    /* Altura fija para máx. 5 filas — no desborda en móvil ni escritorio. */
+    max-height: 14.5rem;
+}
+.dict-suggest.hidden { display: none; }
+.dict-suggest-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.55rem 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+}
+.dict-suggest-item:last-child { border-bottom: none; }
+.dict-suggest-item.active,
+.dict-suggest-item:hover { background: var(--accent-soft); }
+.dict-suggest-item .ds-word {
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+.dict-suggest-item .ds-trans {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Captura rápida (modo clase) ──────────────────────────── */
+.qc-input-wrap { position: relative; }
+.qc-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+.qc-recent { list-style: none; margin: 0; padding: 0; }
+.qc-recent-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+}
+.qc-recent-item:last-child { border-bottom: none; }
+.qc-recent-item .qc-rw { font-weight: 600; color: var(--text-primary); min-width: 7rem; }
+.qc-recent-item .qc-rt { flex: 1; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qc-recent-item .qc-rb {
+    font-size: 0.68rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+.qc-recent-item .qc-rb.pending { background: rgba(255, 149, 0, 0.14); color: #b25e00; }
+.qc-recent-item .qc-rb.done { background: rgba(52, 199, 89, 0.16); color: #1f7a39; }
