@@ -57,7 +57,13 @@ app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
 
 @app.get("/")
 def index():
-    return FileResponse(str(FRONTEND_DIR / "index.html"))
+    # no-cache: el navegador DEBE revalidar el shell HTML contra el servidor en
+    # cada carga. Así el celular siempre ve la última referencia a los JS/CSS
+    # versionados (?v=N) y no se queda pegado a una versión antigua del HTML.
+    return FileResponse(
+        str(FRONTEND_DIR / "index.html"),
+        headers={"Cache-Control": "no-cache, must-revalidate"},
+    )
 
 
 if __name__ == "__main__":
