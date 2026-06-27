@@ -46,10 +46,11 @@ export const words = {
     enrichPending: () => request('/words/enrich-pending', { method: 'POST' }),
 };
 
-// ── Dictionary (offline EN→ES: autocompletado + traducción rápida) ──────
+// ── Dictionary (offline bidireccional: autocompletado + traducción rápida) ──
+// dir: "en-es" (por defecto) | "es-en"
 export const dictionary = {
-    suggest:   (q) => request(`/dictionary/suggest?q=${encodeURIComponent(q.trim())}&limit=5`),
-    translate: (word) => request(`/dictionary/translate/${encodeURIComponent(word.trim().toLowerCase())}`),
+    suggest:   (q, dir = 'en-es') => request(`/dictionary/suggest?q=${encodeURIComponent(q.trim())}&limit=5&dir=${dir}`),
+    translate: (word, dir = 'en-es') => request(`/dictionary/translate/${encodeURIComponent(word.trim().toLowerCase())}?dir=${dir}`),
 };
 
 // ── Categories ───────────────────────────────────────────────
@@ -86,6 +87,21 @@ export const lookup = {
 export const writing = {
     words:  (count = 4) => request(`/writing/words?count=${count}`),
     submit: (data) => request('/writing/submit', { method: 'POST', body: JSON.stringify(data) }),
+};
+
+// ── International Exams (TOEFL Writing) ─────────────────────
+export const exams = {
+    list:        () => request('/exams/'),
+    question:    (taskType, { mode = 'practice', generate = false } = {}) => {
+        const qs = new URLSearchParams({ mode, generate: String(generate) });
+        if (taskType) qs.set('task_type', taskType);
+        return request(`/exams/toefl/writing/question?${qs.toString()}`);
+    },
+    createAttempt: (data) => request('/exams/attempts', { method: 'POST', body: JSON.stringify(data) }),
+    gradeTask:   (attemptId, data) => request(`/exams/attempts/${attemptId}/grade-task`, { method: 'POST', body: JSON.stringify(data) }),
+    finalize:    (attemptId) => request(`/exams/attempts/${attemptId}/finalize`, { method: 'POST' }),
+    getAttempt:  (attemptId) => request(`/exams/attempts/${attemptId}`),
+    history:     (limit = 20) => request(`/exams/history?limit=${limit}`),
 };
 
 // ── Grammar Knowledge Base ──────────────────────────────────

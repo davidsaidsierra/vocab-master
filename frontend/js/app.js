@@ -7,6 +7,7 @@ import { render as renderCategories }   from './components/categoriesPage.js';
 import { render as renderQuickSummary } from './components/quickSummary.js';
 import { render as renderEnglishClass } from './components/englishClass.js';
 import { render as renderWriting }      from './components/writingChallenge.js';
+import { render as renderExams }        from './components/internationalExams.js';
 
 const routes = {
     '/dashboard':    renderDashboard,
@@ -17,6 +18,7 @@ const routes = {
     '/categories':   renderCategories,
     '/english-class': renderEnglishClass,
     '/writing':      renderWriting,
+    '/exams':        renderExams,
 };
 
 const app = document.getElementById('app');

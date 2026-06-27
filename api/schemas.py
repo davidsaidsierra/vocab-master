@@ -214,3 +214,92 @@ class GrammarTopicsOut(BaseModel):
 class GrammarCategoryCount(BaseModel):
     category: str | None = None
     count: int
+
+
+# ── International Exams (TOEFL Writing) ──────────────────────
+class ExamSectionMeta(BaseModel):
+    key: str          # writing | reading | listening | speaking
+    label: str
+    available: bool = False  # implementado en la app
+
+class ExamMeta(BaseModel):
+    key: str          # toefl | cambridge | ielts
+    name: str
+    origin: str       # país de origen
+    flag: str = ""    # emoji
+    total_duration: str = ""
+    description: str = ""
+    sections: list[ExamSectionMeta] = []
+    available: bool = False  # toefl=True; resto "Próximamente"
+
+class ExamListOut(BaseModel):
+    exams: list[ExamMeta] = []
+
+class ExamQuestionOut(BaseModel):
+    id: int
+    exam: str
+    section: str
+    task_type: str
+    payload: dict   # estructura según task_type (ver modelo ExamQuestion)
+    source: str = "ai"
+    difficulty: str | None = None
+
+class ExamQuestionSetOut(BaseModel):
+    """Set de una pregunta por cada tarea — usado por la simulación real."""
+    questions: list[ExamQuestionOut] = []
+
+class ExamAttemptCreateIn(BaseModel):
+    mode: str                       # practice | simulation
+    exam: str = "toefl"
+    section: str = "writing"
+    time_limit_seconds: int | None = None
+
+class ExamAttemptOut(BaseModel):
+    id: int
+    exam: str
+    section: str
+    mode: str
+    time_limit_seconds: int | None = None
+    section_band: float | None = None
+    cefr: str | None = None
+
+class ExamGradeTaskIn(BaseModel):
+    question_id: int | None = None
+    task_type: str                  # build_sentence | email | academic_discussion
+    user_response: str = ""         # ensayo (email/discussion)
+    # build_sentence: orden elegido por el usuario, una lista de palabras por frase
+    sentence_orders: list[list[str]] = []
+
+class ExamTaskResultOut(BaseModel):
+    id: int
+    task_type: str
+    raw_score: float | None = None
+    band: float | None = None
+    evaluation: dict = {}           # JSON de Groq (ensayo) o resultado determinista
+    user_response: str = ""
+
+class ExamFinalizeOut(BaseModel):
+    attempt_id: int
+    section_band: float | None = None  # banda estimada 1.0–6.0
+    cefr: str | None = None
+    estimated: bool = True          # la banda de sección es estimada, no oficial ETS
+    results: list[ExamTaskResultOut] = []
+
+class ExamAttemptDetailOut(BaseModel):
+    attempt: ExamAttemptOut
+    results: list[ExamTaskResultOut] = []
+    created_at: datetime | None = None
+    submitted_at: datetime | None = None
+
+class ExamHistoryItem(BaseModel):
+    id: int
+    exam: str
+    section: str
+    mode: str
+    section_band: float | None = None
+    cefr: str | None = None
+    created_at: datetime
+    submitted_at: datetime | None = None
+
+class ExamHistoryOut(BaseModel):
+    attempts: list[ExamHistoryItem] = []

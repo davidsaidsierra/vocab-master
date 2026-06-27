@@ -1602,3 +1602,203 @@ body.force-desktop #floating-view-toggle {
 }
 .qc-recent-item .qc-rb.pending { background: rgba(255, 149, 0, 0.14); color: #b25e00; }
 .qc-recent-item .qc-rb.done { background: rgba(52, 199, 89, 0.16); color: #1f7a39; }
+
+/* ══════════════════════════════════════════════════════════════
+   International Exams (TOEFL Writing) — prefijo .ie-
+   ══════════════════════════════════════════════════════════════ */
+.ie-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+.ie-back { white-space: nowrap; }
+
+/* ── Landing: tarjetas de examen ── */
+.ie-exam-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+}
+.ie-exam-card {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, transform 0.2s;
+    overflow: hidden;
+}
+.ie-exam-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent);
+}
+.ie-exam-card[data-exam] { cursor: pointer; }
+.ie-exam-card[data-exam]:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.ie-exam-card.ie-disabled { opacity: 0.6; }
+.ie-exam-card.ie-disabled::before { background: var(--text-quaternary); }
+.ie-exam-top { display: flex; justify-content: space-between; align-items: center; }
+.ie-flag { font-size: 2rem; }
+.ie-soon {
+    font-size: 0.68rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 999px;
+    background: var(--bg-hover); color: var(--text-tertiary);
+}
+.ie-exam-name { font-size: 1.2rem; font-weight: 700; margin: 0.6rem 0 0.4rem; }
+.ie-exam-meta { display: flex; gap: 1rem; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.6rem; }
+.ie-exam-desc { font-size: 0.85rem; color: var(--text-secondary); margin: 0 0 0.9rem; line-height: 1.45; }
+.ie-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.ie-pill {
+    font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 999px;
+    background: var(--bg-hover); color: var(--text-tertiary); border: 1px solid var(--border);
+}
+.ie-pill-on { background: var(--accent-soft); color: var(--accent); border-color: transparent; font-weight: 600; }
+.ie-exam-cta { margin-top: 1rem; font-weight: 600; color: var(--accent); font-size: 0.9rem; }
+
+/* ── Modo (practicar / simulación) ── */
+.ie-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.ie-mode-card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1.75rem; cursor: pointer; transition: box-shadow 0.2s, transform 0.2s; text-align: center;
+}
+.ie-mode-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.ie-mode-real { border-color: rgba(0, 113, 227, 0.3); background: linear-gradient(180deg, var(--accent-soft), var(--bg-card)); }
+.ie-mode-icon { font-size: 2.4rem; display: block; margin-bottom: 0.5rem; }
+.ie-mode-card h3 { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.5rem; }
+.ie-mode-card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.45; margin: 0 0 1rem; }
+.ie-mode-cta { font-weight: 600; color: var(--accent); font-size: 0.9rem; }
+
+/* ── Selección de tarea + tiempo ── */
+.ie-task-picks { display: flex; flex-direction: column; gap: 0.6rem; }
+.ie-task-pick { display: block; cursor: pointer; }
+.ie-task-pick input { position: absolute; opacity: 0; }
+.ie-task-pick-body {
+    display: flex; gap: 0.8rem; align-items: flex-start; padding: 0.9rem 1rem;
+    border: 1.5px solid var(--border); border-radius: var(--radius); transition: border-color 0.15s, background 0.15s;
+}
+.ie-task-pick input:checked + .ie-task-pick-body { border-color: var(--accent); background: var(--accent-soft); }
+.ie-task-icon { font-size: 1.5rem; }
+.ie-task-label { font-weight: 600; }
+.ie-task-blurb { font-size: 0.82rem; color: var(--text-secondary); margin-top: 0.15rem; }
+.ie-time-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.ie-time-chip {
+    padding: 0.5rem 1rem; border-radius: 999px; border: 1.5px solid var(--border);
+    background: var(--bg-card); cursor: pointer; font-weight: 600; font-family: inherit; transition: all 0.15s;
+}
+.ie-time-chip.active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+/* ── Barra de tarea + timer ── */
+.ie-task-bar { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.ie-mode-tag {
+    font-size: 0.7rem; font-weight: 700; padding: 0.25rem 0.7rem; border-radius: 999px;
+    background: var(--bg-hover); color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.03em;
+}
+.ie-mode-tag-real { background: var(--accent); color: #fff; }
+.ie-timer {
+    font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1.1rem;
+    padding: 0.25rem 0.7rem; border-radius: var(--radius-sm); background: var(--bg-subtle); color: var(--text-primary);
+}
+.ie-timer-warn { background: var(--accent-soft); color: var(--accent); }
+.ie-timer-danger { background: rgba(255, 59, 48, 0.12); color: var(--red); animation: iePulse 1s infinite; }
+@keyframes iePulse { 50% { opacity: 0.55; } }
+.ie-sim-progress { font-weight: 600; color: var(--text-secondary); font-size: 0.9rem; }
+.ie-sim-hint, .ie-disclaimer { font-size: 0.82rem; color: var(--text-secondary); margin: 0.5rem 0 1rem; }
+.ie-disclaimer { background: rgba(255, 149, 0, 0.08); border: 1px solid rgba(255, 149, 0, 0.2); padding: 0.7rem 1rem; border-radius: var(--radius); }
+
+/* ── Layout práctica (main + pistas) ── */
+.ie-practice-grid { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; align-items: start; }
+.ie-practice-side { position: sticky; top: 1rem; }
+.ie-pistas { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.1rem; box-shadow: var(--shadow-sm); }
+.ie-pistas-section { margin-bottom: 0.6rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+.ie-pistas-section > summary { cursor: pointer; font-weight: 600; font-size: 0.88rem; padding: 0.2rem 0; }
+.ie-conn-group { margin: 0.5rem 0; }
+.ie-conn-fn { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.03em; color: var(--text-tertiary); margin-bottom: 0.25rem; }
+.ie-conn-items { display: flex; flex-wrap: wrap; gap: 0.3rem; }
+.ie-conn-chip { font-size: 0.76rem; padding: 0.2rem 0.55rem; border-radius: 999px; background: var(--bg-hover); color: var(--text-primary); cursor: default; }
+.ie-template { background: var(--bg-subtle); border-radius: var(--radius-sm); padding: 0.7rem; font-size: 0.78rem; white-space: pre-wrap; line-height: 1.5; margin: 0.5rem 0; font-family: inherit; }
+
+/* ── Add word widget ── */
+.ie-addword { margin-top: 0.4rem; }
+.ie-dir-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; margin-bottom: 0.5rem; }
+.ie-dir { padding: 0.3rem 0.7rem; background: var(--bg-card); border: none; cursor: pointer; font-size: 0.76rem; font-family: inherit; color: var(--text-secondary); }
+.ie-dir.active { background: var(--accent); color: #fff; }
+.ie-addword-input { position: relative; }
+.ie-aw-hint { font-size: 0.76rem; margin-top: 0.3rem; min-height: 1rem; }
+.ie-aw-ok { color: #1f7a39; }
+.ie-aw-bad { color: var(--red); }
+
+/* ── Build a Sentence ── */
+.ie-bs { display: flex; flex-direction: column; gap: 0.9rem; }
+.ie-bs-row { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.9rem 1rem; }
+.ie-bs-row-ok { border-color: rgba(52, 199, 89, 0.4); background: rgba(52, 199, 89, 0.05); }
+.ie-bs-row-bad { border-color: rgba(255, 59, 48, 0.35); background: rgba(255, 59, 48, 0.04); }
+.ie-bs-num { font-weight: 700; color: var(--text-tertiary); font-size: 0.85rem; margin-bottom: 0.3rem; }
+.ie-bs-ok { color: #1f7a39; } .ie-bs-bad { color: var(--red); }
+.ie-bs-context { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.5rem; font-style: italic; }
+.ie-bs-answer-line {
+    min-height: 2.4rem; display: flex; flex-wrap: wrap; gap: 0.35rem; align-items: center;
+    padding: 0.5rem; border: 1.5px dashed var(--border-strong); border-radius: var(--radius-sm); margin-bottom: 0.5rem;
+}
+.ie-bs-bank { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.ie-bs-placeholder { font-size: 0.8rem; color: var(--text-quaternary); }
+.ie-bs-answer { font-size: 0.82rem; color: #1f7a39; margin-top: 0.4rem; }
+.ie-chip {
+    padding: 0.35rem 0.7rem; border-radius: var(--radius-sm); font-size: 0.85rem; cursor: pointer;
+    user-select: none; transition: transform 0.1s, background 0.15s; border: 1px solid var(--border);
+}
+.ie-chip:hover { transform: translateY(-1px); }
+.ie-chip-bank { background: var(--bg-hover); color: var(--text-primary); }
+.ie-chip-ans { background: var(--accent-soft); color: var(--accent); border-color: transparent; font-weight: 600; }
+
+/* ── Essay prompt ── */
+.ie-prompt { background: var(--bg-subtle); border-radius: var(--radius); padding: 1rem 1.1rem; margin-bottom: 1rem; font-size: 0.9rem; line-height: 1.55; }
+.ie-prompt-scenario, .ie-prompt-prof { margin-bottom: 0.6rem; }
+.ie-prompt-reqs ol { margin: 0.3rem 0 0 1.1rem; }
+.ie-post { margin-top: 0.6rem; padding-top: 0.6rem; border-top: 1px solid var(--border); }
+.ie-write-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; }
+.ie-wc { font-size: 0.82rem; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+
+/* ── Resultado / bandas ── */
+.ie-result { margin-top: 1.25rem; }
+.ie-score-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+.ie-band {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-width: 110px; padding: 0.8rem 1rem; border-radius: var(--radius); background: var(--bg-card);
+    border: 1px solid var(--border); border-top: 3px solid var(--b, var(--accent));
+}
+.ie-band-num { font-size: 1.6rem; font-weight: 800; color: var(--b, var(--accent)); line-height: 1; }
+.ie-band-label { font-size: 0.72rem; color: var(--text-tertiary); margin-top: 0.25rem; text-align: center; }
+.ie-encourage { flex: 1; font-style: italic; color: var(--text-secondary); min-width: 180px; }
+.ie-crit { display: grid; grid-template-columns: 130px 50px 1fr; gap: 0.5rem; align-items: baseline; padding: 0.3rem 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+.ie-crit-name { text-transform: capitalize; font-weight: 600; }
+.ie-crit-score { font-weight: 700; color: var(--accent); }
+.ie-crit-comment { color: var(--text-secondary); }
+.ie-reqs { margin: 0; padding-left: 1.1rem; font-size: 0.85rem; line-height: 1.6; }
+
+/* ── Simulación: intro + resultados ── */
+.ie-sim-task { display: flex; align-items: center; gap: 0.8rem; padding: 0.7rem 0; border-bottom: 1px solid var(--border); }
+.ie-sim-task:last-child { border-bottom: none; }
+.ie-sim-task .ie-task-time { margin-left: auto; font-weight: 700; color: var(--text-secondary); font-size: 0.85rem; }
+.ie-section-band {
+    display: flex; align-items: center; gap: 1.2rem; padding: 1.5rem 1.75rem; border-radius: var(--radius-lg);
+    background: var(--bg-card); border: 1px solid var(--border); border-left: 5px solid var(--b, var(--accent)); margin-bottom: 0.75rem;
+}
+.ie-section-band-num { font-size: 3rem; font-weight: 800; color: var(--b, var(--accent)); line-height: 1; }
+.ie-section-band-cefr { font-size: 1.4rem; font-weight: 700; }
+.ie-section-band-label { font-size: 0.8rem; color: var(--text-secondary); }
+.ie-results-list { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+.ie-result-task { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.ie-result-task-head { display: flex; align-items: center; gap: 0.7rem; padding: 0.9rem 1.1rem; background: var(--bg-subtle); }
+.ie-result-task-score { margin-left: auto; font-weight: 700; color: var(--b, var(--accent)); font-size: 0.9rem; }
+.ie-result-task-body { padding: 0 1.1rem 1rem; }
+.ie-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+
+/* ── Spinner ── */
+.ie-spinner {
+    width: 42px; height: 42px; border: 4px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; margin: 0 auto; animation: ieSpin 0.8s linear infinite;
+}
+@keyframes ieSpin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ── */
+@media (max-width: 820px) {
+    .ie-practice-grid { grid-template-columns: 1fr; }
+    .ie-practice-side { position: static; }
+    .ie-mode-grid { grid-template-columns: 1fr; }
+    .ie-crit { grid-template-columns: 110px 44px 1fr; }
+}

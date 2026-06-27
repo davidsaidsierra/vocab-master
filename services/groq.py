@@ -22,6 +22,9 @@ from services.prompts import (
     LOOKUP_PROMPT,
     WRITING_CHALLENGE_PROMPT,
     WRITING_CHALLENGE_PROMPT_V2,
+    TOEFL_EMAIL_GRADING_PROMPT,
+    TOEFL_DISCUSSION_GRADING_PROMPT,
+    TOEFL_QUESTION_GEN_PROMPT,
 )
 
 
@@ -135,6 +138,99 @@ def enrich_words_batch(words: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "notes_es": str(item.get("notes_es", "")).strip(),
         })
     return out
+
+
+def _call_json(prompt: str) -> dict[str, Any]:
+    """Single Groq round-trip that returns a parsed JSON object. Shared helper."""
+    client = _ensure_client()
+    resp = client.chat.completions.create(
+        model=_MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+        temperature=0.3,
+    )
+    text = (resp.choices[0].message.content or "").strip()
+    if not text:
+        raise RuntimeError("Groq devolvió una respuesta vacía")
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
+    if not isinstance(data, dict):
+        raise ValueError("Groq no devolvió un objeto JSON")
+    return data
+
+
+def grade_toefl_email(
+    *,
+    scenario: str,
+    requirements: list[str],
+    user_text: str,
+) -> dict[str, Any]:
+    """Grade a TOEFL 2026 'Write an Email' task. Single round-trip."""
+    requirements_block = "\n".join(f"- {r.strip()}" for r in requirements if r.strip())
+    prompt = TOEFL_EMAIL_GRADING_PROMPT.format(
+        scenario=scenario.strip(),
+        requirements_block=requirements_block or "(none)",
+        user_text=user_text.strip(),
+    )
+    data = _call_json(prompt)
+    data.setdefault("band", 0)
+    data.setdefault("criteria", {})
+    data.setdefault("requirements_met", [])
+    data.setdefault("corrected", user_text)
+    data.setdefault("errors", [])
+    data.setdefault("word_count", len(user_text.split()))
+    data.setdefault("feedback_es", "")
+    data.setdefault("encouragement_es", "¡Sigue así!")
+    data.setdefault("vocabulary_suggestions", [])
+    return data
+
+
+def grade_toefl_discussion(
+    *,
+    professor_prompt: str,
+    student_responses: list[dict[str, Any]],
+    user_text: str,
+) -> dict[str, Any]:
+    """Grade a TOEFL 2026 'Write for an Academic Discussion' task. Single round-trip."""
+    block = "\n\n".join(
+        f'{(r.get("name") or "Student").strip()}: {(r.get("text") or "").strip()}'
+        for r in student_responses
+        if isinstance(r, dict)
+    )
+    prompt = TOEFL_DISCUSSION_GRADING_PROMPT.format(
+        professor_prompt=professor_prompt.strip(),
+        student_responses_block=block or "(none)",
+        user_text=user_text.strip(),
+    )
+    data = _call_json(prompt)
+    data.setdefault("band", 0)
+    data.setdefault("rubric_justification_es", "")
+    data.setdefault("matched_descriptors", [])
+    data.setdefault("corrected", user_text)
+    data.setdefault("errors", [])
+    data.setdefault("word_count", len(user_text.split()))
+    data.setdefault("feedback_es", "")
+    data.setdefault("encouragement_es", "¡Sigue así!")
+    data.setdefault("vocabulary_suggestions", [])
+    return data
+
+
+def generate_toefl_question(
+    *,
+    task_type: str,
+    difficulty: str = "medium",
+) -> dict[str, Any]:
+    """
+    Generate ONE new TOEFL Writing question for the given task_type. Single
+    round-trip. Returns the `payload` dict to persist in ExamQuestion.
+    """
+    prompt = TOEFL_QUESTION_GEN_PROMPT.format(
+        task_type=task_type,
+        difficulty=difficulty,
+    )
+    return _call_json(prompt)
 
 
 def correct_writing(

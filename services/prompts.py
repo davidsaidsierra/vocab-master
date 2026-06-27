@@ -123,6 +123,179 @@ Rules:
 """
 
 
+# ── TOEFL iBT Writing 2026 — grading & generation ───────────────────────────
+
+TOEFL_EMAIL_GRADING_PROMPT = """You are an official TOEFL iBT Writing rater grading the 2026 "Write an Email" task. You help a Spanish-speaking student (C1). Be precise, exam-accurate and constructive.
+
+THE TASK (what the student had to do):
+Write an email responding to this scenario, including ALL THREE required elements.
+Scenario:
+\"\"\"
+{scenario}
+\"\"\"
+Required elements (must ALL be addressed):
+{requirements_block}
+
+OFFICIAL ETS SCORING CRITERIA for "Write an Email" — judge the response on:
+- Adherence to social conventions (politeness, appropriate register, hedging)
+- Cohesion (logical flow, connectors, clear paragraphs)
+- Completeness (ALL three required elements are clearly addressed)
+- Grammar (range and accuracy of structures)
+- Vocabulary (precision, variety, idiomatic word choice)
+- Punctuation and mechanics
+A strong response is ~130–140 words, polite, with compound/complex sentences.
+
+The student's email:
+\"\"\"
+{user_text}
+\"\"\"
+
+Return ONLY a JSON object with this EXACT structure:
+
+{{
+  "band": 0,
+  "criteria": {{
+    "social_conventions": {{ "score_0_5": 0, "comment_es": "comentario corto en español" }},
+    "cohesion": {{ "score_0_5": 0, "comment_es": "..." }},
+    "completeness": {{ "score_0_5": 0, "comment_es": "..." }},
+    "grammar": {{ "score_0_5": 0, "comment_es": "..." }},
+    "vocabulary": {{ "score_0_5": 0, "comment_es": "..." }},
+    "punctuation": {{ "score_0_5": 0, "comment_es": "..." }}
+  }},
+  "requirements_met": [
+    {{ "requirement": "exact text of the required element", "met": true, "comment_es": "cómo lo cumplió o por qué no (max 20 palabras)" }}
+  ],
+  "corrected": "the student's email fully corrected (grammar, naturalness, politeness)",
+  "errors": [
+    {{
+      "original": "exact substring from the student's text",
+      "fix": "corrected version",
+      "type": "grammar|spelling|word-choice|punctuation|naturalness|register",
+      "explanation_es": "explicación CORTA en español (max 25 palabras)"
+    }}
+  ],
+  "word_count": 0,
+  "feedback_es": "2-3 frases en español: qué hizo bien y las 1-2 mejoras de mayor impacto para subir de banda",
+  "encouragement_es": "una frase corta, positiva y específica en español (max 15 palabras)",
+  "vocabulary_suggestions": [
+    {{
+      "word": "a word or collocation from the student's own text worth saving (C1+ register)",
+      "reason_es": "por qué vale la pena guardarla (max 15 palabras)",
+      "example_en": "one natural English example sentence using the word/phrase"
+    }}
+  ]
+}}
+
+Rules:
+- `band` is an INTEGER 0–5 reflecting the overall TOEFL "Write an Email" quality per the criteria above (5 = fully successful, 0 = blank/off-topic/not English).
+- Each `score_0_5` is an INTEGER 0–5.
+- `requirements_met` MUST contain exactly one item per required element, in order.
+- `errors` at most 6 items, ordered by importance; if perfect, empty array.
+- `vocabulary_suggestions`: 2-4 items, all picked FROM the student's text (not invented).
+- All Spanish must be natural Latin American / neutral Spanish.
+- Return ONLY valid JSON. No markdown, no code fences, no extra text.
+"""
+
+
+TOEFL_DISCUSSION_GRADING_PROMPT = """You are an official TOEFL iBT Writing rater grading the 2026 "Writing for an Academic Discussion" task. You help a Spanish-speaking student (C1). Apply the OFFICIAL ETS rubric below STRICTLY.
+
+OFFICIAL ETS RUBRIC — "Writing for an Academic Discussion" (score 0–5), verbatim:
+5 — A fully successful response: a relevant and very clearly expressed contribution to the online discussion, demonstrating consistent facility in the use of language. Relevant and well-elaborated explanations, exemplifications, and/or details; effective use of a variety of syntactic structures and precise, idiomatic word choice; almost no lexical or grammatical errors other than those expected from a competent writer under timed conditions.
+4 — A generally successful response: a relevant contribution; facility in the use of language allows the writer's ideas to be easily understood. Relevant and adequately elaborated explanations/examples/details; a variety of syntactic structures and appropriate word choice; few lexical or grammatical errors.
+3 — A partially successful response: mostly relevant and mostly understandable, with some facility in the use of language. Elaboration in which part of an explanation, example, or detail may be missing, unclear, or irrelevant; some variety in syntactic structures and a range of vocabulary; some noticeable lexical and grammatical errors in sentence structure, word form, or idiomatic language.
+2 — A mostly unsuccessful response: an attempt to contribute, but limitations in language may make ideas hard to follow. Ideas poorly elaborated or only partially relevant; a limited range of syntactic structures and vocabulary; an accumulation of errors in sentence structure, word forms, or use.
+1 — An unsuccessful response: an ineffective attempt; limitations in language may prevent expression of ideas. Few or no coherent ideas; severely limited range of structures and vocabulary; serious and frequent errors; minimal original language.
+0 — Blank, rejects the topic, not in English, entirely copied from the prompt, entirely unconnected, or arbitrary keystrokes.
+
+THE DISCUSSION the student responded to:
+Professor's question:
+\"\"\"
+{professor_prompt}
+\"\"\"
+Other students' posts:
+\"\"\"
+{student_responses_block}
+\"\"\"
+
+The student's response (should be ~120–130 words, contribute an opinion with elaboration/example):
+\"\"\"
+{user_text}
+\"\"\"
+
+Return ONLY a JSON object with this EXACT structure:
+
+{{
+  "band": 0,
+  "rubric_justification_es": "1-2 frases en español citando qué descriptores del nivel asignado se cumplen",
+  "matched_descriptors": ["short English phrases from the rubric level that this response meets"],
+  "corrected": "the student's response fully corrected (grammar, naturalness)",
+  "errors": [
+    {{
+      "original": "exact substring from the student's text",
+      "fix": "corrected version",
+      "type": "grammar|spelling|word-choice|punctuation|naturalness",
+      "explanation_es": "explicación CORTA en español (max 25 palabras)"
+    }}
+  ],
+  "word_count": 0,
+  "feedback_es": "2-3 frases en español: qué hizo bien y las 1-2 mejoras de mayor impacto para subir de banda",
+  "encouragement_es": "una frase corta, positiva y específica en español (max 15 palabras)",
+  "vocabulary_suggestions": [
+    {{
+      "word": "a word or collocation from the student's own text worth saving (C1+ register)",
+      "reason_es": "por qué vale la pena guardarla (max 15 palabras)",
+      "example_en": "one natural English example sentence using the word/phrase"
+    }}
+  ]
+}}
+
+Rules:
+- `band` is an INTEGER 0–5 assigned by STRICTLY matching the rubric descriptors above.
+- `errors` at most 6 items, ordered by importance; if perfect, empty array.
+- `vocabulary_suggestions`: 2-4 items, all picked FROM the student's text (not invented).
+- All Spanish must be natural Latin American / neutral Spanish.
+- Return ONLY valid JSON. No markdown, no code fences, no extra text.
+"""
+
+
+TOEFL_QUESTION_GEN_PROMPT = """You are a TOEFL iBT Writing 2026 item writer. Generate ONE brand-new practice question for the "{task_type}" task, similar in style and difficulty to the official examples but with ORIGINAL content. Difficulty: {difficulty}.
+
+Reference on each task type:
+- build_sentence: 10 short everyday sentences (5–7 words each); for each, give the correctly ordered answer and a SCRAMBLED list of its words. Some sentences are questions. Optionally include exactly one EXTRA distractor word not used in the answer (mark has_extra true and include it in "scrambled"). Cover grammar points: SVO with negation, subject-verb inversion, auxiliary after a wh-word, embedded questions, indirect questions, relative clauses.
+- email: a realistic campus/social scenario plus EXACTLY THREE required elements the writer must address (like asking to fix a grade, requesting an extension, complaining politely, etc.).
+- academic_discussion: a professor's question posted on a class board about an academic topic, plus TWO short student responses (one roughly for, one roughly against), each 50–70 words, with distinct first names.
+
+Return ONLY a JSON object. Use EXACTLY the structure that matches "{task_type}":
+
+build_sentence:
+{{
+  "sentences": [
+    {{ "context": "optional one-line setup or empty string", "answer": "The correctly ordered sentence.", "scrambled": ["word", "word", ...], "has_extra": false }}
+  ]
+}}
+
+email:
+{{
+  "scenario": "the full scenario paragraph the student reads",
+  "requirements": ["first required element", "second required element", "third required element"]
+}}
+
+academic_discussion:
+{{
+  "professor_prompt": "the professor's question paragraph",
+  "student_responses": [
+    {{ "name": "FirstName", "text": "their post (~50-70 words)" }},
+    {{ "name": "FirstName", "text": "their post (~50-70 words)" }}
+  ]
+}}
+
+Rules:
+- For build_sentence produce EXACTLY 10 sentences; "scrambled" must be a shuffled list of the answer's words (plus one distractor only if has_extra is true).
+- All content in natural English. Keep it original, not copied from known TOEFL samples.
+- Return ONLY valid JSON. No markdown, no code fences, no extra text.
+"""
+
+
 BATCH_ENRICH_PROMPT = """You are a Spanish-speaking English tutor. A student captured
 these English words quickly during class with only a rough offline translation.
 Enrich ALL of them in ONE response so each becomes a complete vocabulary card.

@@ -49,6 +49,9 @@ def _migrate_word_columns():
 
 
 def init_db():
-    from database.models import Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic, DictionaryEntry  # noqa: F401
+    from database.models import (  # noqa: F401
+        Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic,
+        DictionaryEntry, DictionaryEntryEs, ExamQuestion, ExamAttempt, ExamTaskResult,
+    )
     Base.metadata.create_all(bind=engine)
     _migrate_word_columns()

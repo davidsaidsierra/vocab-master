@@ -106,6 +106,94 @@ class DictionaryEntry(Base):
     created_at = Column(DateTime, default=_utcnow)
 
 
+class DictionaryEntryEs(Base):
+    """
+    Diccionario ES→EN local (offline), importado vía
+    scripts/import_dictionary_es.py desde FreeDict spa-eng (traducciones) + una
+    lista de frecuencia ES (rank). Alimenta el autocompletado por prefijo y la
+    traducción rápida en sentido Español→Inglés (modo práctica de exámenes),
+    SIN llamar a la IA. Tabla separada de DictionaryEntry porque la unicidad va
+    sobre la palabra fuente (aquí, el headword en español).
+    """
+    __tablename__ = "dictionary_entries_es"
+
+    id = Column(Integer, primary_key=True, index=True)
+    word = Column(String(200), nullable=False, unique=True, index=True)  # headword ES, lowercased
+    translation = Column(String(500), nullable=False)  # acepciones EN separadas por ", "
+    rank = Column(Integer, nullable=True, index=True)  # frecuencia (1 = más común); NULL si desconocida
+    created_at = Column(DateTime, default=_utcnow)
+
+
+class ExamQuestion(Base):
+    """
+    Banco reutilizable de preguntas de exámenes internacionales (de momento solo
+    TOEFL Writing). Cada pregunta generada por IA se persiste aquí para poder
+    repetirla o reutilizarla; también se siembra con las muestras oficiales.
+
+    `payload` (JSON) varía según task_type:
+      - build_sentence: {"sentences": [{context, scrambled:[...], answer, has_extra} x10]}
+      - email:          {"scenario": str, "requirements": [str, str, str]}
+      - academic_discussion: {"professor_prompt": str,
+                              "student_responses": [{name, text}, {name, text}]}
+    """
+    __tablename__ = "exam_questions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    exam = Column(String(30), nullable=False, default="toefl", index=True)
+    section = Column(String(30), nullable=False, default="writing", index=True)
+    task_type = Column(String(40), nullable=False, index=True)  # build_sentence | email | academic_discussion
+    payload = Column(Text, nullable=False)        # JSON (ver docstring)
+    source = Column(String(20), default="ai")     # seed | ai
+    difficulty = Column(String(20), nullable=True)  # easy | medium | hard | NULL
+    times_used = Column(Integer, default=0)
+    created_at = Column(DateTime, default=_utcnow, index=True)
+
+
+class ExamAttempt(Base):
+    """
+    Una sesión de examen: práctica (relajada, con ayudas) o simulación real
+    (fiel y calificada). Agrupa los resultados por tarea (ExamTaskResult).
+    """
+    __tablename__ = "exam_attempts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    exam = Column(String(30), nullable=False, default="toefl", index=True)
+    section = Column(String(30), nullable=False, default="writing")
+    mode = Column(String(20), nullable=False)          # practice | simulation
+    time_limit_seconds = Column(Integer, nullable=True)  # elegido por el usuario en práctica
+    started_at = Column(DateTime, default=_utcnow)
+    submitted_at = Column(DateTime, nullable=True)
+    section_band = Column(Float, nullable=True)        # banda estimada 1.0–6.0 (CEFR)
+    meta = Column(Text, nullable=True)                 # JSON libre
+    created_at = Column(DateTime, default=_utcnow, index=True)
+
+    results = relationship(
+        "ExamTaskResult", back_populates="attempt",
+        cascade="all, delete-orphan", lazy="selectin",
+    )
+
+
+class ExamTaskResult(Base):
+    """
+    Resultado de UNA tarea dentro de un intento. Guarda la respuesta del usuario
+    y la evaluación completa (JSON de Groq para los ensayos, o resultado
+    determinista para Build a Sentence), igual que WritingChallenge.correction.
+    """
+    __tablename__ = "exam_task_results"
+
+    id = Column(Integer, primary_key=True, index=True)
+    attempt_id = Column(Integer, ForeignKey("exam_attempts.id"), nullable=False, index=True)
+    question_id = Column(Integer, ForeignKey("exam_questions.id"), nullable=True)
+    task_type = Column(String(40), nullable=False)
+    user_response = Column(Text, nullable=False)   # ensayo, o JSON del orden (build_sentence)
+    evaluation = Column(Text, nullable=False)       # JSON: respuesta Groq o resultado determinista
+    raw_score = Column(Float, nullable=True)        # 0–10 (build_sentence) o 0–5 (rúbrica ensayo)
+    band = Column(Float, nullable=True)             # 1.0–6.0 mapeado por tarea
+    created_at = Column(DateTime, default=_utcnow)
+
+    attempt = relationship("ExamAttempt", back_populates="results")
+
+
 class GrammarTopic(Base):
     """
     Sección del knowledge base de gramática (238 en total).
