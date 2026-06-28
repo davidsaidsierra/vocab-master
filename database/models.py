@@ -36,7 +36,11 @@ class Category(Base):
     __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False, unique=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
+    # OJO: la unicidad de `name` pasa a ser POR USUARIO (no global). El check se
+    # hace a nivel de app; la constraint global heredada se elimina en la
+    # migración (Postgres). Ver _migrate_user_columns().
+    name = Column(String(100), nullable=False)
     color = Column(String(7), default="#8b5cf6")
     icon = Column(String(10), default="📚")
     created_at = Column(DateTime, default=_utcnow)
@@ -48,6 +52,7 @@ class Word(Base):
     __tablename__ = "words"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
     word = Column(String(200), nullable=False)
     translation = Column(String(200), nullable=False)
     definition = Column(Text, nullable=True)
@@ -73,6 +78,7 @@ class Review(Base):
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
     word_id = Column(Integer, ForeignKey("words.id"), nullable=False)
     quality = Column(Integer, nullable=False)  # 0-5 (SM-2 quality rating)
     reviewed_at = Column(DateTime, default=_utcnow)
@@ -88,6 +94,7 @@ class WritingChallenge(Base):
     __tablename__ = "writing_challenges"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
     grammar_topic = Column(String(200), nullable=False)
     target_words = Column(Text, nullable=False)        # JSON: ["word1", "word2", ...]
     user_text = Column(Text, nullable=False)
@@ -181,6 +188,7 @@ class ExamAttempt(Base):
     __tablename__ = "exam_attempts"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
     exam = Column(String(30), nullable=False, default="toefl", index=True)
     section = Column(String(30), nullable=False, default="writing")
     mode = Column(String(20), nullable=False)          # practice | simulation

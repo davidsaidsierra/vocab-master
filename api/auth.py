@@ -132,6 +132,27 @@ def require_role(*roles: str):
     return _dep
 
 
+# ── Scoping de datos por usuario ────────────────────────────────────────────
+def owner_id(user: User) -> int | None:
+    """
+    ID a usar como dueño al ESCRIBIR. Devuelve None en modo local abierto
+    (admin transitorio id=0): así las filas quedan sin asignar y un futuro
+    backfill las adjudica al admin real cuando se configure la auth.
+    """
+    return user.id if (user and user.id and user.id > 0) else None
+
+
+def scope_to_owner(query, model, user):
+    """
+    Filtra una query por el dueño. En modo local abierto (id=0) NO filtra
+    (se ve todo, como antes de multi-usuario).
+    """
+    oid = owner_id(user)
+    if oid is None:
+        return query
+    return query.filter(model.user_id == oid)
+
+
 # ── Compatibilidad: se mantiene la firma anterior por si algo la importa ─────
 async def verify_api_key(x_api_key: str = Header(default="")):
     """DEPRECATED: reemplazado por get_current_user. Se conserva sin uso."""

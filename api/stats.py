@@ -3,21 +3,25 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from database.connection import get_db
-from database.models import Word, Category, Review
+from database.models import Word, Category, Review, User
+from api.auth import get_current_user, scope_to_owner
 
 router = APIRouter(prefix="/api/stats", tags=["stats"])
 
 
 @router.get("/overview")
-def overview(db: Session = Depends(get_db)):
-    total_words = db.query(func.count(Word.id)).scalar()
-    avg_mastery = db.query(func.avg(Word.mastery_level)).scalar() or 0
+def overview(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    total_words = scope_to_owner(db.query(func.count(Word.id)), Word, current_user).scalar()
+    avg_mastery = scope_to_owner(db.query(func.avg(Word.mastery_level)), Word, current_user).scalar() or 0
     due_now = (
-        db.query(func.count(Word.id))
+        scope_to_owner(db.query(func.count(Word.id)), Word, current_user)
         .filter(Word.next_review <= datetime.now(timezone.utc))
         .scalar()
     )
-    total_reviews = db.query(func.count(Review.id)).scalar()
+    total_reviews = scope_to_owner(db.query(func.count(Review.id)), Review, current_user).scalar()
     return {
         "total_words": total_words,
         "average_mastery": round(avg_mastery, 1),
@@ -27,8 +31,11 @@ def overview(db: Session = Depends(get_db)):
 
 
 @router.get("/by-category")
-def by_category(db: Session = Depends(get_db)):
-    cats = db.query(Category).all()
+def by_category(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    cats = scope_to_owner(db.query(Category), Category, current_user).all()
     result = []
     for c in cats:
         word_count = len(c.words)
@@ -39,7 +46,9 @@ def by_category(db: Session = Depends(get_db)):
             "avg_mastery": round(avg, 1),
         })
     # Include uncategorized words
-    uncategorized = db.query(Word).filter(Word.category_id.is_(None)).all()
+    uncategorized = scope_to_owner(
+        db.query(Word).filter(Word.category_id.is_(None)), Word, current_user
+    ).all()
     if uncategorized:
         avg = sum(w.mastery_level for w in uncategorized) / len(uncategorized)
         result.append({
@@ -51,13 +60,20 @@ def by_category(db: Session = Depends(get_db)):
 
 
 @router.get("/activity")
-def activity(days: int = 30, db: Session = Depends(get_db)):
+def activity(
+    days: int = 30,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     """Review count per day for the last N days (for heatmap/chart)."""
     since = datetime.now(timezone.utc) - timedelta(days=days)
     reviews = (
-        db.query(
-            func.date(Review.reviewed_at).label("day"),
-            func.count(Review.id).label("count"),
+        scope_to_owner(
+            db.query(
+                func.date(Review.reviewed_at).label("day"),
+                func.count(Review.id).label("count"),
+            ),
+            Review, current_user,
         )
         .filter(Review.reviewed_at >= since)
         .group_by(func.date(Review.reviewed_at))
@@ -67,9 +83,12 @@ def activity(days: int = 30, db: Session = Depends(get_db)):
 
 
 @router.get("/mastery-distribution")
-def mastery_distribution(db: Session = Depends(get_db)):
+def mastery_distribution(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     """Group words by mastery ranges: 0-20, 20-40, 40-60, 60-80, 80-100."""
-    words = db.query(Word.mastery_level).all()
+    words = scope_to_owner(db.query(Word.mastery_level), Word, current_user).all()
     buckets = {"0-20": 0, "20-40": 0, "40-60": 0, "60-80": 0, "80-100": 0}
     for (m,) in words:
         if m < 20: buckets["0-20"] += 1

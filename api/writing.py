@@ -28,7 +28,8 @@ from api.schemas import (
     GrammarTopicUsage,
 )
 from database.connection import get_db
-from database.models import Word, WritingChallenge, GrammarTopic
+from database.models import Word, WritingChallenge, GrammarTopic, User
+from api.auth import get_current_user, owner_id, scope_to_owner
 from services import groq as groq_service
 
 router = APIRouter(prefix="/api/writing", tags=["writing"])
@@ -42,10 +43,12 @@ def _start_of_today_utc() -> datetime:
     return datetime(now.year, now.month, now.day, tzinfo=timezone.utc)
 
 
-def _count_today(db: Session) -> int:
+def _count_today(db: Session, user: User) -> int:
     start = _start_of_today_utc()
     return (
-        db.query(func.count(WritingChallenge.id))
+        scope_to_owner(
+            db.query(func.count(WritingChallenge.id)), WritingChallenge, user
+        )
         .filter(WritingChallenge.created_at >= start)
         .scalar()
         or 0
@@ -56,6 +59,7 @@ def _count_today(db: Session) -> int:
 def get_challenge_words(
     count: int = Query(4, ge=1, le=8),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     """
     Devuelve N palabras para el reto de escritura. Prioriza:
@@ -66,7 +70,7 @@ def get_challenge_words(
     now = datetime.now(timezone.utc)
 
     due = (
-        db.query(Word)
+        scope_to_owner(db.query(Word), Word, current_user)
         .filter(Word.next_review <= now)
         .order_by(Word.mastery_level.asc(), func.random())
         .limit(count)
@@ -76,7 +80,7 @@ def get_challenge_words(
     if len(due) < count:
         extra_needed = count - len(due)
         existing_ids = [w.id for w in due]
-        q = db.query(Word).order_by(Word.mastery_level.asc(), func.random())
+        q = scope_to_owner(db.query(Word), Word, current_user).order_by(Word.mastery_level.asc(), func.random())
         if existing_ids:
             q = q.filter(~Word.id.in_(existing_ids))
         extra = q.limit(extra_needed).all()
@@ -94,20 +98,24 @@ def get_challenge_words(
 
     return WritingWordsOut(
         words=words_out,
-        daily_used=_count_today(db),
+        daily_used=_count_today(db, current_user),
         daily_limit=DAILY_LIMIT,
     )
 
 
 @router.post("/submit", response_model=WritingSubmitOut)
-def submit_writing(data: WritingSubmitIn, db: Session = Depends(get_db)):
+def submit_writing(
+    data: WritingSubmitIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     text = (data.user_text or "").strip()
     if not text:
         raise HTTPException(400, "El texto no puede estar vacío")
     if len(text) > 5000:
         raise HTTPException(400, "El texto es demasiado largo (max 5000 caracteres)")
 
-    used_today = _count_today(db)
+    used_today = _count_today(db, current_user)
     if used_today >= DAILY_LIMIT:
         raise HTTPException(
             429,
@@ -157,7 +165,9 @@ def submit_writing(data: WritingSubmitIn, db: Session = Depends(get_db)):
     mastery_boosts: list[dict] = []
     if data.target_word_ids and used_lc:
         rows = (
-            db.query(Word).filter(Word.id.in_(data.target_word_ids)).all()
+            scope_to_owner(
+                db.query(Word).filter(Word.id.in_(data.target_word_ids)), Word, current_user
+            ).all()
         )
         for w in rows:
             if w.word.strip().lower() in used_lc:
@@ -175,6 +185,7 @@ def submit_writing(data: WritingSubmitIn, db: Session = Depends(get_db)):
     stored_topic = topic_row.title if topic_row else (data.grammar_topic or "General writing")
     try:
         challenge = WritingChallenge(
+            user_id=owner_id(current_user),
             grammar_topic=stored_topic,
             target_words=json.dumps(target_words, ensure_ascii=False),
             user_text=text,

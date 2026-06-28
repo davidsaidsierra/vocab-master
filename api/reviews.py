@@ -2,7 +2,8 @@ from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from database.connection import get_db
-from database.models import Word, Review
+from database.models import Word, Review, User
+from api.auth import get_current_user, owner_id, scope_to_owner
 from api.schemas import ReviewCreate, ReviewOut, WordOut
 
 router = APIRouter(prefix="/api/reviews", tags=["reviews"])
@@ -68,9 +69,10 @@ def get_practice_words(
     difficulty_max: int | None = Query(None, ge=1, le=5, description="Max difficulty (1-5)"),
     mastery_max: int | None = Query(None, ge=0, le=100, description="Only words with mastery ≤ this value (0-100)"),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     """Return ALL words matching filters — for free practice regardless of schedule."""
-    q = db.query(Word)
+    q = scope_to_owner(db.query(Word), Word, current_user)
 
     if category_id:
         q = q.filter(Word.category_id == category_id)
@@ -96,12 +98,18 @@ def get_practice_words(
 
 
 @router.post("/", response_model=ReviewOut, status_code=201)
-def submit_review(data: ReviewCreate, db: Session = Depends(get_db)):
+def submit_review(
+    data: ReviewCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     """Submit a review. quality accepts 0-5 or the string mapping (4=correct, 1=incorrect)."""
     if not 0 <= data.quality <= 5:
         raise HTTPException(400, "Quality must be 0-5")
 
-    word = db.query(Word).get(data.word_id)
+    word = scope_to_owner(
+        db.query(Word).filter(Word.id == data.word_id), Word, current_user
+    ).one_or_none()
     if not word:
         raise HTTPException(404, "Word not found")
 
@@ -112,7 +120,7 @@ def submit_review(data: ReviewCreate, db: Session = Depends(get_db)):
     word.mastery_level = _mastery_from_sm2(reps, ef)
     word.next_review = datetime.now(timezone.utc) + timedelta(days=ivl)
 
-    review = Review(word_id=data.word_id, quality=data.quality)
+    review = Review(user_id=owner_id(current_user), word_id=data.word_id, quality=data.quality)
     db.add(review)
     db.commit()
     db.refresh(review)

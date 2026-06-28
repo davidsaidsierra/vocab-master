@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from database.connection import get_db
-from database.models import Word, DictionaryEntry
+from database.models import Word, DictionaryEntry, User
+from api.auth import get_current_user, owner_id, scope_to_owner
 from api.schemas import (
     WordCreate, WordUpdate, WordOut,
     QuickWordCreate, QuickWordOut, EnrichResult, EnrichOut,
@@ -13,8 +14,10 @@ router = APIRouter(prefix="/api/words", tags=["words"])
 ENRICH_BATCH = 5  # palabras enriquecidas por llamada a la IA
 
 
-def _pending_count(db: Session) -> int:
-    return db.query(Word).filter(Word.needs_enrichment == 1).count()
+def _pending_count(db: Session, user: User) -> int:
+    return scope_to_owner(
+        db.query(Word).filter(Word.needs_enrichment == 1), Word, user
+    ).count()
 
 
 def _word_to_out(w: Word) -> WordOut:
@@ -37,8 +40,9 @@ def list_words(
     category_id: int | None = Query(None),
     search: str | None = Query(None),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    q = db.query(Word)
+    q = scope_to_owner(db.query(Word), Word, current_user)
     if category_id:
         q = q.filter(Word.category_id == category_id)
     if search:
@@ -50,7 +54,11 @@ def list_words(
 
 # ── Captura rápida (modo clase) ─────────────────────────────
 @router.post("/quick", response_model=QuickWordOut, status_code=201)
-def quick_add(data: QuickWordCreate, db: Session = Depends(get_db)):
+def quick_add(
+    data: QuickWordCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     """
     Guarda una palabra al instante con traducción offline (sin IA) y la marca
     como pendiente de enriquecer. Devuelve la palabra + cuántas pendientes hay.
@@ -69,6 +77,7 @@ def quick_add(data: QuickWordCreate, db: Session = Depends(get_db)):
         translation = entry.translation if entry else ""
 
     w = Word(
+        user_id=owner_id(current_user),
         word=word_lc,
         translation=translation,
         category_id=data.category_id,
@@ -78,15 +87,17 @@ def quick_add(data: QuickWordCreate, db: Session = Depends(get_db)):
     db.add(w)
     db.commit()
     db.refresh(w)
-    return QuickWordOut(word=_word_to_out(w), pending_count=_pending_count(db))
+    return QuickWordOut(word=_word_to_out(w), pending_count=_pending_count(db, current_user))
 
 
 @router.get("/pending", response_model=list[WordOut])
-def list_pending(db: Session = Depends(get_db)):
+def list_pending(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     """Palabras de captura rápida pendientes de enriquecer (más antiguas primero)."""
     rows = (
-        db.query(Word)
-        .filter(Word.needs_enrichment == 1)
+        scope_to_owner(db.query(Word).filter(Word.needs_enrichment == 1), Word, current_user)
         .order_by(Word.created_at.asc())
         .all()
     )
@@ -94,14 +105,16 @@ def list_pending(db: Session = Depends(get_db)):
 
 
 @router.post("/enrich-pending", response_model=EnrichOut)
-def enrich_pending(db: Session = Depends(get_db)):
+def enrich_pending(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     """
     Toma hasta ENRICH_BATCH palabras pendientes (las más antiguas) y las completa
     en UNA sola llamada a Groq: definición, ejemplo, notas, y traducción si faltaba.
     """
     batch = (
-        db.query(Word)
-        .filter(Word.needs_enrichment == 1)
+        scope_to_owner(db.query(Word).filter(Word.needs_enrichment == 1), Word, current_user)
         .order_by(Word.created_at.asc())
         .limit(ENRICH_BATCH)
         .all()
@@ -140,20 +153,33 @@ def enrich_pending(db: Session = Depends(get_db)):
         ))
 
     db.commit()
-    return EnrichOut(enriched=enriched, remaining_pending=_pending_count(db))
+    return EnrichOut(enriched=enriched, remaining_pending=_pending_count(db, current_user))
+
+
+def _get_owned_word(db: Session, word_id: int, user: User) -> Word:
+    """Carga una palabra del usuario actual o lanza 404 (no revela ajenas)."""
+    w = scope_to_owner(db.query(Word).filter(Word.id == word_id), Word, user).one_or_none()
+    if not w:
+        raise HTTPException(404, "Word not found")
+    return w
 
 
 @router.get("/{word_id}", response_model=WordOut)
-def get_word(word_id: int, db: Session = Depends(get_db)):
-    w = db.query(Word).get(word_id)
-    if not w:
-        raise HTTPException(404, "Word not found")
-    return _word_to_out(w)
+def get_word(
+    word_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return _word_to_out(_get_owned_word(db, word_id, current_user))
 
 
 @router.post("/", response_model=WordOut, status_code=201)
-def create_word(data: WordCreate, db: Session = Depends(get_db)):
-    w = Word(**data.model_dump())
+def create_word(
+    data: WordCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    w = Word(user_id=owner_id(current_user), **data.model_dump())
     db.add(w)
     db.commit()
     db.refresh(w)
@@ -161,10 +187,13 @@ def create_word(data: WordCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{word_id}", response_model=WordOut)
-def update_word(word_id: int, data: WordUpdate, db: Session = Depends(get_db)):
-    w = db.query(Word).get(word_id)
-    if not w:
-        raise HTTPException(404, "Word not found")
+def update_word(
+    word_id: int,
+    data: WordUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    w = _get_owned_word(db, word_id, current_user)
     for field, value in data.model_dump(exclude_unset=True).items():
         setattr(w, field, value)
     db.commit()
@@ -173,9 +202,11 @@ def update_word(word_id: int, data: WordUpdate, db: Session = Depends(get_db)):
 
 
 @router.delete("/{word_id}", status_code=204)
-def delete_word(word_id: int, db: Session = Depends(get_db)):
-    w = db.query(Word).get(word_id)
-    if not w:
-        raise HTTPException(404, "Word not found")
+def delete_word(
+    word_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    w = _get_owned_word(db, word_id, current_user)
     db.delete(w)
     db.commit()

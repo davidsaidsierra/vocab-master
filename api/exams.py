@@ -33,7 +33,8 @@ from api.schemas import (
     ExamHistoryItem, ExamHistoryOut,
 )
 from database.connection import get_db
-from database.models import ExamQuestion, ExamAttempt, ExamTaskResult
+from database.models import ExamQuestion, ExamAttempt, ExamTaskResult, User
+from api.auth import get_current_user, owner_id, scope_to_owner
 from services import groq as groq_service
 
 router = APIRouter(prefix="/api/exams", tags=["exams"])
@@ -181,10 +182,15 @@ def _cefr(band: float | None) -> str | None:
 
 
 @router.post("/attempts", response_model=ExamAttemptOut)
-def create_attempt(data: ExamAttemptCreateIn, db: Session = Depends(get_db)):
+def create_attempt(
+    data: ExamAttemptCreateIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     if data.mode not in ("practice", "simulation"):
         raise HTTPException(400, f"mode inválido: {data.mode}")
     attempt = ExamAttempt(
+        user_id=owner_id(current_user),
         exam=data.exam, section=data.section, mode=data.mode,
         time_limit_seconds=data.time_limit_seconds,
     )
@@ -235,8 +241,15 @@ def _grade_build_sentence(question: ExamQuestion, sentence_orders: list[list[str
 
 
 @router.post("/attempts/{attempt_id}/grade-task", response_model=ExamTaskResultOut)
-def grade_task(attempt_id: int, data: ExamGradeTaskIn, db: Session = Depends(get_db)):
-    attempt = db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id).one_or_none()
+def grade_task(
+    attempt_id: int,
+    data: ExamGradeTaskIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    attempt = scope_to_owner(
+        db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id), ExamAttempt, current_user
+    ).one_or_none()
     if attempt is None:
         raise HTTPException(404, f"Intento no encontrado: {attempt_id}")
     if data.task_type not in TASK_TYPES:
@@ -326,8 +339,14 @@ def _result_out(r: ExamTaskResult) -> ExamTaskResultOut:
 
 
 @router.post("/attempts/{attempt_id}/finalize", response_model=ExamFinalizeOut)
-def finalize_attempt(attempt_id: int, db: Session = Depends(get_db)):
-    attempt = db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id).one_or_none()
+def finalize_attempt(
+    attempt_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    attempt = scope_to_owner(
+        db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id), ExamAttempt, current_user
+    ).one_or_none()
     if attempt is None:
         raise HTTPException(404, f"Intento no encontrado: {attempt_id}")
 
@@ -355,8 +374,14 @@ def finalize_attempt(attempt_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/attempts/{attempt_id}", response_model=ExamAttemptDetailOut)
-def get_attempt(attempt_id: int, db: Session = Depends(get_db)):
-    attempt = db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id).one_or_none()
+def get_attempt(
+    attempt_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    attempt = scope_to_owner(
+        db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id), ExamAttempt, current_user
+    ).one_or_none()
     if attempt is None:
         raise HTTPException(404, f"Intento no encontrado: {attempt_id}")
     results = (
@@ -381,9 +406,10 @@ def get_attempt(attempt_id: int, db: Session = Depends(get_db)):
 def history(
     limit: int = Query(default=20, ge=1, le=100),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     rows = (
-        db.query(ExamAttempt)
+        scope_to_owner(db.query(ExamAttempt), ExamAttempt, current_user)
         .filter(ExamAttempt.submitted_at.isnot(None))
         .order_by(ExamAttempt.created_at.desc())
         .limit(limit)
