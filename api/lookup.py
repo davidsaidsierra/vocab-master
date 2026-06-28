@@ -15,8 +15,10 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 
 from api.schemas import LookupOut
+from api.auth import get_current_user
+from api.quota import require_ai_access, consume_ai_quota
 from database.connection import get_db
-from database.models import WordLookup
+from database.models import WordLookup, User
 from services import word_lookup
 
 router = APIRouter(prefix="/api/lookup", tags=["lookup"])
@@ -37,12 +39,13 @@ def _build_out(word_lc: str, data: dict, cached: bool, source: str) -> LookupOut
 def lookup(
     word: str = Path(..., min_length=1, max_length=200),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     word_lc = word.strip().lower()
     if not word_lc:
         raise HTTPException(400, "Word cannot be empty")
 
-    # ── 1. DB cache ─────────────────────────────────────────
+    # ── 1. DB cache (se sirve a TODOS, también free: es solo lectura) ────────
     row = db.query(WordLookup).filter(WordLookup.word == word_lc).first()
     if row:
         try:
@@ -51,7 +54,11 @@ def lookup(
             data = {}
         return _build_out(word_lc, data, cached=True, source=row.source or "gemini")
 
-    # ── 2. Gemini (with Groq fallback) ──────────────────────
+    # ── 2. Cache MISS → llamada real a IA: exige premium/admin + cuota ───────
+    require_ai_access(current_user)
+    consume_ai_quota(current_user, db)
+
+    # ── 3. Gemini (with Groq fallback) ──────────────────────
     try:
         data, source = word_lookup.lookup_word(word_lc)
     except RuntimeError as exc:
@@ -61,7 +68,7 @@ def lookup(
     except Exception as exc:  # pragma: no cover
         raise HTTPException(500, f"Error inesperado: {exc}") from exc
 
-    # ── 3. Persist in cache ─────────────────────────────────
+    # ── 4. Persist in cache ─────────────────────────────────
     try:
         row = WordLookup(
             word=word_lc,

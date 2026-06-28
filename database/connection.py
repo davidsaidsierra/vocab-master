@@ -48,10 +48,89 @@ def _migrate_word_columns():
             conn.execute(text(f"ALTER TABLE words {clause}"))
 
 
+def _bootstrap_admin():
+    """
+    Crea el usuario admin desde env (ADMIN_EMAIL / ADMIN_PASSWORD) si aún no
+    existe. Idempotente: no hace nada si ya hay un usuario con ese email.
+    Sin esas env vars, no hace nada (p. ej. en una instalación que aún no migra).
+    """
+    admin_email = os.environ.get("ADMIN_EMAIL", "").strip().lower()
+    admin_password = os.environ.get("ADMIN_PASSWORD", "")
+    if not admin_email or not admin_password:
+        return
+    from database.models import User
+    from api.auth import hash_password  # import diferido: evita ciclo de imports
+    with SessionLocal() as db:
+        existing = db.query(User).filter(User.email == admin_email).one_or_none()
+        if existing is not None:
+            return
+        db.add(User(
+            email=admin_email,
+            password_hash=hash_password(admin_password),
+            role="admin",
+            is_active=1,
+        ))
+        db.commit()
+
+
+_USER_ID_TABLES = ["words", "categories", "reviews", "writing_challenges", "exam_attempts"]
+
+
+def _migrate_user_columns():
+    """
+    Añade `user_id` (nullable) a las tablas por-usuario si falta, suelta la
+    constraint global UNIQUE de `categories.name` (Postgres) para permitir
+    nombres por-usuario, y hace backfill de las filas existentes asignándolas al
+    admin. Idempotente, válido SQLite y Postgres, no destructivo.
+    """
+    insp = inspect(engine)
+    tables = set(insp.get_table_names())
+    present = [t for t in _USER_ID_TABLES if t in tables]
+
+    # 1. Añadir columna user_id donde falte
+    to_add = [
+        t for t in present
+        if "user_id" not in {c["name"] for c in insp.get_columns(t)}
+    ]
+    if to_add:
+        with engine.begin() as conn:
+            for t in to_add:
+                conn.execute(text(f"ALTER TABLE {t} ADD COLUMN user_id INTEGER"))
+
+    # 2. Soltar la UNIQUE global de categories.name (solo Postgres; en SQLite es
+    #    parte del esquema y se deja, es dev de un solo usuario).
+    if engine.dialect.name == "postgresql" and "categories" in tables:
+        with engine.begin() as conn:
+            conn.execute(text(
+                "ALTER TABLE categories DROP CONSTRAINT IF EXISTS categories_name_key"
+            ))
+
+    # 3. Backfill: asignar filas huérfanas (user_id NULL) al admin, si existe.
+    from database.models import User
+    with SessionLocal() as db:
+        admin = (
+            db.query(User)
+            .filter(User.role == "admin", User.is_active == 1)
+            .order_by(User.id.asc())
+            .first()
+        )
+        admin_id = admin.id if admin else None
+    if admin_id is None:
+        return
+    with engine.begin() as conn:
+        for t in present:
+            conn.execute(
+                text(f"UPDATE {t} SET user_id = :aid WHERE user_id IS NULL"),
+                {"aid": admin_id},
+            )
+
+
 def init_db():
     from database.models import (  # noqa: F401
-        Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic,
+        User, Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic,
         DictionaryEntry, DictionaryEntryEs, ExamQuestion, ExamAttempt, ExamTaskResult,
     )
     Base.metadata.create_all(bind=engine)
     _migrate_word_columns()
+    _bootstrap_admin()
+    _migrate_user_columns()

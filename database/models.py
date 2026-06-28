@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Text
+from sqlalchemy import Column, Integer, String, Float, DateTime, Date, ForeignKey, Text
 from sqlalchemy.orm import relationship
 from database.connection import Base
 
@@ -8,11 +8,39 @@ def _utcnow():
     return datetime.now(timezone.utc)
 
 
+class User(Base):
+    """
+    Usuario de la app (multi-usuario, invite-only). Tres roles:
+        - admin    acceso total, IA ilimitada, gestiona usuarios (solo el dueño).
+        - premium  IA con tope diario (consume la cuota compartida de Groq).
+        - free     funciones sin IA (vocabulario, repaso, diccionario offline...).
+
+    `ai_calls_date` + `ai_calls_today` llevan la cuota diaria por usuario;
+    `last_ai_call_at` sirve para el cooldown anti-ráfaga. Todo esto protege el
+    free tier compartido de Groq (una sola GROQ_API_KEY para todos).
+    """
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), nullable=False, unique=True, index=True)
+    password_hash = Column(String(255), nullable=False)
+    role = Column(String(20), nullable=False, default="free")  # admin | premium | free
+    is_active = Column(Integer, default=1)                      # 0/1
+    ai_calls_date = Column(Date, nullable=True)                 # día del contador de cuota
+    ai_calls_today = Column(Integer, default=0)
+    last_ai_call_at = Column(DateTime, nullable=True)           # cooldown anti-ráfaga
+    created_at = Column(DateTime, default=_utcnow)
+
+
 class Category(Base):
     __tablename__ = "categories"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False, unique=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
+    # OJO: la unicidad de `name` pasa a ser POR USUARIO (no global). El check se
+    # hace a nivel de app; la constraint global heredada se elimina en la
+    # migración (Postgres). Ver _migrate_user_columns().
+    name = Column(String(100), nullable=False)
     color = Column(String(7), default="#8b5cf6")
     icon = Column(String(10), default="📚")
     created_at = Column(DateTime, default=_utcnow)
@@ -24,6 +52,7 @@ class Word(Base):
     __tablename__ = "words"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
     word = Column(String(200), nullable=False)
     translation = Column(String(200), nullable=False)
     definition = Column(Text, nullable=True)
@@ -49,6 +78,7 @@ class Review(Base):
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
     word_id = Column(Integer, ForeignKey("words.id"), nullable=False)
     quality = Column(Integer, nullable=False)  # 0-5 (SM-2 quality rating)
     reviewed_at = Column(DateTime, default=_utcnow)
@@ -64,6 +94,7 @@ class WritingChallenge(Base):
     __tablename__ = "writing_challenges"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
     grammar_topic = Column(String(200), nullable=False)
     target_words = Column(Text, nullable=False)        # JSON: ["word1", "word2", ...]
     user_text = Column(Text, nullable=False)
@@ -157,6 +188,7 @@ class ExamAttempt(Base):
     __tablename__ = "exam_attempts"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
     exam = Column(String(30), nullable=False, default="toefl", index=True)
     section = Column(String(30), nullable=False, default="writing")
     mode = Column(String(20), nullable=False)          # practice | simulation

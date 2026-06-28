@@ -33,7 +33,9 @@ from api.schemas import (
     ExamHistoryItem, ExamHistoryOut,
 )
 from database.connection import get_db
-from database.models import ExamQuestion, ExamAttempt, ExamTaskResult
+from database.models import ExamQuestion, ExamAttempt, ExamTaskResult, User
+from api.auth import get_current_user, owner_id, scope_to_owner
+from api.quota import require_ai_access, consume_ai_quota
 from services import groq as groq_service
 
 router = APIRouter(prefix="/api/exams", tags=["exams"])
@@ -95,11 +97,16 @@ def _question_out(q: ExamQuestion, *, hide_answers: bool = True) -> ExamQuestion
     )
 
 
-def _generate_and_store(db: Session, task_type: str, difficulty: str = "medium") -> ExamQuestion:
+def _generate_and_store(db: Session, task_type: str, difficulty: str, user: User) -> ExamQuestion:
     if not groq_service.is_configured():
         raise HTTPException(503, "Groq no está configurado (falta GROQ_API_KEY)")
+    # Generar una pregunta es una llamada a IA: exige premium/admin + cuota.
+    require_ai_access(user)
+    consume_ai_quota(user, db)
     try:
         payload = groq_service.generate_toefl_question(task_type=task_type, difficulty=difficulty)
+    except groq_service.AIRateLimitError:
+        raise HTTPException(429, "El servicio de IA está saturado ahora mismo. Intenta de nuevo en unos segundos.")
     except RuntimeError as exc:
         raise HTTPException(503, f"Servicio AI no disponible: {exc}") from exc
     except ValueError as exc:
@@ -116,7 +123,7 @@ def _generate_and_store(db: Session, task_type: str, difficulty: str = "medium")
     return q
 
 
-def _pick_or_generate(db: Session, task_type: str, *, generate: bool) -> ExamQuestion:
+def _pick_or_generate(db: Session, task_type: str, *, generate: bool, user: User) -> ExamQuestion:
     if not generate:
         q = (
             db.query(ExamQuestion)
@@ -128,8 +135,8 @@ def _pick_or_generate(db: Session, task_type: str, *, generate: bool) -> ExamQue
             q.times_used = (q.times_used or 0) + 1
             db.commit()
             return q
-    # banco vacío para ese tipo, o se pidió explícitamente generar
-    return _generate_and_store(db, task_type)
+    # banco vacío para ese tipo, o se pidió explícitamente generar → llamada a IA
+    return _generate_and_store(db, task_type, "medium", user)
 
 
 @router.get("/toefl/writing/question")
@@ -138,6 +145,7 @@ def get_question(
     mode: str = Query(default="practice", pattern="^(practice|simulation)$"),
     generate: bool = Query(default=False),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     """
     practice: requiere `task_type` y devuelve UNA pregunta.
@@ -145,12 +153,12 @@ def get_question(
     Si el banco está vacío para un tipo (o generate=true), genera y persiste.
     """
     if mode == "simulation":
-        questions = [_question_out(_pick_or_generate(db, t, generate=generate)) for t in TASK_TYPES]
+        questions = [_question_out(_pick_or_generate(db, t, generate=generate, user=current_user)) for t in TASK_TYPES]
         return ExamQuestionSetOut(questions=questions)
 
     if task_type not in TASK_TYPES:
         raise HTTPException(400, f"task_type inválido: {task_type}")
-    return _question_out(_pick_or_generate(db, task_type, generate=generate))
+    return _question_out(_pick_or_generate(db, task_type, generate=generate, user=current_user))
 
 
 # ── Intentos ────────────────────────────────────────────────────────────────
@@ -181,10 +189,15 @@ def _cefr(band: float | None) -> str | None:
 
 
 @router.post("/attempts", response_model=ExamAttemptOut)
-def create_attempt(data: ExamAttemptCreateIn, db: Session = Depends(get_db)):
+def create_attempt(
+    data: ExamAttemptCreateIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     if data.mode not in ("practice", "simulation"):
         raise HTTPException(400, f"mode inválido: {data.mode}")
     attempt = ExamAttempt(
+        user_id=owner_id(current_user),
         exam=data.exam, section=data.section, mode=data.mode,
         time_limit_seconds=data.time_limit_seconds,
     )
@@ -235,8 +248,15 @@ def _grade_build_sentence(question: ExamQuestion, sentence_orders: list[list[str
 
 
 @router.post("/attempts/{attempt_id}/grade-task", response_model=ExamTaskResultOut)
-def grade_task(attempt_id: int, data: ExamGradeTaskIn, db: Session = Depends(get_db)):
-    attempt = db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id).one_or_none()
+def grade_task(
+    attempt_id: int,
+    data: ExamGradeTaskIn,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    attempt = scope_to_owner(
+        db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id), ExamAttempt, current_user
+    ).one_or_none()
     if attempt is None:
         raise HTTPException(404, f"Intento no encontrado: {attempt_id}")
     if data.task_type not in TASK_TYPES:
@@ -267,6 +287,9 @@ def grade_task(attempt_id: int, data: ExamGradeTaskIn, db: Session = Depends(get
             raise HTTPException(400, f"{data.task_type} requiere question_id")
         if not groq_service.is_configured():
             raise HTTPException(503, "Groq no está configurado (falta GROQ_API_KEY)")
+        # Calificar un ensayo es una llamada a IA: exige premium/admin + cuota.
+        require_ai_access(current_user)
+        consume_ai_quota(current_user, db)
         try:
             payload = json.loads(question.payload)
         except (json.JSONDecodeError, TypeError):
@@ -284,6 +307,8 @@ def grade_task(attempt_id: int, data: ExamGradeTaskIn, db: Session = Depends(get
                     student_responses=payload.get("student_responses", []),
                     user_text=text,
                 )
+        except groq_service.AIRateLimitError:
+            raise HTTPException(429, "El servicio de IA está saturado ahora mismo. Intenta de nuevo en unos segundos.")
         except RuntimeError as exc:
             raise HTTPException(503, f"Servicio AI no disponible: {exc}") from exc
         except ValueError as exc:
@@ -326,8 +351,14 @@ def _result_out(r: ExamTaskResult) -> ExamTaskResultOut:
 
 
 @router.post("/attempts/{attempt_id}/finalize", response_model=ExamFinalizeOut)
-def finalize_attempt(attempt_id: int, db: Session = Depends(get_db)):
-    attempt = db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id).one_or_none()
+def finalize_attempt(
+    attempt_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    attempt = scope_to_owner(
+        db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id), ExamAttempt, current_user
+    ).one_or_none()
     if attempt is None:
         raise HTTPException(404, f"Intento no encontrado: {attempt_id}")
 
@@ -355,8 +386,14 @@ def finalize_attempt(attempt_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/attempts/{attempt_id}", response_model=ExamAttemptDetailOut)
-def get_attempt(attempt_id: int, db: Session = Depends(get_db)):
-    attempt = db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id).one_or_none()
+def get_attempt(
+    attempt_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    attempt = scope_to_owner(
+        db.query(ExamAttempt).filter(ExamAttempt.id == attempt_id), ExamAttempt, current_user
+    ).one_or_none()
     if attempt is None:
         raise HTTPException(404, f"Intento no encontrado: {attempt_id}")
     results = (
@@ -381,9 +418,10 @@ def get_attempt(attempt_id: int, db: Session = Depends(get_db)):
 def history(
     limit: int = Query(default=20, ge=1, le=100),
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     rows = (
-        db.query(ExamAttempt)
+        scope_to_owner(db.query(ExamAttempt), ExamAttempt, current_user)
         .filter(ExamAttempt.submitted_at.isnot(None))
         .order_by(ExamAttempt.created_at.desc())
         .limit(limit)

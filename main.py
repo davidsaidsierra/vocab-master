@@ -18,8 +18,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from database.connection import init_db
-from api import words, categories, reviews, stats, lookup, writing, grammar, dictionary, exams
-from api.auth import verify_api_key
+from api import words, categories, reviews, stats, lookup, writing, grammar, dictionary, exams, auth, admin
+from api.auth import get_current_user
 
 BASE_DIR = Path(__file__).parent
 FRONTEND_DIR = BASE_DIR / "frontend"
@@ -42,15 +42,19 @@ app.add_middleware(
 )
 
 # ── API routers ─────────────────────────────────────────────
-app.include_router(words.router,      dependencies=[Depends(verify_api_key)])
-app.include_router(categories.router, dependencies=[Depends(verify_api_key)])
-app.include_router(reviews.router,    dependencies=[Depends(verify_api_key)])
-app.include_router(stats.router,      dependencies=[Depends(verify_api_key)])
-app.include_router(lookup.router,     dependencies=[Depends(verify_api_key)])
-app.include_router(writing.router,    dependencies=[Depends(verify_api_key)])
-app.include_router(grammar.router,    dependencies=[Depends(verify_api_key)])
-app.include_router(dictionary.router, dependencies=[Depends(verify_api_key)])
-app.include_router(exams.router,      dependencies=[Depends(verify_api_key)])
+# /api/auth (login) es público; el resto exige usuario autenticado
+# (get_current_user acepta JWT Bearer y, de forma transitoria, X-API-Key legacy).
+app.include_router(auth.router)
+app.include_router(admin.router)
+app.include_router(words.router,      dependencies=[Depends(get_current_user)])
+app.include_router(categories.router, dependencies=[Depends(get_current_user)])
+app.include_router(reviews.router,    dependencies=[Depends(get_current_user)])
+app.include_router(stats.router,      dependencies=[Depends(get_current_user)])
+app.include_router(lookup.router,     dependencies=[Depends(get_current_user)])
+app.include_router(writing.router,    dependencies=[Depends(get_current_user)])
+app.include_router(grammar.router,    dependencies=[Depends(get_current_user)])
+app.include_router(dictionary.router, dependencies=[Depends(get_current_user)])
+app.include_router(exams.router,      dependencies=[Depends(get_current_user)])
 
 # ── Serve frontend ──────────────────────────────────────────
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")

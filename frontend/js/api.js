@@ -1,27 +1,34 @@
 // ── API client — all calls to the FastAPI backend ────────────
 
 const BASE = '/api';
+const TOKEN_KEY = 'vocab_token';
 
-function getApiKey() {
-    return localStorage.getItem('vocab_api_key') || '';
+export function getToken() {
+    return localStorage.getItem(TOKEN_KEY) || '';
+}
+export function setToken(t) {
+    if (t) localStorage.setItem(TOKEN_KEY, t);
+}
+export function clearToken() {
+    localStorage.removeItem(TOKEN_KEY);
 }
 
 async function request(path, options = {}) {
-    const res = await fetch(`${BASE}${path}`, {
-        ...options,
-        headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': getApiKey(),
-            ...(options.headers || {}),
-        },
-    });
+    const token = getToken();
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+    };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE}${path}`, { ...options, headers });
+
     if (res.status === 401) {
-        const key = prompt('Ingresa tu API Key para acceder:');
-        if (key) {
-            localStorage.setItem('vocab_api_key', key);
-            return request(path, options);
-        }
-        throw new Error('API Key requerida');
+        // Token ausente/expirado → limpiar y pedir login. En modo local abierto
+        // el backend nunca devuelve 401, así que esto no aparece en local.
+        clearToken();
+        window.dispatchEvent(new CustomEvent('auth:required'));
+        throw new Error('Sesión requerida');
     }
     if (res.status === 204) return null;
     if (!res.ok) {
@@ -30,6 +37,20 @@ async function request(path, options = {}) {
     }
     return res.json();
 }
+
+// ── Auth ─────────────────────────────────────────────────────
+export const auth = {
+    login: (email, password) =>
+        request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+    me: () => request('/auth/me'),
+};
+
+// ── Admin (gestión de usuarios; solo rol admin) ──────────────
+export const admin = {
+    listUsers: () => request('/admin/users'),
+    createUser: (data) => request('/admin/users', { method: 'POST', body: JSON.stringify(data) }),
+    updateUser: (id, data) => request(`/admin/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+};
 
 // ── Words ────────────────────────────────────────────────────
 export const words = {
