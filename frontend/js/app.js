@@ -8,6 +8,11 @@ import { render as renderQuickSummary } from './components/quickSummary.js';
 import { render as renderEnglishClass } from './components/englishClass.js';
 import { render as renderWriting }      from './components/writingChallenge.js';
 import { render as renderExams }        from './components/internationalExams.js';
+import { render as renderAdminUsers }   from './components/adminUsers.js';
+import {
+    loadCurrentUser, applyRoleVisibility, initLoginForm,
+    showLogin, logout, getRole,
+} from './auth.js';
 
 const routes = {
     '/dashboard':    renderDashboard,
@@ -19,27 +24,55 @@ const routes = {
     '/english-class': renderEnglishClass,
     '/writing':      renderWriting,
     '/exams':        renderExams,
+    '/admin':        renderAdminUsers,
 };
 
 const app = document.getElementById('app');
 const navLinks = document.querySelectorAll('.nav-link');
 
 function navigate() {
-    const hash = window.location.hash.slice(1) || '/dashboard';
+    let hash = window.location.hash.slice(1) || '/dashboard';
+
+    // Guardas por rol: el panel admin solo para admin; Writing solo para
+    // quien tiene IA. Si no aplica, redirige al dashboard (defensa en cliente;
+    // el servidor también bloquea).
+    const role = getRole();
+    if (hash === '/admin' && role !== 'admin') hash = '/dashboard';
+    if (hash === '/writing' && !(role === 'admin' || role === 'premium')) hash = '/dashboard';
+
     const renderFn = routes[hash] || renderDashboard;
 
-    // Update active nav link
     navLinks.forEach(link => {
         const page = link.dataset.page;
-        const isActive = hash === `/${page}`;
-        link.classList.toggle('active', isActive);
+        link.classList.toggle('active', hash === `/${page}`);
     });
 
     renderFn(app);
 }
 
 window.addEventListener('hashchange', navigate);
-navigate();
+
+// ── Arranque: cargar sesión antes de enrutar ────────────────
+async function boot() {
+    initLoginForm(() => { applyRoleVisibility(); navigate(); });
+
+    // Si una llamada devuelve 401 en cualquier momento → mostrar login.
+    window.addEventListener('auth:required', showLogin);
+
+    // Botón de logout (si existe en el DOM).
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) logoutBtn.addEventListener('click', () => logout());
+
+    const user = await loadCurrentUser();
+    applyRoleVisibility();
+    if (!user) {
+        showLogin();   // backend con auth y sin sesión válida
+        return;
+    }
+    navigate();
+}
+
+boot();
 
 /* ══════════════════════════════════════════════════════════════
    MOBILE ENHANCEMENTS — totalmente aditivo y defensivo

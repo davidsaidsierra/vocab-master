@@ -18,7 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from database.connection import init_db
-from api import words, categories, reviews, stats, lookup, writing, grammar, dictionary, exams, auth
+from api import words, categories, reviews, stats, lookup, writing, grammar, dictionary, exams, auth, admin
 from api.auth import get_current_user
 
 BASE_DIR = Path(__file__).parent
@@ -45,6 +45,7 @@ app.add_middleware(
 # /api/auth (login) es público; el resto exige usuario autenticado
 # (get_current_user acepta JWT Bearer y, de forma transitoria, X-API-Key legacy).
 app.include_router(auth.router)
+app.include_router(admin.router)
 app.include_router(words.router,      dependencies=[Depends(get_current_user)])
 app.include_router(categories.router, dependencies=[Depends(get_current_user)])
 app.include_router(reviews.router,    dependencies=[Depends(get_current_user)])
