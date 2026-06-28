@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from database.connection import get_db
 from database.models import Word, DictionaryEntry, User
 from api.auth import get_current_user, owner_id, scope_to_owner
+from api.quota import require_ai_access, consume_ai_quota
 from api.schemas import (
     WordCreate, WordUpdate, WordOut,
     QuickWordCreate, QuickWordOut, EnrichResult, EnrichOut,
@@ -122,9 +123,15 @@ def enrich_pending(
     if not batch:
         return EnrichOut(enriched=[], remaining_pending=0)
 
+    # Gating de IA: free → 403; premium consume cuota; admin ilimitado.
+    require_ai_access(current_user)
+    consume_ai_quota(current_user, db)
+
     payload = [{"word": w.word, "translation": w.translation} for w in batch]
     try:
         results = groq.enrich_words_batch(payload)
+    except groq.AIRateLimitError:
+        raise HTTPException(429, "El servicio de IA está saturado ahora mismo. Intenta de nuevo en unos segundos.")
     except RuntimeError as exc:
         raise HTTPException(503, f"Servicio de IA no disponible: {exc}") from exc
     except ValueError as exc:

@@ -14,8 +14,28 @@ from typing import Any
 
 try:
     from groq import Groq
+    from groq import RateLimitError as _GroqRateLimit
 except ImportError:
     Groq = None  # type: ignore
+    _GroqRateLimit = None  # type: ignore
+
+
+class AIRateLimitError(RuntimeError):
+    """Groq devolvió 429 (límite de tasa/TPM). Reintentar en unos segundos."""
+
+
+def _create(client: Any, **kwargs: Any) -> Any:
+    """
+    Envoltorio único de chat.completions.create: traduce el 429 de Groq a
+    AIRateLimitError para que la API lo devuelva como un 429 amable en español.
+    Mantiene el round-trip único (no reintenta aquí).
+    """
+    try:
+        return client.chat.completions.create(**kwargs)
+    except Exception as exc:  # noqa: BLE001
+        if _GroqRateLimit is not None and isinstance(exc, _GroqRateLimit):
+            raise AIRateLimitError(str(exc)) from exc
+        raise
 
 from services.prompts import (
     BATCH_ENRICH_PROMPT,
@@ -63,7 +83,8 @@ def lookup_word(word: str) -> dict[str, Any]:
     client = _ensure_client()
     prompt = LOOKUP_PROMPT.format(word=word.strip())
 
-    resp = client.chat.completions.create(
+    resp = _create(
+        client,
         model=_MODEL_NAME,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
@@ -106,7 +127,8 @@ def enrich_words_batch(words: list[dict[str, Any]]) -> list[dict[str, Any]]:
     )
     prompt = BATCH_ENRICH_PROMPT.format(words_block=words_block)
 
-    resp = client.chat.completions.create(
+    resp = _create(
+        client,
         model=_MODEL_NAME,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
@@ -143,7 +165,8 @@ def enrich_words_batch(words: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def _call_json(prompt: str) -> dict[str, Any]:
     """Single Groq round-trip that returns a parsed JSON object. Shared helper."""
     client = _ensure_client()
-    resp = client.chat.completions.create(
+    resp = _create(
+        client,
         model=_MODEL_NAME,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
@@ -253,7 +276,8 @@ def correct_writing(
         user_text=user_text.strip(),
     )
 
-    resp = client.chat.completions.create(
+    resp = _create(
+        client,
         model=_MODEL_NAME,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},
@@ -309,7 +333,8 @@ def correct_writing_v2(
         user_text=user_text.strip(),
     )
 
-    resp = client.chat.completions.create(
+    resp = _create(
+        client,
         model=_MODEL_NAME,
         messages=[{"role": "user", "content": prompt}],
         response_format={"type": "json_object"},

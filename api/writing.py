@@ -30,6 +30,7 @@ from api.schemas import (
 from database.connection import get_db
 from database.models import Word, WritingChallenge, GrammarTopic, User
 from api.auth import get_current_user, owner_id, scope_to_owner
+from api.quota import require_ai_access, consume_ai_quota
 from services import groq as groq_service
 
 router = APIRouter(prefix="/api/writing", tags=["writing"])
@@ -115,8 +116,11 @@ def submit_writing(
     if len(text) > 5000:
         raise HTTPException(400, "El texto es demasiado largo (max 5000 caracteres)")
 
+    # Gating de IA: free → 403; el resto sigue.
+    require_ai_access(current_user)
+
     used_today = _count_today(db, current_user)
-    if used_today >= DAILY_LIMIT:
+    if current_user.role != "admin" and used_today >= DAILY_LIMIT:
         raise HTTPException(
             429,
             f"Has alcanzado el límite diario de {DAILY_LIMIT} retos. Vuelve mañana.",
@@ -139,6 +143,9 @@ def submit_writing(
         if topic_row is None:
             raise HTTPException(404, f"Topic no encontrado: {data.grammar_topic_slug}")
 
+    # Consume cuota de IA (premium: tope diario + cooldown; admin: ilimitado).
+    consume_ai_quota(current_user, db)
+
     try:
         if topic_row is not None:
             result = groq_service.correct_writing_v2(
@@ -154,6 +161,8 @@ def submit_writing(
                 target_words=target_words,
                 user_text=text,
             )
+    except groq_service.AIRateLimitError:
+        raise HTTPException(429, "El servicio de IA está saturado ahora mismo. Intenta de nuevo en unos segundos.")
     except RuntimeError as exc:
         raise HTTPException(503, f"Servicio AI no disponible: {exc}") from exc
     except ValueError as exc:
