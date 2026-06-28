@@ -48,10 +48,36 @@ def _migrate_word_columns():
             conn.execute(text(f"ALTER TABLE words {clause}"))
 
 
+def _bootstrap_admin():
+    """
+    Crea el usuario admin desde env (ADMIN_EMAIL / ADMIN_PASSWORD) si aún no
+    existe. Idempotente: no hace nada si ya hay un usuario con ese email.
+    Sin esas env vars, no hace nada (p. ej. en una instalación que aún no migra).
+    """
+    admin_email = os.environ.get("ADMIN_EMAIL", "").strip().lower()
+    admin_password = os.environ.get("ADMIN_PASSWORD", "")
+    if not admin_email or not admin_password:
+        return
+    from database.models import User
+    from api.auth import hash_password  # import diferido: evita ciclo de imports
+    with SessionLocal() as db:
+        existing = db.query(User).filter(User.email == admin_email).one_or_none()
+        if existing is not None:
+            return
+        db.add(User(
+            email=admin_email,
+            password_hash=hash_password(admin_password),
+            role="admin",
+            is_active=1,
+        ))
+        db.commit()
+
+
 def init_db():
     from database.models import (  # noqa: F401
-        Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic,
+        User, Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic,
         DictionaryEntry, DictionaryEntryEs, ExamQuestion, ExamAttempt, ExamTaskResult,
     )
     Base.metadata.create_all(bind=engine)
     _migrate_word_columns()
+    _bootstrap_admin()
