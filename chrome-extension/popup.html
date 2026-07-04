@@ -177,7 +177,20 @@
     <div class="dot" id="status-dot" title="Checking connection…"></div>
   </div>
 
-  <div id="form-view">
+  <div id="loading-view" style="text-align:center;padding:24px 0;color:#64748b;font-size:13px">
+    Conectando…
+  </div>
+
+  <div id="login-view" style="display:none">
+    <div class="error" id="login-error"></div>
+    <label>Email</label>
+    <input type="email" id="login-email" placeholder="tu@email.com" autocomplete="username">
+    <label>Contraseña</label>
+    <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn btn-primary" id="login-btn">Iniciar sesión</button>
+  </div>
+
+  <div id="form-view" style="display:none">
     <div class="error" id="error-msg"></div>
 
     <label>Word / Phrase</label>

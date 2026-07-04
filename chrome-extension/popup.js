@@ -13,6 +13,12 @@ const lookupBtn       = $("#lookup-btn");
 const lookupPanel     = $("#lookup-panel");
 const errorMsg        = $("#error-msg");
 const statusDot       = $("#status-dot");
+const loadingView     = $("#loading-view");
+const loginView       = $("#login-view");
+const loginEmail      = $("#login-email");
+const loginPassword   = $("#login-password");
+const loginBtn        = $("#login-btn");
+const loginError      = $("#login-error");
 const formView        = $("#form-view");
 const successView     = $("#success-view");
 
@@ -24,59 +30,146 @@ function escHtml(s) {
     .replace(/>/g, '&gt;');
 }
 
-// ── API Key ─────────────────────────────────────────────────
-async function getApiKey() {
-  const data = await chrome.storage.local.get("api_key");
-  if (data.api_key) return data.api_key;
-  const key = prompt("Ingresa tu API Key de VocabMaster:");
-  if (key) {
-    await chrome.storage.local.set({ api_key: key });
-    return key;
+// ── Token JWT (reemplaza al viejo X-API-Key) ────────────────
+const TOKEN_KEY = "vocab_token";
+let token = "";
+
+async function loadToken() {
+  const d = await chrome.storage.local.get(TOKEN_KEY);
+  token = d[TOKEN_KEY] || "";
+  return token;
+}
+async function setToken(t) {
+  token = t || "";
+  await chrome.storage.local.set({ [TOKEN_KEY]: token });
+}
+async function clearToken() {
+  token = "";
+  await chrome.storage.local.remove(TOKEN_KEY);
+}
+function authHeaders() {
+  const h = { "Content-Type": "application/json" };
+  if (token) h["Authorization"] = `Bearer ${token}`;
+  return h;
+}
+
+// fetch contra la API con el token; si el server responde 401, la sesión
+// expiró → limpiar token y volver al login.
+async function apiFetch(path, options = {}) {
+  const res = await fetch(`${API}${path}`, {
+    ...options,
+    headers: { ...authHeaders(), ...(options.headers || {}) },
+  });
+  if (res.status === 401) {
+    await clearToken();
+    showLogin("Tu sesión expiró. Inicia sesión de nuevo.");
+    throw new Error("No autenticado");
   }
-  return "";
+  return res;
 }
 
-function apiHeaders(key) {
-  return { "Content-Type": "application/json", "X-API-Key": key };
+// ── Vistas ──────────────────────────────────────────────────
+function hideAll() {
+  loadingView.style.display = "none";
+  loginView.style.display = "none";
+  formView.style.display = "none";
+  successView.style.display = "none";
+}
+function showLogin(msg) {
+  hideAll();
+  loginView.style.display = "block";
+  if (msg) {
+    loginError.textContent = msg;
+    loginError.style.display = "block";
+  } else {
+    loginError.style.display = "none";
+  }
+  loginEmail.focus();
+}
+function showForm() {
+  hideAll();
+  formView.style.display = "block";
+  loadCategories();
+  loadCapturedWord();
 }
 
-// ── Check if VocabMaster server is running ──────────────────
-// Tries local first (fast, no cold-start), falls back to Render.
-async function checkConnection() {
-  const key = await getApiKey();
-  // 1. Try local
+// ── Reachability: local primero, luego Render ───────────────
+// Cualquier respuesta HTTP (incluida 401 sin token) significa "alcanzable".
+async function reachable(base) {
   try {
-    const res = await fetch(`${API_LOCAL}/stats/overview`, {
-      headers: apiHeaders(key),
+    await fetch(`${base}/auth/me`, {
+      headers: authHeaders(),
       signal: AbortSignal.timeout(1500),
     });
-    if (res.ok) {
-      API = API_LOCAL;
-      statusDot.classList.add("online");
-      statusDot.title = "Connected (local)";
-      return true;
-    }
-  } catch {}
-  // 2. Fallback to Render
-  try {
-    const res = await fetch(`${API_REMOTE}/stats/overview`, { headers: apiHeaders(key) });
-    if (res.ok) {
-      API = API_REMOTE;
-      statusDot.classList.add("online");
-      statusDot.title = "Connected (Render)";
-      return true;
-    }
-  } catch {}
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function checkConnection() {
+  if (await reachable(API_LOCAL)) {
+    API = API_LOCAL;
+    statusDot.classList.add("online");
+    statusDot.title = "Connected (local)";
+    return true;
+  }
+  if (await reachable(API_REMOTE)) {
+    API = API_REMOTE;
+    statusDot.classList.add("online");
+    statusDot.title = "Connected (Render)";
+    return true;
+  }
   statusDot.title = "Cannot reach VocabMaster";
   return false;
+}
+
+// ── Login ───────────────────────────────────────────────────
+loginBtn.addEventListener("click", doLogin);
+loginPassword.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") { e.preventDefault(); doLogin(); }
+});
+
+async function doLogin() {
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value;
+  if (!email || !password) {
+    loginError.textContent = "Ingresa email y contraseña.";
+    loginError.style.display = "block";
+    return;
+  }
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Entrando…";
+  try {
+    const res = await fetch(`${API}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    await setToken(data.access_token);
+    loginPassword.value = "";
+    showForm();
+  } catch (err) {
+    loginError.textContent = err.message;
+    loginError.style.display = "block";
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Iniciar sesión";
+  }
 }
 
 // ── Load categories from API ────────────────────────────────
 async function loadCategories() {
   try {
-    const key = await getApiKey();
-    const res = await fetch(`${API}/categories/`, { headers: apiHeaders(key) });
+    const res = await apiFetch(`/categories/`);
+    if (!res.ok) return;
     const cats = await res.json();
+    categorySelect.length = 1; // conserva la opción "None"
     cats.forEach((c) => {
       const opt = document.createElement("option");
       opt.value = c.id;
@@ -110,10 +203,7 @@ lookupBtn.addEventListener("click", async () => {
   lookupPanel.innerHTML = `<div class="lookup-loading">Buscando significados…</div>`;
 
   try {
-    const key = await getApiKey();
-    const res = await fetch(`${API}/lookup/${encodeURIComponent(word.toLowerCase())}`, {
-      headers: apiHeaders(key),
-    });
+    const res = await apiFetch(`/lookup/${encodeURIComponent(word.toLowerCase())}`);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.detail || `HTTP ${res.status}`);
@@ -199,15 +289,13 @@ saveBtn.addEventListener("click", async () => {
       difficulty: parseInt(difficultySelect.value),
     };
 
-    const key = await getApiKey();
-    const res = await fetch(`${API}/words/`, {
+    const res = await apiFetch(`/words/`, {
       method: "POST",
-      headers: apiHeaders(key),
       body: JSON.stringify(body),
     });
 
     if (!res.ok) {
-      const err = await res.json();
+      const err = await res.json().catch(() => ({}));
       throw new Error(err.detail || "Failed to save");
     }
 
@@ -231,14 +319,14 @@ $("#add-another").addEventListener("click", () => {
   difficultySelect.value = "3";
   lookupPanel.classList.remove("visible");
   lookupPanel.innerHTML = "";
-  formView.style.display = "block";
   successView.style.display = "none";
+  formView.style.display = "block";
   wordInput.focus();
 });
 
-// ── Allow Enter key to save ─────────────────────────────────
+// ── Allow Enter key to save (solo dentro del formulario) ────
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
+  if (e.key === "Enter" && !e.shiftKey && formView.style.display !== "none") {
     e.preventDefault();
     saveBtn.click();
   }
@@ -252,8 +340,34 @@ function showError(msg) {
 }
 
 // ── Init ────────────────────────────────────────────────────
-// checkConnection must resolve first so API points to the right server.
-checkConnection().then(() => {
-  loadCategories();
-  loadCapturedWord();
-});
+async function init() {
+  await loadToken();
+  const ok = await checkConnection();
+  if (!ok) {
+    showLogin("No se pudo conectar con el servidor.");
+    return;
+  }
+  if (!token) {
+    showLogin();
+    return;
+  }
+  // Verifica que el token siga siendo válido.
+  try {
+    const res = await fetch(`${API}/auth/me`, { headers: authHeaders() });
+    if (res.status === 401) {
+      await clearToken();
+      showLogin("Tu sesión expiró. Inicia sesión de nuevo.");
+      return;
+    }
+    if (!res.ok) {
+      showLogin("No se pudo verificar la sesión.");
+      return;
+    }
+  } catch {
+    showLogin("No se pudo conectar con el servidor.");
+    return;
+  }
+  showForm();
+}
+
+init();
