@@ -51,7 +51,9 @@ from services.prompts import (
 from services import ai_schemas
 
 
-_MODEL_NAME = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
+# llama-3.3-70b-versatile fue deprecado por Groq (se apaga el 2026-08-16).
+# gpt-oss-120b es el reemplazo recomendado por Groq, también en el free tier.
+_MODEL_NAME = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
 _API_KEY = os.environ.get("GROQ_API_KEY", "")
 _client: Any = None
 

@@ -18,8 +18,8 @@ VocabMaster is a **personal English learning tool** for a single user (the owner
 
 ## Current architecture (already built — do NOT rewrite)
 - **Backend:** FastAPI + SQLAlchemy + SQLite (`data/vocab.db`).
-- **Auth:** simple API key via `api/auth.py`.
-- **AI:** Groq (`llama-3.3-70b-versatile`) with `response_format=json_object`. Gemini as fallback for word lookups.
+- **Auth:** multi-user JWT (invite-only, roles admin/premium/free) via `api/auth.py`. Local dev without login requires `ALLOW_OPEN_MODE=1`.
+- **AI:** Groq (`openai/gpt-oss-120b` — migrated 2026-07 because Groq deprecated llama-3.3-70b, decommission 2026-08-16) with `response_format=json_object`. Gemini as fallback for word lookups.
 - **Frontend:** vanilla JS modules (no framework), served from `frontend/`.
 - **Chrome extension:** for quick word lookup while browsing.
 
