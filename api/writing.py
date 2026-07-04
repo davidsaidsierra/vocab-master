@@ -10,6 +10,7 @@ Reglas:
 """
 
 import json
+import logging
 import random
 from datetime import datetime, timezone, timedelta
 from typing import List
@@ -32,6 +33,8 @@ from database.models import Word, WritingChallenge, GrammarTopic, User
 from api.auth import get_current_user, owner_id, scope_to_owner
 from api.quota import require_ai_access, consume_ai_quota
 from services import groq as groq_service
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/writing", tags=["writing"])
 
@@ -164,9 +167,11 @@ def submit_writing(
     except groq_service.AIRateLimitError:
         raise HTTPException(429, "El servicio de IA está saturado ahora mismo. Intenta de nuevo en unos segundos.")
     except RuntimeError as exc:
-        raise HTTPException(503, f"Servicio AI no disponible: {exc}") from exc
+        logger.warning("Writing AI service unavailable: %s", exc)
+        raise HTTPException(503, "Servicio de IA no disponible en este momento.") from exc
     except ValueError as exc:
-        raise HTTPException(502, f"Respuesta inválida del modelo: {exc}") from exc
+        logger.warning("Invalid AI response for writing submission: %s", exc)
+        raise HTTPException(502, "El modelo devolvió una respuesta inválida.") from exc
 
     used_correctly_raw = result.get("words_used_correctly") or []
     used_lc = {w.strip().lower() for w in used_correctly_raw if isinstance(w, str)}

@@ -18,6 +18,7 @@ except ImportError:
     genai = None  # type: ignore
 
 from services.prompts import LOOKUP_PROMPT
+from services import ai_schemas
 
 
 _MODEL_NAME = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash-lite")
@@ -72,11 +73,7 @@ def lookup_word(word: str) -> dict[str, Any]:
     except json.JSONDecodeError as exc:
         raise ValueError(f"Gemini devolvió JSON inválido: {exc}") from exc
 
-    # Minimal validation / normalization
-    if not isinstance(data, dict):
-        raise ValueError("Gemini no devolvió un objeto JSON")
-    data.setdefault("word", word.strip().lower())
-    data.setdefault("phonetic", "")
-    data.setdefault("meanings", [])
-    data.setdefault("common_phrases", [])
+    data = ai_schemas.validate(ai_schemas.LookupResult, data)
+    if not data.get("word"):
+        data["word"] = word.strip().lower()
     return data

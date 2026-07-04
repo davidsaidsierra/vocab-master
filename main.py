@@ -11,12 +11,14 @@ try:
 except ImportError:
     pass  # python-dotenv is optional; env vars can also be set externally
 
+import os
 from pathlib import Path
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from starlette.middleware.base import BaseHTTPMiddleware
 from database.connection import init_db
 from api import words, categories, reviews, stats, lookup, writing, grammar, dictionary, exams, auth, admin
 from api.auth import get_current_user
@@ -33,17 +35,41 @@ async def lifespan(app):
 
 app = FastAPI(title="VocabMaster", version="1.0.0", lifespan=lifespan)
 
-# ── CORS (allows Chrome extension to call the local API) ───
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "same-origin"
+        return response
+
+
+app.add_middleware(SecurityHeadersMiddleware)
+
+# ── CORS ─────────────────────────────────────────────────────
+# Solo orígenes conocidos: el frontend (local + Render) y la extensión de
+# Chrome. EXTENSION_ORIGIN (chrome-extension://<id>) se agrega por env var
+# porque el ID de la extensión depende de cómo se instaló/empaquetó.
+_ALLOWED_ORIGINS = [
+    "https://vocab-master-re2t.onrender.com",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+]
+_extension_origin = os.environ.get("EXTENSION_ORIGIN", "").strip()
+if _extension_origin:
+    _ALLOWED_ORIGINS.append(_extension_origin)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # ── API routers ─────────────────────────────────────────────
 # /api/auth (login) es público; el resto exige usuario autenticado
-# (get_current_user acepta JWT Bearer y, de forma transitoria, X-API-Key legacy).
+# (get_current_user valida el JWT Bearer; el admin gestiona sus endpoints).
 app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(words.router,      dependencies=[Depends(get_current_user)])

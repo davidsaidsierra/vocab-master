@@ -45,7 +45,10 @@ from services.prompts import (
     TOEFL_EMAIL_GRADING_PROMPT,
     TOEFL_DISCUSSION_GRADING_PROMPT,
     TOEFL_QUESTION_GEN_PROMPT,
+    INJECTION_GUARD,
+    wrap_untrusted,
 )
+from services import ai_schemas
 
 
 _MODEL_NAME = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
@@ -100,12 +103,9 @@ def lookup_word(word: str) -> dict[str, Any]:
     except json.JSONDecodeError as exc:
         raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
 
-    if not isinstance(data, dict):
-        raise ValueError("Groq no devolvió un objeto JSON")
-    data.setdefault("word", word.strip().lower())
-    data.setdefault("phonetic", "")
-    data.setdefault("meanings", [])
-    data.setdefault("common_phrases", [])
+    data = ai_schemas.validate(ai_schemas.LookupResult, data)
+    if not data.get("word"):
+        data["word"] = word.strip().lower()
     return data
 
 
@@ -144,20 +144,16 @@ def enrich_words_batch(words: list[dict[str, Any]]) -> list[dict[str, Any]]:
     except json.JSONDecodeError as exc:
         raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
 
-    results = data.get("results") if isinstance(data, dict) else None
-    if not isinstance(results, list):
-        raise ValueError("Groq no devolvió un array 'results'")
+    validated = ai_schemas.validate(ai_schemas.EnrichBatch, data)
 
     out: list[dict[str, Any]] = []
-    for item in results:
-        if not isinstance(item, dict):
-            continue
+    for item in validated["results"]:
         out.append({
-            "word": str(item.get("word", "")).strip().lower(),
-            "translation_es": str(item.get("translation_es", "")).strip(),
-            "definition_en": str(item.get("definition_en", "")).strip(),
-            "example_en": str(item.get("example_en", "")).strip(),
-            "notes_es": str(item.get("notes_es", "")).strip(),
+            "word": item["word"].strip().lower(),
+            "translation_es": item["translation_es"].strip(),
+            "definition_en": item["definition_en"].strip(),
+            "example_en": item["example_en"].strip(),
+            "notes_es": item["notes_es"].strip(),
         })
     return out
 
@@ -193,9 +189,10 @@ def grade_toefl_email(
     """Grade a TOEFL 2026 'Write an Email' task. Single round-trip."""
     requirements_block = "\n".join(f"- {r.strip()}" for r in requirements if r.strip())
     prompt = TOEFL_EMAIL_GRADING_PROMPT.format(
+        injection_guard=INJECTION_GUARD,
         scenario=scenario.strip(),
         requirements_block=requirements_block or "(none)",
-        user_text=user_text.strip(),
+        user_text=wrap_untrusted(user_text.strip()),
     )
     data = _call_json(prompt)
     data.setdefault("band", 0)
@@ -223,9 +220,10 @@ def grade_toefl_discussion(
         if isinstance(r, dict)
     )
     prompt = TOEFL_DISCUSSION_GRADING_PROMPT.format(
+        injection_guard=INJECTION_GUARD,
         professor_prompt=professor_prompt.strip(),
         student_responses_block=block or "(none)",
-        user_text=user_text.strip(),
+        user_text=wrap_untrusted(user_text.strip()),
     )
     data = _call_json(prompt)
     data.setdefault("band", 0)
@@ -270,10 +268,11 @@ def correct_writing(
     """
     client = _ensure_client()
     prompt = WRITING_CHALLENGE_PROMPT.format(
+        injection_guard=INJECTION_GUARD,
         grammar_topic=grammar_topic.strip(),
         grammar_hint=grammar_hint.strip(),
         target_words=", ".join(target_words) if target_words else "(none)",
-        user_text=user_text.strip(),
+        user_text=wrap_untrusted(user_text.strip()),
     )
 
     resp = _create(
@@ -293,23 +292,13 @@ def correct_writing(
     except json.JSONDecodeError as exc:
         raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
 
-    if not isinstance(data, dict):
-        raise ValueError("Groq no devolvió un objeto JSON")
-
-    data.setdefault("corrected", user_text)
-    data.setdefault("errors", [])
-    data.setdefault("words_used_correctly", [])
-    data.setdefault("grammar_used_correctly", False)
-    data.setdefault("grammar_feedback_es", "")
-    data.setdefault("encouragement_es", "¡Sigue así!")
-    data.setdefault("score", 0)
-    # Synthesize grammar_topic_usage from V1's boolean so the frontend's new
-    # badge code works identically for V1 and V2 flows.
-    data.setdefault("grammar_topic_usage", {
-        "used": "yes" if data.get("grammar_used_correctly") else "no",
-        "variant_used": "",
-        "explanation_es": "",
-    })
+    data = ai_schemas.validate(ai_schemas.WritingCorrection, data)
+    if not data.get("corrected"):
+        data["corrected"] = user_text
+    # V1 no emite grammar_topic_usage; se sintetiza desde el booleano para que
+    # el frontend muestre el badge igual que en V2.
+    if data["grammar_used_correctly"] and data["grammar_topic_usage"]["used"] == "no":
+        data["grammar_topic_usage"]["used"] = "yes"
     return data
 
 
@@ -327,10 +316,11 @@ def correct_writing_v2(
     """
     client = _ensure_client()
     prompt = WRITING_CHALLENGE_PROMPT_V2.format(
+        injection_guard=INJECTION_GUARD,
         topic_title=topic_title.strip(),
         reference_material=topic_content_md.strip(),
         target_words=", ".join(target_words) if target_words else "(none)",
-        user_text=user_text.strip(),
+        user_text=wrap_untrusted(user_text.strip()),
     )
 
     resp = _create(
@@ -350,32 +340,10 @@ def correct_writing_v2(
     except json.JSONDecodeError as exc:
         raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
 
-    if not isinstance(data, dict):
-        raise ValueError("Groq no devolvió un objeto JSON")
-
-    data.setdefault("corrected", user_text)
-    data.setdefault("errors", [])
-    data.setdefault("words_used_correctly", [])
-    data.setdefault("grammar_feedback_es", "")
-    data.setdefault("encouragement_es", "¡Sigue así!")
-    data.setdefault("score", 0)
-    data.setdefault("vocabulary_suggestions", [])
-
-    # Normalize grammar_topic_usage; derive grammar_used_correctly bool for back-compat.
-    gtu = data.get("grammar_topic_usage")
-    if not isinstance(gtu, dict):
-        gtu = {}
-    gtu.setdefault("used", "no")
-    gtu.setdefault("variant_used", "")
-    gtu.setdefault("explanation_es", "")
-    if gtu["used"] not in ("yes", "no", "partial"):
-        gtu["used"] = "no"
-    data["grammar_topic_usage"] = gtu
-    # Back-compat: True if the topic was used at all (yes or partial).
-    data["grammar_used_correctly"] = gtu["used"] in ("yes", "partial")
-
-    # Ensure each error has reference_quote (default to empty if model omits).
-    for e in data.get("errors", []):
-        if isinstance(e, dict):
-            e.setdefault("reference_quote", "")
+    data = ai_schemas.validate(ai_schemas.WritingCorrection, data)
+    if not data.get("corrected"):
+        data["corrected"] = user_text
+    # Back-compat: grammar_used_correctly = True si usó el tema (yes o partial).
+    # El validador ya normalizó grammar_topic_usage.used a yes|no|partial.
+    data["grammar_used_correctly"] = data["grammar_topic_usage"]["used"] in ("yes", "partial")
     return data
