@@ -139,11 +139,17 @@ class EnrichItem(BaseModel):
     definition_en: str = ""
     example_en: str = ""
     notes_es: str = ""
+    synonyms_en: list[str] = []
 
-    @field_validator("*", mode="before")
+    @field_validator("word", "translation_es", "definition_en", "example_en", "notes_es", mode="before")
     @classmethod
     def _s(cls, v):
         return _to_str(v)
+
+    @field_validator("synonyms_en", mode="before")
+    @classmethod
+    def _sl(cls, v):
+        return _to_str_list(v)
 
 
 class EnrichBatch(BaseModel):

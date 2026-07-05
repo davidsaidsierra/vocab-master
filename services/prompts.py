@@ -341,7 +341,8 @@ Return ONLY a JSON object with this EXACT structure and nothing else:
       "translation_es": "traducción principal pulida al español (1-3 palabras)",
       "definition_en": "short English definition (max 15 words)",
       "example_en": "one natural, conversational English sentence using the word",
-      "notes_es": "nota breve útil en español (matiz, registro, falso amigo); cadena vacía si no aporta"
+      "notes_es": "nota breve útil en español (matiz, registro, falso amigo); cadena vacía si no aporta",
+      "synonyms_en": ["3 to 6 common English synonyms of the word, lowercased, single words or short collocations; empty array if it has no real synonyms"]
     }}
   ]
 }}
@@ -350,6 +351,7 @@ Rules:
 - Include EXACTLY one result per input word, in the same order, same lowercased spelling.
 - `translation_es` must be natural Latin American / neutral Spanish.
 - Examples must be real and conversational, not literary.
+- `synonyms_en`: real, commonly-used synonyms only (not definitions or related words); [] if none fit.
 - Return ONLY valid JSON. No markdown, no code fences, no extra text.
 """
 

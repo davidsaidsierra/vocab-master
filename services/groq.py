@@ -156,6 +156,7 @@ def enrich_words_batch(words: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "definition_en": item["definition_en"].strip(),
             "example_en": item["example_en"].strip(),
             "notes_es": item["notes_es"].strip(),
+            "synonyms_en": [s.strip().lower() for s in item["synonyms_en"] if s.strip()],
         })
     return out
 
