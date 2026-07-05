@@ -173,6 +173,19 @@ class GrammarTopicUsage(BaseModel):
     variant_used: str = ""
     explanation_es: str = ""
 
+
+# ── Métricas deterministas de escritura (services/writing_metrics.py, sin IA) ─
+class WritingMetricsOut(BaseModel):
+    word_count: int = 0
+    sentence_count: int = 0
+    errors_total: int = 0
+    errors_by_type: dict[str, int] = {}
+    errors_per_100: float = 0.0
+    spelling_suspects: list[str] = []
+    vocab_distribution: dict[str, float] = {}  # A1..C2 + "unknown", en % (suman ~100)
+    advanced_pct: float = 0.0  # % de vocabulario B2+
+
+
 class WritingSubmitOut(BaseModel):
     corrected: str
     errors: list[WritingError] = []
@@ -186,6 +199,17 @@ class WritingSubmitOut(BaseModel):
     vocabulary_suggestions: list[VocabularySuggestion] = []
     daily_used: int = 0
     daily_limit: int = 10
+    metrics: WritingMetricsOut = WritingMetricsOut()
+
+class WritingHistoryItem(BaseModel):
+    id: int
+    created_at: datetime
+    grammar_topic: str
+    score: int = 0
+    metrics: WritingMetricsOut = WritingMetricsOut()
+
+class WritingHistoryOut(BaseModel):
+    items: list[WritingHistoryItem] = []
 
 
 # ── Dictionary (offline EN→ES) ──────────────────────────────
@@ -287,6 +311,7 @@ class ExamTaskResultOut(BaseModel):
     band: float | None = None
     evaluation: dict = {}           # JSON de Groq (ensayo) o resultado determinista
     user_response: str = ""
+    metrics: WritingMetricsOut | None = None  # solo email/academic_discussion; None en build_sentence
 
 class ExamFinalizeOut(BaseModel):
     attempt_id: int
@@ -310,6 +335,7 @@ class ExamHistoryItem(BaseModel):
     cefr: str | None = None
     created_at: datetime
     submitted_at: datetime | None = None
+    metrics: WritingMetricsOut | None = None  # agregado de las tareas de ensayo del intento
 
 class ExamHistoryOut(BaseModel):
     attempts: list[ExamHistoryItem] = []

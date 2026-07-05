@@ -11,6 +11,7 @@ import { toast } from '../utils/helpers.js';
 import {
     TASK_META, TASK_ORDER, CONNECTORS, EMAIL_POLITENESS, TEMPLATES,
 } from '../toeflWriting.js';
+import { renderMetrics } from './metricsView.js';
 
 // ── Utilidades ──────────────────────────────────────────────
 function esc(s) {
@@ -245,7 +246,7 @@ function practiceTaskHTML() {
     }
 
     const evalBlock = p.evaluation
-        ? `<div id="ie-eval-mount">${evaluationHTML(p.taskType, p.evaluation, p.band, p.rawScore)}</div>`
+        ? `<div id="ie-eval-mount">${evaluationHTML(p.taskType, p.evaluation, p.band, p.rawScore, p.metrics)}</div>`
         : '<div id="ie-eval-mount"></div>';
 
     return `
@@ -353,7 +354,7 @@ function essayHTML(taskType, question, response) {
 }
 
 // ── Render del resultado de una tarea ───────────────────────
-function evaluationHTML(taskType, ev, band, rawScore) {
+function evaluationHTML(taskType, ev, band, rawScore, metrics) {
     if (taskType === 'build_sentence') {
         return `
             <div class="ie-result">
@@ -430,6 +431,7 @@ function evaluationHTML(taskType, ev, band, rawScore) {
             ${breakdown}
             <div class="wc-section"><h4>Texto corregido</h4><div class="wc-corrected">${esc(ev.corrected || '')}</div></div>
             <div class="wc-section"><h4>Errores y correcciones</h4><div class="wc-errors">${errors}</div></div>
+            ${renderMetrics(metrics)}
             ${vocab ? `<div class="wc-section wc-vocab-suggestions"><h4>💡 Vocabulario sugerido <span class="wc-tag">de tu texto</span></h4>${vocab}</div>` : ''}
         </div>`;
 }
@@ -508,7 +510,7 @@ function simResultsHTML() {
                     <strong>${esc(m.label)}</strong>
                     <span class="ie-result-task-score" style="--b:${bandColor(r.band)}">${score} · banda ${r.band ?? '—'}</span>
                 </div>
-                <div class="ie-result-task-body">${evaluationHTML(r.task_type, r.evaluation || {}, r.band, r.raw_score)}</div>
+                <div class="ie-result-task-body">${evaluationHTML(r.task_type, r.evaluation || {}, r.band, r.raw_score, r.metrics)}</div>
             </div>`;
     }).join('');
 
@@ -606,7 +608,7 @@ async function startPractice(taskType, limitSec) {
         state.practice = {
             taskType, question, attemptId: attempt.id,
             response: '', orders: {}, timeLeft: limitSec, limitSec,
-            evaluation: null, band: null, rawScore: null,
+            evaluation: null, band: null, rawScore: null, metrics: null,
         };
         state.view = 'practiceTask';
     } catch (err) {
@@ -643,7 +645,7 @@ function bindPracticeTask() {
         try {
             newQ.disabled = true;
             p.question = await api.question(p.taskType, { mode: 'practice', generate: true });
-            p.orders = {}; p.evaluation = null; p.response = '';
+            p.orders = {}; p.evaluation = null; p.response = ''; p.metrics = null;
             rerender();
             startCountdown(() => state.practice.timeLeft, v => state.practice.timeLeft = v, null);
         } catch (err) { toast(err.message || 'Error', 'error'); newQ.disabled = false; }
@@ -820,7 +822,7 @@ async function onPracticeEvaluate() {
     if (btn) { btn.disabled = true; btn.textContent = p.taskType === 'build_sentence' ? 'Verificando…' : 'Evaluando…'; }
     try {
         const res = await api.gradeTask(p.attemptId, payload);
-        p.evaluation = res.evaluation; p.band = res.band; p.rawScore = res.raw_score;
+        p.evaluation = res.evaluation; p.band = res.band; p.rawScore = res.raw_score; p.metrics = res.metrics;
         rerender();
         startCountdown(() => p.timeLeft, v => p.timeLeft = v, null);
         const mount = root.querySelector('#ie-eval-mount');

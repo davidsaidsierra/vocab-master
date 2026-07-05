@@ -52,6 +52,25 @@ def _migrate_word_columns():
             conn.execute(text(f"ALTER TABLE words {clause}"))
 
 
+def _migrate_metrics_columns():
+    """
+    Añade la columna `metrics` (JSON de services.writing_metrics: errores por
+    tipo, distribución de vocabulario CEFR) a writing_challenges y
+    exam_task_results, si falta. Idempotente, no destructivo. El valor se
+    calcula lazy (al leer /history) sobre datos que ya existen, así que no
+    hace falta ningún backfill aquí.
+    """
+    insp = inspect(engine)
+    tables = set(insp.get_table_names())
+    for table in ("writing_challenges", "exam_task_results"):
+        if table not in tables:
+            continue
+        existing = {c["name"] for c in insp.get_columns(table)}
+        if "metrics" not in existing:
+            with engine.begin() as conn:
+                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN metrics TEXT"))
+
+
 def _bootstrap_admin():
     """
     Crea el usuario admin desde env (ADMIN_EMAIL / ADMIN_PASSWORD) si aún no
@@ -136,5 +155,6 @@ def init_db():
     )
     Base.metadata.create_all(bind=engine)
     _migrate_word_columns()
+    _migrate_metrics_columns()
     _bootstrap_admin()
     _migrate_user_columns()

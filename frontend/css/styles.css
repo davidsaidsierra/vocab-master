@@ -1795,6 +1795,115 @@ body.force-desktop #floating-view-toggle {
 }
 @keyframes ieSpin { to { transform: rotate(360deg); } }
 
+/* ── Dashboard v2 ─────────────────────────────────────────── */
+.dash-summary-phrase {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+.dash-legend {
+    font-size: 0.78rem;
+    color: var(--text-tertiary);
+    margin-bottom: 0.75rem;
+}
+.dash-level-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.dash-level-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.dash-level-label {
+    width: 1.75rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.dash-level-bar {
+    flex: 1;
+    height: 1.1rem;
+    background: var(--bg-hover);
+    border-radius: 0.35rem;
+    overflow: hidden;
+    display: flex;
+}
+.dash-level-bar > div {
+    height: 100%;
+    border-radius: 0.35rem;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.dash-level-stacked > div { border-radius: 0; }
+.dash-level-stacked > div:first-child { border-radius: 0.35rem 0 0 0.35rem; }
+.dash-level-stacked > div:last-child { border-radius: 0 0.35rem 0.35rem 0; }
+.dash-level-count {
+    width: 5.5rem;
+    text-align: right;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+/* ── Análisis del texto (metricsView.js — sin IA) ────────────── */
+.mv-analysis { margin-bottom: 0; }
+.mv-meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+.mv-block { margin-bottom: 0.9rem; }
+.mv-block-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.5rem;
+}
+.mv-advanced {
+    font-weight: 500;
+    color: #af52de;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-left: 0.4rem;
+}
+.mv-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.mv-chip {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+    background: rgba(255, 149, 0, 0.1);
+    color: #b45309;
+}
+.mv-vocab-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.35rem;
+}
+.mv-vocab-label { width: 1.5rem; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+.mv-vocab-bar {
+    flex: 1;
+    height: 0.6rem;
+    background: var(--bg-hover);
+    border-radius: 0.3rem;
+    overflow: hidden;
+}
+.mv-vocab-bar > div { height: 100%; border-radius: 0.3rem; transition: width 0.5s ease; }
+.mv-vocab-pct { width: 2.5rem; text-align: right; font-size: 0.72rem; color: var(--text-secondary); flex-shrink: 0; }
+.mv-suspects {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    background: var(--bg-subtle);
+    border-radius: var(--radius);
+    padding: 0.5rem 0.75rem;
+    margin-top: 0.5rem;
+}
+
 /* ── Responsive ── */
 @media (max-width: 820px) {
     .ie-practice-grid { grid-template-columns: 1fr; }

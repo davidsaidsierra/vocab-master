@@ -103,6 +103,7 @@ class WritingChallenge(Base):
     correction = Column(Text, nullable=False)          # JSON: full Groq response
     words_used_correctly = Column(Text, nullable=True) # JSON: ["word1"]
     grammar_used_correctly = Column(Integer, default=0)  # 0/1 (bool)
+    metrics = Column(Text, nullable=True)              # JSON: services.writing_metrics (errores por tipo, vocab CEFR); NULL = se calcula lazy al leer /history
     created_at = Column(DateTime, default=_utcnow, index=True)
 
 
@@ -223,6 +224,7 @@ class ExamTaskResult(Base):
     evaluation = Column(Text, nullable=False)       # JSON: respuesta Groq o resultado determinista
     raw_score = Column(Float, nullable=True)        # 0–10 (build_sentence) o 0–5 (rúbrica ensayo)
     band = Column(Float, nullable=True)             # 1.0–6.0 mapeado por tarea
+    metrics = Column(Text, nullable=True)           # JSON: services.writing_metrics; solo para email/academic_discussion (NULL en build_sentence)
     created_at = Column(DateTime, default=_utcnow)
 
     attempt = relationship("ExamAttempt", back_populates="results")

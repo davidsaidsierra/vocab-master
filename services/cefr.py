@@ -66,3 +66,18 @@ def level_for_word(word: str, pos: str | None = None) -> str | None:
 
     lvl = analyzer.get_average_word_level_CEFR(w)
     return str(lvl) if lvl else None
+
+
+def is_known_word(word: str) -> bool:
+    """
+    True si `word` está en la base de cefrpy (incluye formas conjugadas/
+    plurales). Se usa como corrector ortográfico offline en
+    `services/writing_metrics.py`: si no está, es candidata a typo.
+    """
+    analyzer = _get_analyzer()
+    if analyzer is None or not word:
+        return False
+    w = word.strip().lower()
+    if not w or " " in w:
+        return False
+    return bool(analyzer.is_word_in_database(w))

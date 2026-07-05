@@ -12,6 +12,7 @@
 import { writing as api, words as wordsApi } from '../api.js';
 import { WEEKS } from './englishClass.js';
 import { openPicker } from './grammarPicker.js';
+import { renderMetrics } from './metricsView.js';
 
 const MAX_CHARS = 5000;
 const STORAGE_KEY = 'vocabmaster_writing_state';
@@ -239,6 +240,8 @@ function resultHTML(r) {
                 <h4>Errores y correcciones</h4>
                 <div class="wc-errors">${errorsHTML}</div>
             </div>
+
+            ${renderMetrics(r.metrics)}
 
             <div class="wc-grid-2">
                 <div class="wc-section">

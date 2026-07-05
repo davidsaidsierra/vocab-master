@@ -94,10 +94,12 @@ export const reviews = {
 
 // ── Stats ────────────────────────────────────────────────────
 export const stats = {
-    overview:     () => request('/stats/overview'),
-    byCategory:   () => request('/stats/by-category'),
-    activity:     (days = 30) => request(`/stats/activity?days=${days}`),
-    distribution: () => request('/stats/mastery-distribution'),
+    overview:      () => request('/stats/overview'),
+    byCategory:    () => request('/stats/by-category'),
+    activity:      (days = 30) => request(`/stats/activity?days=${days}`),
+    distribution:  () => request('/stats/mastery-distribution'),
+    byLevel:       () => request('/stats/by-level'),
+    levelProgress: () => request('/stats/level-progress'),
 };
 
 // ── Lookup (AI contextual translation) ──────────────────────
@@ -108,8 +110,9 @@ export const lookup = {
 
 // ── Writing Challenge (AI text correction) ──────────────────
 export const writing = {
-    words:  (count = 4) => request(`/writing/words?count=${count}`),
-    submit: (data) => request('/writing/submit', { method: 'POST', body: JSON.stringify(data) }),
+    words:   (count = 4) => request(`/writing/words?count=${count}`),
+    submit:  (data) => request('/writing/submit', { method: 'POST', body: JSON.stringify(data) }),
+    history: (limit = 50) => request(`/writing/history?limit=${limit}`),
 };
 
 // ── International Exams (TOEFL Writing) ─────────────────────

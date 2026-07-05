@@ -37,6 +37,9 @@ from database.models import ExamQuestion, ExamAttempt, ExamTaskResult, User
 from api.auth import get_current_user, owner_id, scope_to_owner
 from api.quota import require_ai_access, consume_ai_quota
 from services import groq as groq_service
+from services import writing_metrics
+
+_ESSAY_TASK_TYPES = ("email", "academic_discussion")
 
 router = APIRouter(prefix="/api/exams", tags=["exams"])
 
@@ -275,6 +278,7 @@ def grade_task(
         raw_score = graded["raw_score"]
         band = _norm_to_band(graded["normalized"])
         user_response = json.dumps(data.sentence_orders, ensure_ascii=False)
+        metrics = None  # sin texto libre, no aplica
 
     # ── Ensayos: una llamada a Groq según la rúbrica ────────────────────────
     else:
@@ -317,6 +321,9 @@ def grade_task(
         raw_score = float(evaluation.get("band", 0) or 0)
         band = _norm_to_band(raw_score / 5.0)
         user_response = text
+        # Métricas deterministas (sin IA): errores por tipo + nivel CEFR del
+        # vocabulario, calculadas sobre la `evaluation` que la IA YA devolvió.
+        metrics = writing_metrics.compute_metrics(text, evaluation, db)
 
     result = ExamTaskResult(
         attempt_id=attempt.id,
@@ -326,6 +333,7 @@ def grade_task(
         evaluation=json.dumps(evaluation, ensure_ascii=False),
         raw_score=raw_score,
         band=band,
+        metrics=json.dumps(metrics, ensure_ascii=False) if metrics is not None else None,
     )
     db.add(result)
     db.commit()
@@ -335,6 +343,7 @@ def grade_task(
         id=result.id, task_type=result.task_type,
         raw_score=result.raw_score, band=result.band,
         evaluation=evaluation, user_response=user_response,
+        metrics=metrics,
     )
 
 
@@ -343,10 +352,22 @@ def _result_out(r: ExamTaskResult) -> ExamTaskResultOut:
         evaluation = json.loads(r.evaluation)
     except (json.JSONDecodeError, TypeError):
         evaluation = {}
+    metrics = None
+    if r.metrics:
+        try:
+            metrics = json.loads(r.metrics)
+        except (json.JSONDecodeError, TypeError):
+            metrics = None
+    elif r.task_type in _ESSAY_TASK_TYPES:
+        # Fila vieja (previa a esta feature): calcular lazy, sin IA.
+        metrics = writing_metrics.compute_metrics(
+            r.user_response or "", evaluation if isinstance(evaluation, dict) else {}
+        )
     return ExamTaskResultOut(
         id=r.id, task_type=r.task_type, raw_score=r.raw_score, band=r.band,
         evaluation=evaluation if isinstance(evaluation, dict) else {},
         user_response=r.user_response or "",
+        metrics=metrics,
     )
 
 
@@ -420,6 +441,12 @@ def history(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
+    """
+    Historial de intentos, con métricas agregadas (errores por tipo, nivel
+    CEFR del vocabulario) de sus tareas de ensayo (email/academic_discussion;
+    build_sentence no tiene texto libre). Lazy backfill: las tareas viejas sin
+    `metrics` se calculan aquí mismo y se persisten — sin IA, sin botón.
+    """
     rows = (
         scope_to_owner(db.query(ExamAttempt), ExamAttempt, current_user)
         .filter(ExamAttempt.submitted_at.isnot(None))
@@ -427,11 +454,37 @@ def history(
         .limit(limit)
         .all()
     )
-    return ExamHistoryOut(attempts=[
-        ExamHistoryItem(
+    items: list[ExamHistoryItem] = []
+    dirty = False
+    for a in rows:
+        essay_results = [r for r in a.results if r.task_type in _ESSAY_TASK_TYPES]
+        per_task_metrics = []
+        for r in essay_results:
+            m = None
+            if r.metrics:
+                try:
+                    m = json.loads(r.metrics)
+                except (json.JSONDecodeError, TypeError):
+                    m = None
+            if m is None:
+                try:
+                    evaluation = json.loads(r.evaluation) if r.evaluation else {}
+                except (json.JSONDecodeError, TypeError):
+                    evaluation = {}
+                m = writing_metrics.compute_metrics(
+                    r.user_response or "", evaluation if isinstance(evaluation, dict) else {}, db
+                )
+                r.metrics = json.dumps(m, ensure_ascii=False)
+                dirty = True
+            per_task_metrics.append(m)
+        agg_metrics = writing_metrics.merge_metrics(per_task_metrics) if per_task_metrics else None
+
+        items.append(ExamHistoryItem(
             id=a.id, exam=a.exam, section=a.section, mode=a.mode,
             section_band=a.section_band, cefr=_cefr(a.section_band),
             created_at=a.created_at, submitted_at=a.submitted_at,
-        )
-        for a in rows
-    ])
+            metrics=agg_metrics,
+        ))
+    if dirty:
+        db.commit()
+    return ExamHistoryOut(attempts=items)

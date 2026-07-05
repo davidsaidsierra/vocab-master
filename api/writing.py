@@ -27,12 +27,15 @@ from api.schemas import (
     WritingError,
     VocabularySuggestion,
     GrammarTopicUsage,
+    WritingHistoryItem,
+    WritingHistoryOut,
 )
 from database.connection import get_db
 from database.models import Word, WritingChallenge, GrammarTopic, User
 from api.auth import get_current_user, owner_id, scope_to_owner
 from api.quota import require_ai_access, consume_ai_quota
 from services import groq as groq_service
+from services import writing_metrics
 
 logger = logging.getLogger(__name__)
 
@@ -196,6 +199,11 @@ def submit_writing(
                         "new": new,
                     })
 
+    # Métricas deterministas (sin IA): desglose de errores por tipo + nivel CEFR
+    # del vocabulario del texto. Se calcula sobre el `result` que la IA YA
+    # devolvió — cero llamadas nuevas.
+    metrics = writing_metrics.compute_metrics(text, result, db)
+
     stored_topic = topic_row.title if topic_row else (data.grammar_topic or "General writing")
     try:
         challenge = WritingChallenge(
@@ -206,6 +214,7 @@ def submit_writing(
             correction=json.dumps(result, ensure_ascii=False),
             words_used_correctly=json.dumps(list(used_lc), ensure_ascii=False),
             grammar_used_correctly=1 if result.get("grammar_used_correctly") else 0,
+            metrics=json.dumps(metrics, ensure_ascii=False),
         )
         db.add(challenge)
         db.commit()
@@ -253,4 +262,57 @@ def submit_writing(
         vocabulary_suggestions=vocab_suggestions,
         daily_used=used_today + 1,
         daily_limit=DAILY_LIMIT,
+        metrics=metrics,
     )
+
+
+@router.get("/history", response_model=WritingHistoryOut)
+def get_history(
+    limit: int = Query(50, ge=1, le=200),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Historial de retos de escritura con sus métricas deterministas (errores por
+    tipo, vocabulario por nivel CEFR). Lazy backfill: si una fila vieja no
+    tiene `metrics` calculadas (se guardó antes de esta feature), se calculan
+    aquí mismo desde `user_text` + `correction` ya almacenados y se persisten
+    — sin IA, sin botón, el historial se pone al día solo al abrirlo.
+    """
+    rows = (
+        scope_to_owner(db.query(WritingChallenge), WritingChallenge, current_user)
+        .order_by(WritingChallenge.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    items: list[WritingHistoryItem] = []
+    dirty = False
+    for row in rows:
+        try:
+            correction = json.loads(row.correction) if row.correction else {}
+        except (json.JSONDecodeError, TypeError):
+            correction = {}
+        if not isinstance(correction, dict):
+            correction = {}
+
+        metrics_data = None
+        if row.metrics:
+            try:
+                metrics_data = json.loads(row.metrics)
+            except (json.JSONDecodeError, TypeError):
+                metrics_data = None
+        if metrics_data is None:
+            metrics_data = writing_metrics.compute_metrics(row.user_text, correction, db)
+            row.metrics = json.dumps(metrics_data, ensure_ascii=False)
+            dirty = True
+
+        items.append(WritingHistoryItem(
+            id=row.id,
+            created_at=row.created_at,
+            grammar_topic=row.grammar_topic,
+            score=int(correction.get("score", 0) or 0),
+            metrics=metrics_data,
+        ))
+    if dirty:
+        db.commit()
+    return WritingHistoryOut(items=items)
