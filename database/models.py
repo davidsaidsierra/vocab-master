@@ -58,8 +58,10 @@ class Word(Base):
     definition = Column(Text, nullable=True)
     example = Column(Text, nullable=True)
     notes = Column(Text, nullable=True)
+    synonyms = Column(Text, nullable=True)          # JSON: ["glad","cheerful",...] (para el modo Synonym); NULL = sin generar
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
-    difficulty = Column(Integer, default=3)          # 1-5
+    difficulty = Column(Integer, default=3)          # 1-5 (dificultad subjetiva del usuario)
+    cefr_level = Column(String(2), nullable=True)    # A1..C2 (nivel objetivo, vía cefrpy); NULL si desconocido/frase
     mastery_level = Column(Float, default=0.0)       # 0-100
     next_review = Column(DateTime, default=_utcnow)
     ease_factor = Column(Float, default=2.5)         # SM-2

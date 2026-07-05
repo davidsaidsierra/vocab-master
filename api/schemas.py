@@ -51,6 +51,8 @@ class WordOut(BaseModel):
     category_color: str | None = None
     category_icon: str | None = None
     difficulty: int
+    cefr_level: str | None = None
+    synonyms: list[str] = []
     mastery_level: float
     next_review: datetime
     ease_factor: float
@@ -82,6 +84,14 @@ class EnrichResult(BaseModel):
 class EnrichOut(BaseModel):
     enriched: list[EnrichResult] = []
     remaining_pending: int = 0
+
+class SynonymBackfillOut(BaseModel):
+    updated: int = 0            # palabras a las que se les generó sinónimos en esta tanda
+    remaining: int = 0          # palabras que aún faltan por procesar
+
+class LevelBackfillOut(BaseModel):
+    updated: int = 0            # palabras a las que se les asignó nivel CEFR en esta pasada
+    unresolved: int = 0         # palabras sin nivel posible (frases o fuera de la base)
 
 
 # ── Reviews ─────────────────────────────────────────────────

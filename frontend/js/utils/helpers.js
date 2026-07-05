@@ -7,14 +7,19 @@ export function toast(message, type = 'success') {
     setTimeout(() => el.remove(), 3000);
 }
 
-// ── Difficulty stars HTML ────────────────────────────────────
-export function starsHTML(level, interactive = false) {
-    return Array.from({ length: 5 }, (_, i) => {
-        const filled = i < level;
-        const cls = filled ? 'filled' : 'empty';
-        const data = interactive ? `data-value="${i + 1}"` : '';
-        return `<span class="star ${cls}" ${data}>★</span>`;
-    }).join('');
+// ── CEFR level badge ─────────────────────────────────────────
+// Color por familia de nivel (intuitivo): A básico → verde, B intermedio →
+// ámbar, C avanzado → morado. Devuelve '' si la palabra no tiene nivel (frase o
+// fuera de la base de cefrpy).
+const CEFR_COLORS = {
+    A1: '#34c759', A2: '#34c759',
+    B1: '#ff9500', B2: '#ff9500',
+    C1: '#af52de', C2: '#af52de',
+};
+export function cefrBadgeHTML(level) {
+    if (!level) return '';
+    const color = CEFR_COLORS[level] || '#86868b';
+    return `<span class="badge" title="Nivel ${level} (CEFR)" style="background:${color}1f;color:${color};font-weight:600">${level}</span>`;
 }
 
 // ── Mastery color ────────────────────────────────────────────

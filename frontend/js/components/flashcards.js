@@ -1,5 +1,6 @@
 import * as api from '../api.js';
-import { toast } from '../utils/helpers.js';
+import { toast, cefrBadgeHTML } from '../utils/helpers.js';
+import { checkAnswer, checkAgainstList } from '../utils/grading.js';
 
 // ── Web Speech API pronunciation ──────────────────────────────
 function speak(text, lang = 'en-US') {
@@ -17,6 +18,7 @@ let isFlipped = false;
 let sessionCorrect = 0;
 let sessionIncorrect = 0;
 let isReverseMode = false;  // false = EN→ES (normal), true = ES→EN (reverse)
+let reviewType = 'recognition';  // recognition | translation | synonym
 
 export async function render(container) {
     sessionCorrect = 0;
@@ -32,6 +34,15 @@ export async function render(container) {
 
             <!-- ── Filters ────────────────────────────── -->
             <div class="card mb-6" style="padding:1rem 1.25rem">
+                <!-- Review type -->
+                <div class="mb-3">
+                    <label class="block text-xs text-slate-500 mb-1.5">Review type</label>
+                    <div class="inline-flex rounded-lg overflow-hidden border border-slate-700" style="font-size:0.8rem" id="review-type-toggle">
+                        <button type="button" data-type="recognition" class="rtype-btn px-3 py-1.5 font-medium transition-colors">👁 Recognition</button>
+                        <button type="button" data-type="translation" class="rtype-btn px-3 py-1.5 font-medium transition-colors">✍️ Type translation</button>
+                        <button type="button" data-type="synonym" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🔀 Synonym</button>
+                    </div>
+                </div>
                 <div class="flex flex-wrap gap-3 items-end">
                     <div class="flex-1 min-w-[140px]">
                         <label class="block text-xs text-slate-500 mb-1">Category</label>
@@ -57,18 +68,15 @@ export async function render(container) {
                         </select>
                     </div>
                     <div class="flex-1 min-w-[140px]">
-                        <label class="block text-xs text-slate-500 mb-1">Difficulty</label>
-                        <select id="review-filter-difficulty" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
-                            <option value="">All difficulties</option>
-                            <option value="5-5">⭐⭐⭐⭐⭐ Only (5)</option>
-                            <option value="4-5">⭐⭐⭐⭐ to ⭐⭐⭐⭐⭐ (4–5)</option>
-                            <option value="4-4">⭐⭐⭐⭐ Only (4)</option>
-                            <option value="3-5">⭐⭐⭐ to ⭐⭐⭐⭐⭐ (3–5)</option>
-                            <option value="3-3">⭐⭐⭐ Only (3)</option>
-                            <option value="1-3">⭐ to ⭐⭐⭐ (1–3)</option>
-                            <option value="2-2">⭐⭐ Only (2)</option>
-                            <option value="1-2">⭐ to ⭐⭐ (1–2)</option>
-                            <option value="1-1">⭐ Only (1)</option>
+                        <label class="block text-xs text-slate-500 mb-1">Level (CEFR)</label>
+                        <select id="review-filter-level" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
+                            <option value="">All levels</option>
+                            <option value="A1">🟢 A1 · básico</option>
+                            <option value="A2">🟢 A2 · básico</option>
+                            <option value="B1">🟠 B1 · intermedio</option>
+                            <option value="B2">🟠 B2 · intermedio</option>
+                            <option value="C1">🟣 C1 · avanzado</option>
+                            <option value="C2">🟣 C2 · avanzado</option>
                         </select>
                     </div>
                     <div class="flex-1 min-w-[150px]">
@@ -91,7 +99,7 @@ export async function render(container) {
                 </div>
 
                 <!-- Mode toggle -->
-                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-800/60">
+                <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-800/60" id="study-mode-row">
                     <span class="text-xs text-slate-500">Study mode:</span>
                     <div class="flex rounded-lg overflow-hidden border border-slate-700" style="font-size:0.75rem">
                         <button id="mode-normal" class="mode-btn active px-3 py-1.5 font-medium transition-colors" style="background:rgba(139,92,246,0.2);color:#a78bfa">
@@ -104,6 +112,10 @@ export async function render(container) {
                     <span class="text-xs text-slate-600" id="mode-label">See the word, recall the translation</span>
                 </div>
                 <p class="text-xs text-slate-600 mt-2" id="word-count-label">Loading…</p>
+                <div id="synonym-tools" class="hidden mt-2 flex items-center gap-3 flex-wrap">
+                    <button class="btn-secondary" id="gen-synonyms-btn" style="padding:0.35rem 0.9rem;font-size:0.75rem">✨ Generar sinónimos faltantes (usa IA)</button>
+                    <span class="text-xs text-slate-500" id="gen-synonyms-status"></span>
+                </div>
             </div>
 
             <!-- ── Flashcard area (hidden until Start) ── -->
@@ -143,6 +155,22 @@ export async function render(container) {
                     </div>
                 </div>
 
+                <!-- ── Typing card (translation / synonym) ── -->
+                <div id="typing-container" class="hidden">
+                    <div class="card" style="padding:2rem 1.5rem;text-align:center">
+                        <div class="flex items-center justify-center gap-2 mb-3" id="typing-badges"></div>
+                        <p class="text-xs uppercase tracking-wider mb-2" id="typing-label" style="color:#a5b4fc">Escribe la traducción</p>
+                        <p class="text-3xl font-bold mb-1" id="typing-prompt"></p>
+                        <p class="text-sm text-slate-500 mb-4" id="typing-hint"></p>
+                        <input type="text" id="typing-input" class="form-input" style="text-align:center;max-width:320px;margin:0 auto" placeholder="Escribe aquí…" autocomplete="off" autocapitalize="off" spellcheck="false">
+                        <div class="mt-4 flex items-center justify-center gap-4" id="typing-actions">
+                            <button class="btn-primary" id="typing-submit" style="padding:0.5rem 1.5rem">Check</button>
+                            <button class="text-xs text-slate-500 hover:text-slate-400 transition-colors" id="typing-skip">⏭ Skip</button>
+                        </div>
+                        <div id="typing-feedback" class="hidden mt-4" style="max-width:360px;margin-left:auto;margin-right:auto"></div>
+                    </div>
+                </div>
+
                 <div id="rating-panel" class="hidden">
                     <p class="text-xs text-slate-500 text-center mb-3">Did you know it? <span class="text-slate-600">(← / →)</span></p>
                     <div class="flex gap-4">
@@ -176,7 +204,7 @@ export async function render(container) {
 
     const filterCat        = container.querySelector('#review-filter-cat');
     const filterDays       = container.querySelector('#review-filter-days');
-    const filterDiff       = container.querySelector('#review-filter-difficulty');
+    const filterLevel      = container.querySelector('#review-filter-level');
     const filterMastery    = container.querySelector('#review-filter-mastery');
     const customWrapper    = container.querySelector('#custom-days-wrapper');
     const customInput      = container.querySelector('#custom-days-input');
@@ -189,6 +217,64 @@ export async function render(container) {
     const modeNormalBtn    = container.querySelector('#mode-normal');
     const modeReverseBtn   = container.querySelector('#mode-reverse');
     const modeLabel        = container.querySelector('#mode-label');
+    const reviewTypeToggle   = container.querySelector('#review-type-toggle');
+    const studyModeRow       = container.querySelector('#study-mode-row');
+    const flashcardContainer = container.querySelector('.flashcard-container');
+    const typingContainer    = container.querySelector('#typing-container');
+    const typingBadges       = container.querySelector('#typing-badges');
+    const typingLabel        = container.querySelector('#typing-label');
+    const typingPrompt       = container.querySelector('#typing-prompt');
+    const typingHint         = container.querySelector('#typing-hint');
+    const typingInput        = container.querySelector('#typing-input');
+    const typingSubmit       = container.querySelector('#typing-submit');
+    const typingSkip         = container.querySelector('#typing-skip');
+    const typingFeedback     = container.querySelector('#typing-feedback');
+    const synonymTools       = container.querySelector('#synonym-tools');
+    const genSynonymsBtn     = container.querySelector('#gen-synonyms-btn');
+    const genSynonymsStatus  = container.querySelector('#gen-synonyms-status');
+
+    // ── Review type (recognition / translation / synonym) ─
+    function setReviewType(type) {
+        reviewType = type;
+        reviewTypeToggle.querySelectorAll('.rtype-btn').forEach(b => {
+            const active = b.dataset.type === type;
+            b.style.background = active ? 'rgba(0,113,227,0.12)' : '';
+            b.style.color = active ? '#0071e3' : '#64748b';
+        });
+        // La dirección EN↔ES no aplica al sinónimo (siempre inglés→inglés).
+        studyModeRow.style.display = type === 'synonym' ? 'none' : '';
+        synonymTools.classList.toggle('hidden', type !== 'synonym');
+    }
+    reviewTypeToggle.querySelectorAll('.rtype-btn').forEach(b => {
+        b.addEventListener('click', () => {
+            if (b.disabled) return;
+            setReviewType(b.dataset.type);
+            updateWordCount();
+        });
+    });
+    setReviewType('recognition');
+
+    // ── Generar sinónimos faltantes (backfill por lotes, gastando IA) ──
+    genSynonymsBtn.addEventListener('click', async () => {
+        genSynonymsBtn.disabled = true;
+        let total = 0;
+        try {
+            while (true) {
+                const r = await api.words.backfillSynonyms();
+                total += r.updated;
+                if (r.updated === 0 || r.remaining === 0) {
+                    genSynonymsStatus.textContent = `✓ Listo (${total} palabra${total !== 1 ? 's' : ''} procesada${total !== 1 ? 's' : ''})`;
+                    break;
+                }
+                genSynonymsStatus.textContent = `Generando… ${total} listas, ${r.remaining} restantes`;
+            }
+            await updateWordCount();
+        } catch (err) {
+            genSynonymsStatus.textContent = err.message;
+        } finally {
+            genSynonymsBtn.disabled = false;
+        }
+    });
 
     // ── Mode toggle ─────────────────────────────────────
     function setMode(reverse) {
@@ -227,14 +313,16 @@ export async function render(container) {
             params.days = filterDays.value;
         }
 
-        if (filterDiff.value) {
-            const [min, max] = filterDiff.value.split('-');
-            params.difficulty_min = min;
-            params.difficulty_max = max;
+        if (filterLevel.value) {
+            params.cefr_level = filterLevel.value;
         }
 
         if (filterMastery.value !== '') {
             params.mastery_max = filterMastery.value;
+        }
+
+        if (reviewType === 'synonym') {
+            params.with_synonyms = 1;
         }
 
         return params;
@@ -251,7 +339,7 @@ export async function render(container) {
     }
 
     filterCat.addEventListener('change', updateWordCount);
-    filterDiff.addEventListener('change', updateWordCount);
+    filterLevel.addEventListener('change', updateWordCount);
     filterMastery.addEventListener('change', updateWordCount);
     customInput.addEventListener('input', updateWordCount);
     await updateWordCount();
@@ -305,6 +393,15 @@ export async function render(container) {
     // ── Keyboard shortcuts ──────────────────────────────
     function onKeyDown(e) {
         if (reviewArea.classList.contains('hidden')) return;
+        // Modo escrito: Enter califica (mientras no haya feedback). Con feedback
+        // visible, el botón "Next" tiene el foco y Enter lo activa de forma nativa.
+        if (reviewType !== 'recognition') {
+            if (e.key === 'Enter' && typingFeedback.classList.contains('hidden')) {
+                e.preventDefault();
+                gradeTyping();
+            }
+            return;
+        }
         if (e.key === ' ' || e.key === 'ArrowUp') { e.preventDefault(); flipCard(); }
         if (isFlipped) {
             if (e.key === 'ArrowRight') { e.preventDefault(); submitAnswer(4); }
@@ -316,6 +413,14 @@ export async function render(container) {
     // ── Binary feedback buttons ─────────────────────────
     container.querySelector('#btn-correct').addEventListener('click', () => submitAnswer(4));
     container.querySelector('#btn-incorrect').addEventListener('click', () => submitAnswer(1));
+
+    // ── Typing mode: check + skip ───────────────────────
+    typingSubmit.addEventListener('click', gradeTyping);
+    typingSkip.addEventListener('click', () => {
+        currentIndex++;
+        if (currentIndex >= practiceWords.length) { showSessionComplete(); return; }
+        showCard();
+    });
 
     // ── Skip button ─────────────────────────────────────
     container.querySelector('#btn-skip').addEventListener('click', () => {
@@ -349,11 +454,32 @@ export async function render(container) {
         }
     }
 
-    function showCard() {
-        const w = practiceWords[currentIndex];
+    function esc(s) {
+        return String(s ?? '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function updateProgress() {
         const total = practiceWords.length;
         const pct   = Math.round((currentIndex / total) * 100);
-        const cat   = w.category_name ? `${w.category_icon} ${w.category_name}` : '';
+        container.querySelector('#review-progress').textContent = `${currentIndex + 1} / ${total}`;
+        container.querySelector('#session-score').textContent = `✓ ${sessionCorrect}  ✗ ${sessionIncorrect}`;
+        container.querySelector('#review-progress-bar').style.width = `${pct}%`;
+    }
+
+    function showCard() {
+        updateProgress();
+        if (reviewType === 'recognition') showRecognitionCard();
+        else showTypingCard();
+    }
+
+    function showRecognitionCard() {
+        flashcardContainer.classList.remove('hidden');
+        typingContainer.classList.add('hidden');
+
+        const w = practiceWords[currentIndex];
+        const cat = w.category_name ? `${w.category_icon} ${w.category_name}` : '';
 
         if (!isReverseMode) {
             // ── Normal: front = English word ────────────────
@@ -380,9 +506,100 @@ export async function render(container) {
         }
 
         container.querySelector('#card-notes').textContent = w.notes ? `📝 ${w.notes}` : '';
-        container.querySelector('#review-progress').textContent = `${currentIndex + 1} / ${total}`;
-        container.querySelector('#session-score').textContent = `✓ ${sessionCorrect}  ✗ ${sessionIncorrect}`;
-        container.querySelector('#review-progress-bar').style.width = `${pct}%`;
+    }
+
+    function showTypingCard() {
+        flashcardContainer.classList.add('hidden');
+        typingContainer.classList.remove('hidden');
+
+        const w = practiceWords[currentIndex];
+        if (reviewType === 'synonym') {
+            typingPrompt.textContent = w.word;
+            typingLabel.textContent = 'Escribe un sinónimo (en inglés)';
+            typingHint.textContent = w.translation || '';
+        } else if (!isReverseMode) {
+            typingPrompt.textContent = w.word;
+            typingLabel.textContent = 'Escribe la traducción';
+            typingHint.textContent = '';
+        } else {
+            typingPrompt.textContent = w.translation;
+            typingLabel.textContent = 'Escribe la palabra en inglés';
+            typingHint.textContent = '';
+        }
+
+        const cat = w.category_name
+            ? `<span class="badge" style="background:${w.category_color || '#8b5cf6'}22;color:${w.category_color || '#8b5cf6'}">${w.category_icon || ''} ${esc(w.category_name)}</span>`
+            : '';
+        typingBadges.innerHTML = cefrBadgeHTML(w.cefr_level) + cat;
+
+        typingInput.value = '';
+        typingInput.disabled = false;
+        typingSubmit.classList.remove('hidden');
+        typingSubmit.disabled = false;
+        typingFeedback.classList.add('hidden');
+        typingFeedback.innerHTML = '';
+        setTimeout(() => typingInput.focus(), 60);
+    }
+
+    function gradeTyping() {
+        const w = practiceWords[currentIndex];
+        if (!w) return;
+        const val = typingInput.value;
+        if (!val.trim()) { typingInput.focus(); return; }
+
+        let expected, res;
+        if (reviewType === 'synonym') {
+            const list = Array.isArray(w.synonyms) ? w.synonyms : [];
+            res = checkAgainstList(val, list);
+            expected = list.join(', ');
+        } else if (!isReverseMode) {
+            expected = w.translation;
+            res = checkAnswer(val, expected);
+        } else {
+            expected = w.word;
+            res = checkAnswer(val, expected);
+        }
+
+        typingInput.disabled = true;
+        typingSubmit.classList.add('hidden');
+        const quality = res.correct ? (res.exact ? 5 : 4) : 1;
+        renderTypingFeedback(res, expected, w, quality);
+    }
+
+    function renderTypingFeedback(res, expectedRaw, w, quality) {
+        const ok = res.correct;
+        const isSyn = reviewType === 'synonym';
+        const head = ok
+            ? (res.exact ? '✓ Correcto' : '✓ Correcto (con un typo)')
+            : '✗ Incorrecto';
+        // En sinónimos siempre mostramos la lista válida (es educativo). En
+        // traducción solo revelamos la respuesta cuando falla.
+        const synList = (isSyn && Array.isArray(w.synonyms) && w.synonyms.length)
+            ? `<div class="text-sm mt-1" style="color:var(--text-primary)">Sinónimos válidos: <span class="font-bold">${esc(w.synonyms.join(', '))}</span></div>`
+            : '';
+        const revealAnswer = (!ok && !isSyn)
+            ? `<div class="text-sm mt-1" style="color:var(--text-primary)">Respuesta: <span class="font-bold">${esc(expectedRaw)}</span></div>`
+            : '';
+        // Override sin IA: si escribiste un sinónimo válido que no estaba en la lista.
+        const override = (!ok && isSyn)
+            ? `<button class="mt-2 text-xs font-medium" id="typing-override" style="color:#0071e3">✓ Mi sinónimo también vale — marcar como correcto</button>`
+            : '';
+        typingFeedback.innerHTML = `
+            <div class="rounded-lg p-3 text-left" style="background:${ok ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.1)'}">
+                <div class="font-semibold text-sm" style="color:${ok ? '#34c759' : '#ff3b30'}">${head}</div>
+                ${revealAnswer}
+                ${synList}
+                ${w.example ? `<div class="text-xs text-slate-500 italic mt-1">"${esc(w.example)}"</div>` : ''}
+                ${override}
+            </div>
+            <button class="btn-primary mt-3 w-full" id="typing-next" style="padding:0.5rem 1.5rem">Next →</button>
+        `;
+        typingFeedback.classList.remove('hidden');
+        const nextBtn = typingFeedback.querySelector('#typing-next');
+        nextBtn.addEventListener('click', () => submitAnswer(quality));
+        const ov = typingFeedback.querySelector('#typing-override');
+        if (ov) ov.addEventListener('click', () => submitAnswer(4));  // marcar correcto sin IA
+        setTimeout(() => nextBtn.focus(), 50);
     }
 
     // Remove keyboard listener and stop speech when navigating away

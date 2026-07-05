@@ -67,6 +67,8 @@ def get_practice_words(
     days: int | None = Query(None, description="Only words added in the last N days (0 = today)"),
     difficulty_min: int | None = Query(None, ge=1, le=5, description="Min difficulty (1-5)"),
     difficulty_max: int | None = Query(None, ge=1, le=5, description="Max difficulty (1-5)"),
+    cefr_level: str | None = Query(None, description="Filtrar por nivel CEFR (A1..C2)"),
+    with_synonyms: bool = Query(False, description="Solo palabras con sinónimos (modo Synonym)"),
     mastery_max: int | None = Query(None, ge=0, le=100, description="Only words with mastery ≤ this value (0-100)"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
@@ -76,6 +78,12 @@ def get_practice_words(
 
     if category_id:
         q = q.filter(Word.category_id == category_id)
+
+    if cefr_level:
+        q = q.filter(Word.cefr_level == cefr_level.upper())
+
+    if with_synonyms:
+        q = q.filter(Word.synonyms.isnot(None), Word.synonyms != "[]")
 
     if days is not None:
         now = datetime.now(timezone.utc)

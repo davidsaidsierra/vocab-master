@@ -42,6 +42,13 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "same-origin"
+        # Assets estáticos (JS/CSS): revalidar SIEMPRE contra el servidor. Sin
+        # esto el navegador los cachea por heurística y tras un deploy podría
+        # seguir ejecutando módulos viejos. Con ETag la revalidación es barata
+        # (304 si no cambió). Los módulos ES se importan sin ?v=, así que este
+        # header es lo que garantiza que un cambio de frontend llegue al usuario.
+        if request.url.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "no-cache"
         return response
 
 

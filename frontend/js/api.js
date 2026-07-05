@@ -65,6 +65,8 @@ export const words = {
     quick:  (data) => request('/words/quick', { method: 'POST', body: JSON.stringify(data) }),
     pending: () => request('/words/pending'),
     enrichPending: () => request('/words/enrich-pending', { method: 'POST' }),
+    backfillSynonyms: () => request('/words/backfill-synonyms', { method: 'POST' }),
+    backfillLevels: () => request('/words/backfill-levels', { method: 'POST' }),
 };
 
 // ── Dictionary (offline bidireccional: autocompletado + traducción rápida) ──

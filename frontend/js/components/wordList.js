@@ -1,5 +1,5 @@
 import * as api from '../api.js';
-import { starsHTML, masteryColor, formatDate, truncate, toast } from '../utils/helpers.js';
+import { masteryColor, formatDate, truncate, toast, cefrBadgeHTML } from '../utils/helpers.js';
 import { openLookupModal } from './lookupModal.js';
 
 let categoriesCache = [];
@@ -9,7 +9,8 @@ export async function render(container) {
         <div class="page-enter" id="words-page">
             <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
                 <h2 class="text-2xl font-bold">My Words</h2>
-                <div class="flex gap-3">
+                <div class="flex gap-3 items-center flex-wrap">
+                    <button id="backfill-levels-btn" class="btn-secondary" title="Asigna el nivel CEFR (A1–C2) a las palabras que aún no lo tienen. Sin IA, no toca nada más." style="padding:0.6rem 1rem;font-size:0.85rem;white-space:nowrap">↻ Actualizar niveles</button>
                     <input type="text" id="search-input" class="form-input w-56" placeholder="Search words…">
                     <select id="filter-category" class="form-input w-44">
                         <option value="">All Categories</option>
@@ -25,6 +26,26 @@ export async function render(container) {
     const grid = container.querySelector('#words-grid');
     const searchInput = container.querySelector('#search-input');
     const filterCat = container.querySelector('#filter-category');
+    const backfillBtn = container.querySelector('#backfill-levels-btn');
+
+    // ── Actualizar niveles CEFR de palabras viejas (sin IA) ──────
+    backfillBtn.addEventListener('click', async () => {
+        backfillBtn.disabled = true;
+        const prev = backfillBtn.textContent;
+        backfillBtn.textContent = 'Actualizando…';
+        try {
+            const r = await api.words.backfillLevels();
+            toast(r.updated > 0
+                ? `${r.updated} palabra${r.updated !== 1 ? 's' : ''} actualizada${r.updated !== 1 ? 's' : ''} con su nivel`
+                : 'Todo al día — no había niveles por completar');
+            await loadWords();
+        } catch (err) {
+            toast(err.message, 'error');
+        } finally {
+            backfillBtn.disabled = false;
+            backfillBtn.textContent = prev;
+        }
+    });
 
     // Load categories for filter + edit modal
     categoriesCache = await api.categories.list();
@@ -66,7 +87,10 @@ export async function render(container) {
                 <div class="word-card" style="--card-accent:${w.category_color || '#8b5cf6'}">
                     <div class="flex items-start justify-between mb-2">
                         <div>
-                            <h3 class="text-lg font-bold" style="color:var(--text-primary)">${w.word}</h3>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-bold" style="color:var(--text-primary)">${w.word}</h3>
+                                ${cefrBadgeHTML(w.cefr_level)}
+                            </div>
                             <p class="text-sm text-slate-400">${w.translation}</p>
                         </div>
                         <div class="flex gap-1">
@@ -76,10 +100,7 @@ export async function render(container) {
                         </div>
                     </div>
                     ${w.example ? `<p class="text-xs text-slate-500 italic mt-2 mb-2">"${truncate(w.example, 80)}"</p>` : ''}
-                    <div class="flex items-center justify-between mt-3">
-                        ${catBadge}
-                        <div class="stars text-xs">${starsHTML(w.difficulty)}</div>
-                    </div>
+                    ${catBadge ? `<div class="mt-3">${catBadge}</div>` : ''}
                     <div class="mt-3">
                         <div class="flex justify-between text-xs text-slate-500 mb-1">
                             <span>Mastery</span>
@@ -191,20 +212,12 @@ function openEditModal(word, onSave) {
                     <label class="block text-xs text-slate-400 mb-1">Notes</label>
                     <textarea name="notes" rows="2" class="form-input">${escHtml(word.notes || '')}</textarea>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Category</label>
-                        <select name="category_id" class="form-input">
-                            <option value="" ${!word.category_id ? 'selected' : ''}>None</option>
-                            ${catOptions}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Difficulty</label>
-                        <select name="difficulty" class="form-input">
-                            ${[1,2,3,4,5].map(i => `<option value="${i}" ${i === word.difficulty ? 'selected' : ''}>${i} ${'★'.repeat(i)}</option>`).join('')}
-                        </select>
-                    </div>
+                <div>
+                    <label class="block text-xs text-slate-400 mb-1">Category</label>
+                    <select name="category_id" class="form-input">
+                        <option value="" ${!word.category_id ? 'selected' : ''}>None</option>
+                        ${catOptions}
+                    </select>
                 </div>
                 <div class="flex gap-3 pt-1">
                     <button type="submit" class="btn-primary flex-1">Save Changes</button>
@@ -233,7 +246,6 @@ function openEditModal(word, onSave) {
             example: form.example.value.trim() || null,
             notes: form.notes.value.trim() || null,
             category_id: form.category_id.value ? parseInt(form.category_id.value) : null,
-            difficulty: parseInt(form.difficulty.value),
         };
         try {
             await api.words.update(word.id, data);

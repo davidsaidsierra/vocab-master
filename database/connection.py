@@ -41,6 +41,10 @@ def _migrate_word_columns():
         to_add.append("ADD COLUMN needs_enrichment INTEGER DEFAULT 0")
     if "source" not in existing:
         to_add.append("ADD COLUMN source VARCHAR(20) DEFAULT 'manual'")
+    if "cefr_level" not in existing:
+        to_add.append("ADD COLUMN cefr_level VARCHAR(2)")
+    if "synonyms" not in existing:
+        to_add.append("ADD COLUMN synonyms TEXT")
     if not to_add:
         return
     with engine.begin() as conn:

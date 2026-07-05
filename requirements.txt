@@ -8,3 +8,4 @@ groq==1.2.0
 python-dotenv==1.0.1
 PyJWT==2.9.0
 passlib==1.7.4
+cefrpy==1.0.2

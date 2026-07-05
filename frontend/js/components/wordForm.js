@@ -115,21 +115,12 @@ export async function render(container) {
                     <label class="block text-sm text-slate-400 mb-1">Notes</label>
                     <textarea name="notes" rows="2" class="form-input" placeholder="Any personal notes…"></textarea>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-1">Category</label>
-                        <select name="category_id" class="form-input">
-                            <option value="">No category</option>
-                            ${cats.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm text-slate-400 mb-2">Difficulty</label>
-                        <div class="stars text-2xl" id="difficulty-stars">
-                            ${[1,2,3,4,5].map(i => `<span class="star ${i <= 3 ? 'filled' : 'empty'}" data-value="${i}">★</span>`).join('')}
-                        </div>
-                        <input type="hidden" name="difficulty" value="3">
-                    </div>
+                <div>
+                    <label class="block text-sm text-slate-400 mb-1">Category</label>
+                    <select name="category_id" class="form-input">
+                        <option value="">No category</option>
+                        ${cats.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('')}
+                    </select>
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button type="submit" class="btn-primary flex-1">Add Word</button>
@@ -195,20 +186,6 @@ export async function render(container) {
         });
     });
 
-    // Difficulty stars interaction
-    const starsContainer = container.querySelector('#difficulty-stars');
-    const difficultyInput = container.querySelector('[name="difficulty"]');
-    starsContainer.addEventListener('click', (e) => {
-        const star = e.target.closest('.star');
-        if (!star) return;
-        const val = parseInt(star.dataset.value);
-        difficultyInput.value = val;
-        starsContainer.querySelectorAll('.star').forEach((s, i) => {
-            s.classList.toggle('filled', i < val);
-            s.classList.toggle('empty', i >= val);
-        });
-    });
-
     // Form submit
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -219,17 +196,11 @@ export async function render(container) {
             example: form.example.value.trim() || null,
             notes: form.notes.value.trim() || null,
             category_id: form.category_id.value ? parseInt(form.category_id.value) : null,
-            difficulty: parseInt(form.difficulty.value),
         };
         try {
             await api.words.create(data);
             toast(`"${data.word}" added!`);
             form.reset();
-            difficultyInput.value = 3;
-            starsContainer.querySelectorAll('.star').forEach((s, i) => {
-                s.classList.toggle('filled', i < 3);
-                s.classList.toggle('empty', i >= 3);
-            });
         } catch (err) {
             toast(err.message, 'error');
         }
