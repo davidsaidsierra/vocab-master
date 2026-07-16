@@ -1,6 +1,7 @@
 import * as api from '../api.js';
 import { masteryColor, formatDate, truncate, toast, cefrBadgeHTML } from '../utils/helpers.js';
 import { openLookupModal } from './lookupModal.js';
+import { POS_OPTIONS, CEFR_OPTIONS, DAYS_OPTIONS, MASTERY_OPTIONS, optionsHTML } from '../utils/wordFilters.js';
 
 let categoriesCache = [];
 
@@ -12,8 +13,38 @@ export async function render(container) {
                 <div class="flex gap-3 items-center flex-wrap">
                     <button id="backfill-levels-btn" class="btn-secondary" title="Asigna el nivel CEFR (A1–C2) a las palabras que aún no lo tienen. Sin IA, no toca nada más." style="padding:0.6rem 1rem;font-size:0.85rem;white-space:nowrap">↻ Actualizar niveles</button>
                     <input type="text" id="search-input" class="form-input w-56" placeholder="Search words…">
-                    <select id="filter-category" class="form-input w-44">
+                </div>
+            </div>
+            <!-- ── Filtros (mismos que en Repaso) ─────────── -->
+            <div class="flex flex-wrap gap-3 items-end mb-6">
+                <div class="min-w-[150px]">
+                    <label class="block text-xs text-slate-500 mb-1">Category</label>
+                    <select id="filter-category" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                         <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div class="min-w-[150px]">
+                    <label class="block text-xs text-slate-500 mb-1">Added in the last…</label>
+                    <select id="filter-days" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
+                        ${optionsHTML(DAYS_OPTIONS)}
+                    </select>
+                </div>
+                <div class="min-w-[140px]">
+                    <label class="block text-xs text-slate-500 mb-1">Level (CEFR)</label>
+                    <select id="filter-level" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
+                        ${optionsHTML(CEFR_OPTIONS)}
+                    </select>
+                </div>
+                <div class="min-w-[150px]">
+                    <label class="block text-xs text-slate-500 mb-1">Mastery level</label>
+                    <select id="filter-mastery" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
+                        ${optionsHTML(MASTERY_OPTIONS)}
+                    </select>
+                </div>
+                <div class="min-w-[150px]">
+                    <label class="block text-xs text-slate-500 mb-1">Categoría gramatical</label>
+                    <select id="filter-pos" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
+                        ${optionsHTML(POS_OPTIONS)}
                     </select>
                 </div>
             </div>
@@ -26,6 +57,10 @@ export async function render(container) {
     const grid = container.querySelector('#words-grid');
     const searchInput = container.querySelector('#search-input');
     const filterCat = container.querySelector('#filter-category');
+    const filterDays = container.querySelector('#filter-days');
+    const filterLevel = container.querySelector('#filter-level');
+    const filterMastery = container.querySelector('#filter-mastery');
+    const filterPos = container.querySelector('#filter-pos');
     const backfillBtn = container.querySelector('#backfill-levels-btn');
 
     // ── Actualizar niveles CEFR de palabras viejas (sin IA) ──────
@@ -62,6 +97,10 @@ export async function render(container) {
         const params = {};
         if (searchInput.value.trim()) params.search = searchInput.value.trim();
         if (filterCat.value) params.category_id = filterCat.value;
+        if (filterDays.value !== '') params.days = filterDays.value;
+        if (filterLevel.value) params.cefr_level = filterLevel.value;
+        if (filterMastery.value !== '') params.mastery_max = filterMastery.value;
+        if (filterPos.value) params.part_of_speech = filterPos.value;
         allWords = await api.words.list(params);
         renderGrid();
     }
@@ -87,9 +126,11 @@ export async function render(container) {
                 <div class="word-card" style="--card-accent:${w.category_color || '#8b5cf6'}">
                     <div class="flex items-start justify-between mb-2">
                         <div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <h3 class="text-lg font-bold" style="color:var(--text-primary)">${w.word}</h3>
                                 ${cefrBadgeHTML(w.cefr_level)}
+                                ${w.part_of_speech ? `<span class="badge" style="background:rgba(139,92,246,0.15);color:#a78bfa">${w.part_of_speech}</span>` : ''}
+                                ${(w.meanings && w.meanings.length > 1) ? `<span class="badge" style="background:rgba(148,163,184,0.15);color:#94a3b8" title="Significados guardados">${w.meanings.length} sig.</span>` : ''}
                             </div>
                             <p class="text-sm text-slate-400">${w.translation}</p>
                         </div>
@@ -121,6 +162,17 @@ export async function render(container) {
                 const word = allWords.find(w => w.id === parseInt(btn.dataset.id));
                 if (!word) return;
                 openLookupModal(word.word, {
+                    // Guardar-todo: actualiza la palabra con TODAS sus acepciones.
+                    onSaveAll: async (full) => {
+                        await api.words.update(word.id, {
+                            meanings: full.meanings || [],
+                            common_phrases: full.common_phrases || [],
+                            phonetic: full.phonetic || null,
+                        });
+                        toast(`"${word.word}" actualizada con todos sus significados ✓`);
+                        loadWords();
+                    },
+                    // Alternativa: guardar solo un significado elegido.
                     onPickMeaning: async (meaning) => {
                         const firstEx = (meaning.examples && meaning.examples[0]) || null;
                         await api.words.update(word.id, {
@@ -167,6 +219,10 @@ export async function render(container) {
         debounce = setTimeout(loadWords, 300);
     });
     filterCat.addEventListener('change', loadWords);
+    filterDays.addEventListener('change', loadWords);
+    filterLevel.addEventListener('change', loadWords);
+    filterMastery.addEventListener('change', loadWords);
+    filterPos.addEventListener('change', loadWords);
 
     await loadWords();
 }

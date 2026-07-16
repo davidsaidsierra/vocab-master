@@ -367,7 +367,7 @@ Return a JSON object with this EXACT structure and nothing else:
   "phonetic": "IPA pronunciation (e.g. /ʃʊər/), empty string if unknown",
   "meanings": [
     {{
-      "part_of_speech": "noun|verb|adjective|adverb|interjection|phrase|...",
+      "part_of_speech": "EXACTLY ONE of: noun|verb|adjective|adverb|pronoun|preposition|conjunction|determiner|interjection|phrase",
       "translation_es": "traducción principal al español (1-3 palabras)",
       "definition_en": "short English definition (max 15 words)",
       "definition_es": "definición corta en español (max 15 palabras)",
@@ -390,6 +390,10 @@ Return a JSON object with this EXACT structure and nothing else:
 }}
 
 Rules:
+- `part_of_speech` MUST be exactly one value from this closed list:
+  noun, verb, adjective, adverb, pronoun, preposition, conjunction,
+  determiner, interjection, phrase. A "connector" is a conjunction. If a
+  meaning is an idiom/multi-word expression, use "phrase".
 - Include ALL common distinct meanings. For example, for "sure" include:
   confirmation ("yes, of course"), certainty ("I am sure"), and the phrases
   "make sure", "for sure", "sure thing".
@@ -400,4 +404,27 @@ Rules:
 - If the word has only one meaning, return only one item in `meanings`.
 - Return ONLY valid JSON. Do not include markdown, code fences or any
   explanation text.
+"""
+
+
+CONTEXTUAL_LOOKUP_PROMPT = """You are a Spanish-speaking English tutor. A student is reading a text and
+selected the word/phrase "{word}" inside this exact sentence:
+
+{context}
+
+Explain what "{word}" means SPECIFICALLY in that sentence — not a generic
+dictionary entry, but the sense that applies here given the surrounding words.
+
+Return a JSON object with this EXACT structure and nothing else:
+
+{{
+  "part_of_speech": "EXACTLY ONE of: noun|verb|adjective|adverb|pronoun|preposition|conjunction|determiner|interjection|phrase",
+  "sense_es": "traducción/sentido de la palabra TAL COMO se usa en esa oración (1-4 palabras)",
+  "explanation_es": "1-2 frases en español explicando por qué significa eso ahí, mencionando alguna pista del contexto (max 35 palabras)"
+}}
+
+Rules:
+- Base the meaning ONLY on the sentence given, even if the word has other common meanings elsewhere.
+- `sense_es` must be natural Latin American / neutral Spanish.
+- Return ONLY valid JSON. No markdown, no code fences, no extra text.
 """

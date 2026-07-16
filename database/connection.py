@@ -45,6 +45,16 @@ def _migrate_word_columns():
         to_add.append("ADD COLUMN cefr_level VARCHAR(2)")
     if "synonyms" not in existing:
         to_add.append("ADD COLUMN synonyms TEXT")
+    if "meanings" not in existing:
+        to_add.append("ADD COLUMN meanings TEXT")
+    if "common_phrases" not in existing:
+        to_add.append("ADD COLUMN common_phrases TEXT")
+    if "part_of_speech" not in existing:
+        to_add.append("ADD COLUMN part_of_speech VARCHAR(20)")
+    if "phonetic" not in existing:
+        to_add.append("ADD COLUMN phonetic VARCHAR(60)")
+    if "source_document_id" not in existing:
+        to_add.append("ADD COLUMN source_document_id INTEGER")
     if not to_add:
         return
     with engine.begin() as conn:
@@ -96,7 +106,7 @@ def _bootstrap_admin():
         db.commit()
 
 
-_USER_ID_TABLES = ["words", "categories", "reviews", "writing_challenges", "exam_attempts"]
+_USER_ID_TABLES = ["words", "categories", "reviews", "writing_challenges", "exam_attempts", "documents", "annotations"]
 
 
 def _migrate_user_columns():
@@ -152,6 +162,7 @@ def init_db():
     from database.models import (  # noqa: F401
         User, Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic,
         DictionaryEntry, DictionaryEntryEs, ExamQuestion, ExamAttempt, ExamTaskResult,
+        Document, Annotation,
     )
     Base.metadata.create_all(bind=engine)
     _migrate_word_columns()

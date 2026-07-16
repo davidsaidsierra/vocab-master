@@ -20,6 +20,35 @@ class CategoryOut(BaseModel):
         from_attributes = True
 
 
+# ── Lookup (AI-powered contextual translation) ─────────────
+# Definidos antes de Words porque un Word puede guardar TODAS sus acepciones
+# (meanings) y frases comunes tal como las devuelve el lookup.
+class LookupExample(BaseModel):
+    en: str
+    es: str
+
+class LookupMeaning(BaseModel):
+    part_of_speech: str = ""
+    translation_es: str = ""
+    definition_en: str = ""
+    definition_es: str = ""
+    examples: list[LookupExample] = []
+
+class LookupPhrase(BaseModel):
+    phrase: str
+    meaning_es: str = ""
+    example_en: str = ""
+    example_es: str = ""
+
+class LookupOut(BaseModel):
+    word: str
+    phonetic: str = ""
+    meanings: list[LookupMeaning] = []
+    common_phrases: list[LookupPhrase] = []
+    cached: bool = False  # true if served from DB cache
+    source: str = "gemini"
+
+
 # ── Words ───────────────────────────────────────────────────
 class WordCreate(BaseModel):
     word: str
@@ -29,6 +58,12 @@ class WordCreate(BaseModel):
     notes: str | None = None
     category_id: int | None = None
     difficulty: int = 3
+    # Guardar-todo desde el lookup: todas las acepciones + frases + categoría.
+    meanings: list[LookupMeaning] | None = None
+    common_phrases: list[LookupPhrase] | None = None
+    part_of_speech: str | None = None
+    phonetic: str | None = None
+    source_document_id: int | None = None
 
 class WordUpdate(BaseModel):
     word: str | None = None
@@ -38,6 +73,11 @@ class WordUpdate(BaseModel):
     notes: str | None = None
     category_id: int | None = None
     difficulty: int | None = None
+    synonyms: list[str] | None = None
+    meanings: list[LookupMeaning] | None = None
+    common_phrases: list[LookupPhrase] | None = None
+    part_of_speech: str | None = None
+    phonetic: str | None = None
 
 class WordOut(BaseModel):
     id: int
@@ -53,6 +93,11 @@ class WordOut(BaseModel):
     difficulty: int
     cefr_level: str | None = None
     synonyms: list[str] = []
+    meanings: list[LookupMeaning] = []
+    common_phrases: list[LookupPhrase] = []
+    part_of_speech: str | None = None
+    phonetic: str | None = None
+    source_document_id: int | None = None
     mastery_level: float
     next_review: datetime
     ease_factor: float
@@ -107,33 +152,6 @@ class ReviewOut(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-# ── Lookup (AI-powered contextual translation) ─────────────
-class LookupExample(BaseModel):
-    en: str
-    es: str
-
-class LookupMeaning(BaseModel):
-    part_of_speech: str = ""
-    translation_es: str = ""
-    definition_en: str = ""
-    definition_es: str = ""
-    examples: list[LookupExample] = []
-
-class LookupPhrase(BaseModel):
-    phrase: str
-    meaning_es: str = ""
-    example_en: str = ""
-    example_es: str = ""
-
-class LookupOut(BaseModel):
-    word: str
-    phonetic: str = ""
-    meanings: list[LookupMeaning] = []
-    common_phrases: list[LookupPhrase] = []
-    cached: bool = False  # true if served from DB cache
-    source: str = "gemini"
 
 
 # ── Writing Challenge ──────────────────────────────────────
@@ -224,6 +242,82 @@ class DictTranslateOut(BaseModel):
     word: str
     translation: str = ""
     found: bool = False
+
+
+# ── Lector de PDF: documentos y anotaciones ─────────────────
+class DocumentCreate(BaseModel):
+    title: str
+    content_hash: str          # sha256 del archivo (identifica el PDF local sin subirlo)
+    num_pages: int | None = None
+
+class DocumentUpdate(BaseModel):
+    title: str | None = None
+    last_page: int | None = None
+    last_scroll: float | None = None
+    num_pages: int | None = None
+
+class DocumentOut(BaseModel):
+    id: int
+    title: str
+    content_hash: str
+    storage: str
+    num_pages: int | None = None
+    last_page: int
+    last_scroll: float
+    last_opened_at: datetime
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+class AnnotationRect(BaseModel):
+    x: float
+    y: float
+    width: float
+    height: float
+
+class AnnotationCreate(BaseModel):
+    page: int
+    kind: str = "highlight"  # highlight | note | bookmark
+    selected_text: str | None = None
+    note_text: str | None = None
+    color: str | None = "#fde68a"
+    rects: list[AnnotationRect] = []
+
+class AnnotationUpdate(BaseModel):
+    note_text: str | None = None
+    color: str | None = None
+
+class AnnotationOut(BaseModel):
+    id: int
+    document_id: int
+    page: int
+    kind: str
+    selected_text: str | None
+    note_text: str | None
+    color: str | None
+    rects: list[AnnotationRect] = []
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+# ── Lookup contextual (desde el lector de PDF) ──────────────
+# Igual que LookupOut pero para UN significado puntual, el que aplica en la
+# oración seleccionada (no todas las acepciones del diccionario).
+class ContextualLookupIn(BaseModel):
+    word: str
+    context: str  # la oración/fragmento donde aparece la palabra
+
+class ContextualLookupOut(BaseModel):
+    word: str
+    context: str
+    part_of_speech: str = ""
+    sense_es: str = ""          # traducción/sentido EN ESE contexto
+    explanation_es: str = ""    # por qué significa eso ahí (matiz, no el genérico)
+    cached: bool = False
+    source: str = "gemini"
 
 
 # ── Grammar topics ──────────────────────────────────────────

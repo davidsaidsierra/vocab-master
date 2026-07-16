@@ -1,4 +1,5 @@
 import json
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -13,6 +14,7 @@ from api.schemas import (
 )
 from services import groq
 from services import cefr
+from services import ai_schemas
 
 router = APIRouter(prefix="/api/words", tags=["words"])
 
@@ -35,6 +37,10 @@ def _word_to_out(w: Word) -> WordOut:
         category_icon=w.category.icon if w.category else None,
         difficulty=w.difficulty, cefr_level=w.cefr_level,
         synonyms=json.loads(w.synonyms) if w.synonyms else [],
+        meanings=json.loads(w.meanings) if w.meanings else [],
+        common_phrases=json.loads(w.common_phrases) if w.common_phrases else [],
+        part_of_speech=w.part_of_speech, phonetic=w.phonetic,
+        source_document_id=w.source_document_id,
         mastery_level=w.mastery_level,
         next_review=w.next_review, ease_factor=w.ease_factor,
         interval=w.interval, repetitions=w.repetitions,
@@ -42,11 +48,47 @@ def _word_to_out(w: Word) -> WordOut:
     )
 
 
+def _apply_lookup_payload(w: Word, meanings, common_phrases, *, override_translation: bool):
+    """
+    Guarda TODAS las acepciones y frases del lookup en el Word y deriva los
+    campos "resumen" (translation/definition/example/part_of_speech). No llama
+    a la IA: recibe datos que ya venían del lookup cacheado.
+    - `translation` se rellena con TODAS las traducciones unidas por ", " porque
+      el calificador de repaso ya separa por comas y acepta cualquier variante.
+    - `part_of_speech` se normaliza a la lista cerrada (por si el lookup era del
+      cache viejo con categorías libres).
+    """
+    if meanings:
+        for m in meanings:
+            m["part_of_speech"] = ai_schemas.canonical_pos(m.get("part_of_speech"))
+        w.meanings = json.dumps(meanings, ensure_ascii=False)
+        all_tr = list(dict.fromkeys(
+            (m.get("translation_es") or "").strip()
+            for m in meanings if (m.get("translation_es") or "").strip()
+        ))
+        if all_tr and override_translation:
+            w.translation = ", ".join(all_tr)
+        first = meanings[0]
+        if not w.part_of_speech:
+            w.part_of_speech = first.get("part_of_speech") or None
+        if not w.definition:
+            w.definition = first.get("definition_en") or None
+        if not w.example:
+            exs = first.get("examples") or []
+            if exs:
+                w.example = (exs[0] or {}).get("en") or None
+    if common_phrases is not None:
+        w.common_phrases = json.dumps(common_phrases, ensure_ascii=False) if common_phrases else None
+
+
 @router.get("/", response_model=list[WordOut])
 def list_words(
     category_id: int | None = Query(None),
     search: str | None = Query(None),
     cefr_level: str | None = Query(None, description="Filtrar por nivel CEFR (A1..C2)"),
+    part_of_speech: str | None = Query(None, description="Filtrar por categoría gramatical"),
+    days: int | None = Query(None, description="Solo palabras añadidas en los últimos N días (0 = hoy)"),
+    mastery_max: int | None = Query(None, ge=0, le=100, description="Solo palabras con mastery ≤ este valor"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -55,10 +97,20 @@ def list_words(
         q = q.filter(Word.category_id == category_id)
     if cefr_level:
         q = q.filter(Word.cefr_level == cefr_level.upper())
+    if part_of_speech:
+        q = q.filter(Word.part_of_speech == part_of_speech.lower())
+    if days is not None:
+        now = datetime.now(timezone.utc)
+        cutoff = (now - timedelta(days=days)).replace(hour=0, minute=0, second=0, microsecond=0)
+        q = q.filter(Word.created_at >= cutoff)
     if search:
         pattern = f"%{search}%"
         q = q.filter(Word.word.ilike(pattern) | Word.translation.ilike(pattern))
-    words = q.order_by(Word.created_at.desc()).all()
+    if mastery_max is not None:
+        q = q.filter(Word.mastery_level <= mastery_max)
+        words = q.order_by(Word.mastery_level.asc()).all()
+    else:
+        words = q.order_by(Word.created_at.desc()).all()
     return [_word_to_out(w) for w in words]
 
 
@@ -282,7 +334,11 @@ def create_word(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    w = Word(user_id=owner_id(current_user), **data.model_dump())
+    payload = data.model_dump()
+    meanings = payload.pop("meanings", None)
+    common_phrases = payload.pop("common_phrases", None)
+    w = Word(user_id=owner_id(current_user), **payload)
+    _apply_lookup_payload(w, meanings, common_phrases, override_translation=True)
     w.cefr_level = cefr.level_for_word(w.word)
     db.add(w)
     db.commit()
@@ -299,8 +355,21 @@ def update_word(
 ):
     w = _get_owned_word(db, word_id, current_user)
     fields = data.model_dump(exclude_unset=True)
+    meanings = fields.pop("meanings", None)
+    common_phrases = fields.pop("common_phrases", None)
+    # synonyms es una columna JSON (Text): serializar la lista antes de asignar.
+    if "synonyms" in fields:
+        syns = fields.pop("synonyms")
+        w.synonyms = json.dumps(syns or [], ensure_ascii=False)
     for field, value in fields.items():
         setattr(w, field, value)
+    if meanings is not None or common_phrases is not None:
+        # Si el cliente mandó explícitamente translation, respetarla; si no,
+        # derivarla de los significados.
+        _apply_lookup_payload(
+            w, meanings, common_phrases,
+            override_translation=("translation" not in fields),
+        )
     # Si cambió el texto de la palabra, el nivel CEFR puede haber cambiado.
     if "word" in fields:
         w.cefr_level = cefr.level_for_word(w.word)

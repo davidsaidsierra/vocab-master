@@ -35,8 +35,15 @@
     </script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <!-- PDF.js (lector de PDF) -->
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs" type="module"></script>
+    <script type="module">
+        import * as pdfjsLib from "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs";
+        pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.worker.min.mjs";
+        window.pdfjsLib = pdfjsLib;
+    </script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/css/styles.css?v=10">
+    <link rel="stylesheet" href="/static/css/styles.css?v=11">
 </head>
 <body class="min-h-screen flex">
 
@@ -98,6 +105,10 @@
             <a href="#/writing" class="nav-link" data-page="writing" data-requires-ai>
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                 Writing
+            </a>
+            <a href="#/reading" class="nav-link" data-page="reading">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                Lectura
             </a>
             <a href="#/admin" class="nav-link" data-page="admin" data-admin-only style="display:none">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -169,6 +180,10 @@
             <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a5 5 0 100-10 5 5 0 000 10z M8.5 13.5L7 21l5-3 5 3-1.5-7.5"/></svg>
             <span>Exams</span>
         </a>
+        <a href="#/reading" class="bn-item" data-page="reading">
+            <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+            <span>Leer</span>
+        </a>
     </nav>
 
     <!-- ── Floating view-toggle (desktop only, hidden on real mobile) -->
@@ -180,6 +195,6 @@
     </button>
 
     <!-- ── JavaScript modules ───────────────────────────── -->
-    <script type="module" src="/static/js/app.js?v=10"></script>
+    <script type="module" src="/static/js/app.js?v=11"></script>
 </body>
 </html>

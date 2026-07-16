@@ -68,6 +68,7 @@ def get_practice_words(
     difficulty_min: int | None = Query(None, ge=1, le=5, description="Min difficulty (1-5)"),
     difficulty_max: int | None = Query(None, ge=1, le=5, description="Max difficulty (1-5)"),
     cefr_level: str | None = Query(None, description="Filtrar por nivel CEFR (A1..C2)"),
+    part_of_speech: str | None = Query(None, description="Filtrar por categoría gramatical"),
     with_synonyms: bool = Query(False, description="Solo palabras con sinónimos (modo Synonym)"),
     mastery_max: int | None = Query(None, ge=0, le=100, description="Only words with mastery ≤ this value (0-100)"),
     db: Session = Depends(get_db),
@@ -81,6 +82,9 @@ def get_practice_words(
 
     if cefr_level:
         q = q.filter(Word.cefr_level == cefr_level.upper())
+
+    if part_of_speech:
+        q = q.filter(Word.part_of_speech == part_of_speech.lower())
 
     if with_synonyms:
         q = q.filter(Word.synonyms.isnot(None), Word.synonyms != "[]")

@@ -106,6 +106,39 @@ export const stats = {
 export const lookup = {
     get:        (word) => request(`/lookup/${encodeURIComponent(word.trim().toLowerCase())}`),
     invalidate: (word) => request(`/lookup/${encodeURIComponent(word.trim().toLowerCase())}`, { method: 'DELETE' }),
+    contextual: (word, context) => request('/lookup/contextual', { method: 'POST', body: JSON.stringify({ word, context }) }),
+};
+
+// ── Documents (lector de PDF) ────────────────────────────────
+export const documents = {
+    list:       () => request('/documents/'),
+    byHash:     (hash) => request(`/documents/by-hash/${hash}`),
+    create:     (data) => request('/documents/', { method: 'POST', body: JSON.stringify(data) }),
+    update:     (id, data) => request(`/documents/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    delete:     (id) => request(`/documents/${id}`, { method: 'DELETE' }),
+    upload:     async (id, file) => {
+        const token = getToken();
+        const form = new FormData();
+        form.append('file', file);
+        const res = await fetch(`${BASE}/documents/${id}/upload`, {
+            method: 'POST',
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+            body: form,
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({ detail: 'Error al subir el PDF' }));
+            throw new Error(err.detail || `HTTP ${res.status}`);
+        }
+        return res.json();
+    },
+    fileUrl:    (id) => `${BASE}/documents/${id}/file`,
+    words:      (id) => request(`/documents/${id}/words`),
+    annotations: {
+        list:   (docId) => request(`/documents/${docId}/annotations`),
+        create: (docId, data) => request(`/documents/${docId}/annotations`, { method: 'POST', body: JSON.stringify(data) }),
+        update: (docId, annId, data) => request(`/documents/${docId}/annotations/${annId}`, { method: 'PATCH', body: JSON.stringify(data) }),
+        delete: (docId, annId) => request(`/documents/${docId}/annotations/${annId}`, { method: 'DELETE' }),
+    },
 };
 
 // ── Writing Challenge (AI text correction) ──────────────────

@@ -9,6 +9,7 @@ import { render as renderEnglishClass } from './components/englishClass.js';
 import { render as renderWriting }      from './components/writingChallenge.js';
 import { render as renderExams }        from './components/internationalExams.js';
 import { render as renderAdminUsers }   from './components/adminUsers.js';
+import { render as renderPdfReader }    from './components/pdfReader.js';
 import {
     loadCurrentUser, applyRoleVisibility, initLoginForm,
     showLogin, logout, getRole,
@@ -25,6 +26,7 @@ const routes = {
     '/writing':      renderWriting,
     '/exams':        renderExams,
     '/admin':        renderAdminUsers,
+    '/reading':      renderPdfReader,
 };
 
 const app = document.getElementById('app');

@@ -59,6 +59,10 @@ class Word(Base):
     example = Column(Text, nullable=True)
     notes = Column(Text, nullable=True)
     synonyms = Column(Text, nullable=True)          # JSON: ["glad","cheerful",...] (para el modo Synonym); NULL = sin generar
+    meanings = Column(Text, nullable=True)          # JSON: [{part_of_speech, translation_es, definition_en, definition_es, examples:[{en,es}]}] — todas las acepciones del lookup
+    common_phrases = Column(Text, nullable=True)    # JSON: [{phrase, meaning_es, example_en, example_es}] del lookup
+    part_of_speech = Column(String(20), nullable=True)  # categoría gramatical del 1er significado (lista cerrada; para filtrar)
+    phonetic = Column(String(60), nullable=True)    # IPA del lookup (opcional, solo display)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     difficulty = Column(Integer, default=3)          # 1-5 (dificultad subjetiva del usuario)
     cefr_level = Column(String(2), nullable=True)    # A1..C2 (nivel objetivo, vía cefrpy); NULL si desconocido/frase
@@ -69,6 +73,7 @@ class Word(Base):
     repetitions = Column(Integer, default=0)
     needs_enrichment = Column(Integer, default=0)    # 0/1 — captura rápida pendiente de IA
     source = Column(String(20), default="manual")    # manual | quick | ai
+    source_document_id = Column(Integer, ForeignKey("documents.id"), nullable=True, index=True)  # si se guardó desde el lector de PDF, el documento de origen
     created_at = Column(DateTime, default=_utcnow)
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
 
@@ -228,6 +233,56 @@ class ExamTaskResult(Base):
     created_at = Column(DateTime, default=_utcnow)
 
     attempt = relationship("ExamAttempt", back_populates="results")
+
+
+class Document(Base):
+    """
+    Un PDF abierto en el lector. `content_hash` (sha256 del archivo) identifica
+    el documento sin necesidad de subirlo: si el usuario reabre el mismo PDF
+    local, se reconoce por su hash y recupera sus anotaciones + página de
+    lectura. `storage`='uploaded' cuando además se subió el archivo (opcional)
+    para acceder desde otro dispositivo; en ese caso `file_path` apunta al
+    archivo guardado en el servidor.
+    """
+    __tablename__ = "documents"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
+    title = Column(String(300), nullable=False)
+    content_hash = Column(String(64), nullable=False, index=True)  # sha256 hex
+    storage = Column(String(20), nullable=False, default="local")  # local | uploaded
+    file_path = Column(String(500), nullable=True)  # solo si storage == "uploaded"
+    num_pages = Column(Integer, nullable=True)
+    last_page = Column(Integer, nullable=False, default=1)       # resume: "hoy terminé acá"
+    last_scroll = Column(Float, nullable=False, default=0.0)     # scroll dentro de la página
+    last_opened_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
+    created_at = Column(DateTime, default=_utcnow)
+
+    annotations = relationship(
+        "Annotation", back_populates="document", cascade="all, delete-orphan", lazy="selectin"
+    )
+
+
+class Annotation(Base):
+    """
+    Resaltado, nota al margen o marcador dentro de un Document. `rects` guarda
+    las coordenadas del resaltado en fracciones (0-1) del tamaño de página, para
+    poder redibujarlo sin importar el zoom con el que se renderice después.
+    """
+    __tablename__ = "annotations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
+    document_id = Column(Integer, ForeignKey("documents.id"), nullable=False, index=True)
+    page = Column(Integer, nullable=False, index=True)
+    kind = Column(String(20), nullable=False, default="highlight")  # highlight | note | bookmark
+    selected_text = Column(Text, nullable=True)
+    note_text = Column(Text, nullable=True)
+    color = Column(String(20), nullable=True, default="#fde68a")
+    rects = Column(Text, nullable=True)  # JSON: [{x,y,width,height}] fracciones 0-1
+    created_at = Column(DateTime, default=_utcnow)
+
+    document = relationship("Document", back_populates="annotations")
 
 
 class GrammarTopic(Base):

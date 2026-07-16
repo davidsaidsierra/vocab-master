@@ -17,7 +17,7 @@ try:
 except ImportError:
     genai = None  # type: ignore
 
-from services.prompts import LOOKUP_PROMPT
+from services.prompts import LOOKUP_PROMPT, CONTEXTUAL_LOOKUP_PROMPT
 from services import ai_schemas
 
 
@@ -77,3 +77,29 @@ def lookup_word(word: str) -> dict[str, Any]:
     if not data.get("word"):
         data["word"] = word.strip().lower()
     return data
+
+
+def contextual_lookup_word(word: str, context: str) -> dict[str, Any]:
+    """Significado de `word` tal como se usa en `context`. Single round-trip."""
+    _ensure_configured()
+
+    model = genai.GenerativeModel(
+        model_name=_MODEL_NAME,
+        generation_config={
+            "response_mime_type": "application/json",
+            "temperature": 0.3,
+        },
+    )
+    prompt = CONTEXTUAL_LOOKUP_PROMPT.format(word=word.strip(), context=context.strip())
+    resp = model.generate_content(prompt)
+
+    text = (resp.text or "").strip()
+    if not text:
+        raise RuntimeError("Gemini devolvió una respuesta vacía")
+
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Gemini devolvió JSON inválido: {exc}") from exc
+
+    return ai_schemas.validate(ai_schemas.ContextualLookupResult, data)

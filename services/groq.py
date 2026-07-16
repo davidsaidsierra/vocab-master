@@ -40,6 +40,7 @@ def _create(client: Any, **kwargs: Any) -> Any:
 from services.prompts import (
     BATCH_ENRICH_PROMPT,
     LOOKUP_PROMPT,
+    CONTEXTUAL_LOOKUP_PROMPT,
     WRITING_CHALLENGE_PROMPT,
     WRITING_CHALLENGE_PROMPT_V2,
     TOEFL_EMAIL_GRADING_PROMPT,
@@ -109,6 +110,34 @@ def lookup_word(word: str) -> dict[str, Any]:
     if not data.get("word"):
         data["word"] = word.strip().lower()
     return data
+
+
+def contextual_lookup_word(word: str, context: str) -> dict[str, Any]:
+    """
+    Significado de `word` TAL COMO se usa en `context` (la oración donde el
+    estudiante la seleccionó en el lector de PDF). Single round-trip.
+    """
+    client = _ensure_client()
+    prompt = CONTEXTUAL_LOOKUP_PROMPT.format(word=word.strip(), context=context.strip())
+
+    resp = _create(
+        client,
+        model=_MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+        temperature=0.3,
+    )
+
+    text = (resp.choices[0].message.content or "").strip()
+    if not text:
+        raise RuntimeError("Groq devolvió una respuesta vacía")
+
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
+
+    return ai_schemas.validate(ai_schemas.ContextualLookupResult, data)
 
 
 def enrich_words_batch(words: list[dict[str, Any]]) -> list[dict[str, Any]]:

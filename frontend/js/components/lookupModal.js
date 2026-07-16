@@ -14,9 +14,13 @@ function esc(str) {
  * Opens a modal that fetches and displays all contextual meanings of a word.
  * @param {string} word - The English word/phrase to look up.
  * @param {object} [opts]
- * @param {(meaning: object) => void} [opts.onPickMeaning]
+ * @param {(meaning: object, full: object) => void} [opts.onPickMeaning]
  *     If provided, adds a "Use this" button on each meaning that passes the
  *     chosen meaning back (useful to auto-fill the Add-Word form).
+ * @param {(full: object) => Promise<void>} [opts.onSaveAll]
+ *     If provided, adds a primary "Guardar palabra" button that saves the WHOLE
+ *     lookup payload (todos los significados + frases + categoría). No IA extra:
+ *     usa los datos ya devueltos por el lookup.
  */
 export function openLookupModal(word, opts = {}) {
     // Remove any existing modal
@@ -121,7 +125,31 @@ function renderLookup(data, body, phonetic, opts, close) {
         </div>
     ` : '';
 
-    body.innerHTML = meaningsHTML + phrasesHTML;
+    const saveAllHTML = opts.onSaveAll ? `
+        <div class="flex items-center justify-between gap-3 mb-4 p-3 rounded-lg" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25)">
+            <p class="text-xs text-slate-400">Guarda esta palabra con <strong class="text-slate-200">todos</strong> sus significados y su categoría gramatical.</p>
+            <button id="lookup-save-all" class="btn-primary" style="white-space:nowrap;padding:0.5rem 1rem">💾 Guardar palabra</button>
+        </div>
+    ` : '';
+
+    body.innerHTML = saveAllHTML + meaningsHTML + phrasesHTML;
+
+    // Botón "Guardar palabra" — guarda el payload completo (sin IA extra).
+    if (opts.onSaveAll) {
+        const saveBtn = body.querySelector('#lookup-save-all');
+        saveBtn?.addEventListener('click', async () => {
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Guardando…';
+            try {
+                await opts.onSaveAll(data);
+                close();
+            } catch (err) {
+                saveBtn.disabled = false;
+                saveBtn.textContent = '💾 Guardar palabra';
+                toast(err.message || 'No se pudo guardar', 'error');
+            }
+        });
+    }
 
     // Hook "Use this" buttons
     if (opts.onPickMeaning) {

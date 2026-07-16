@@ -44,3 +44,23 @@ def lookup_word(word: str) -> tuple[dict[str, Any], str]:
                 f"Gemini sin cuota y Groq también falló: {groq_exc}"
             ) from groq_exc
         raise gemini_exc
+
+
+def lookup_word_contextual(word: str, context: str) -> tuple[dict[str, Any], str]:
+    """Igual que lookup_word pero para el significado en un contexto puntual
+    (lector de PDF). Mismo patrón Gemini→Groq de fallback."""
+    try:
+        return gemini.contextual_lookup_word(word, context), "gemini"
+    except Exception as exc:
+        if not groq.is_configured():
+            raise
+        gemini_exc = exc
+
+    try:
+        return groq.contextual_lookup_word(word, context), "groq"
+    except Exception as groq_exc:
+        if _looks_like_quota_error(gemini_exc):
+            raise RuntimeError(
+                f"Gemini sin cuota y Groq también falló: {groq_exc}"
+            ) from groq_exc
+        raise gemini_exc

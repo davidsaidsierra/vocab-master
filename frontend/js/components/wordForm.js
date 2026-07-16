@@ -174,6 +174,21 @@ export async function render(container) {
             return;
         }
         openLookupModal(w, {
+            // Guardar-todo: crea la palabra con TODAS sus acepciones de una vez.
+            onSaveAll: async (full) => {
+                const firstTr = (full.meanings?.[0]?.translation_es) || '';
+                await api.words.create({
+                    word: w,
+                    translation: firstTr || w,   // el backend la re-deriva uniendo todas
+                    meanings: full.meanings || [],
+                    common_phrases: full.common_phrases || [],
+                    phonetic: full.phonetic || null,
+                });
+                const n = (full.meanings || []).length;
+                toast(`"${w}" guardada con ${n} significado${n !== 1 ? 's' : ''} ✓`);
+                form.reset();
+            },
+            // Alternativa: rellenar el formulario a mano con un significado.
             onPickMeaning: (meaning, full) => {
                 if (meaning.translation_es) form.translation.value = meaning.translation_es;
                 if (meaning.definition_en && !form.definition.value.trim())

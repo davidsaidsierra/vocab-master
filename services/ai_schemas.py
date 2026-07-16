@@ -12,6 +12,7 @@ pequeñas variaciones del modelo. Todos los campos tienen default. Lo único que
 garantiza es que el tipo de salida es el esperado.
 """
 
+import re
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, ValidationError, field_validator
@@ -69,6 +70,49 @@ def _to_dict_list(v: Any) -> list[dict]:
     return [x for x in v if isinstance(x, dict)]
 
 
+# ── Categoría gramatical (part-of-speech) ────────────────────────────────────
+# Lista CERRADA de categorías. El repaso y "Mis Palabras" filtran por este valor
+# exacto, así que hay que normalizar lo que devuelva la IA (o lo que ya esté
+# cacheado en WordLookup con la lista vieja abierta) a uno de estos valores.
+_POS_CANON = {
+    "noun", "verb", "adjective", "adverb", "pronoun", "preposition",
+    "conjunction", "determiner", "interjection", "phrase",
+}
+_POS_ALIASES = {
+    "connector": "conjunction", "conjuction": "conjunction", "conj": "conjunction",
+    "conjunción": "conjunction", "conjuncion": "conjunction",
+    "adj": "adjective", "adjetivo": "adjective",
+    "adv": "adverb", "adverbio": "adverb",
+    "n": "noun", "sustantivo": "noun", "nombre": "noun",
+    "v": "verb", "verbo": "verb", "phrasal verb": "verb", "phrasal_verb": "verb",
+    "prep": "preposition", "preposición": "preposition", "preposicion": "preposition",
+    "pron": "pronoun", "pronombre": "pronoun",
+    "det": "determiner", "article": "determiner", "artículo": "determiner", "articulo": "determiner",
+    "interj": "interjection", "exclamation": "interjection",
+    "interjección": "interjection", "interjeccion": "interjection",
+    "idiom": "phrase", "expression": "phrase", "frase": "phrase", "collocation": "phrase",
+}
+
+
+def canonical_pos(v: Any) -> str:
+    """Coacciona cualquier part_of_speech al conjunto cerrado. Fallback: 'phrase'."""
+    s = _to_str(v).strip().lower()
+    if not s:
+        return "phrase"
+    if s in _POS_CANON:
+        return s
+    if s in _POS_ALIASES:
+        return _POS_ALIASES[s]
+    # A veces viene "noun, verb" o "noun/verb": tomar el primero reconocible.
+    for part in re.split(r"[,/|;]| or ", s):
+        p = part.strip()
+        if p in _POS_CANON:
+            return p
+        if p in _POS_ALIASES:
+            return _POS_ALIASES[p]
+    return "phrase"
+
+
 # ── Lookup ───────────────────────────────────────────────────────────────────
 class _LookupExample(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -89,10 +133,15 @@ class _LookupMeaning(BaseModel):
     definition_es: str = ""
     examples: list[_LookupExample] = []
 
-    @field_validator("part_of_speech", "translation_es", "definition_en", "definition_es", mode="before")
+    @field_validator("translation_es", "definition_en", "definition_es", mode="before")
     @classmethod
     def _s(cls, v):
         return _to_str(v)
+
+    @field_validator("part_of_speech", mode="before")
+    @classmethod
+    def _pos(cls, v):
+        return canonical_pos(v)
 
     @field_validator("examples", mode="before")
     @classmethod
@@ -129,6 +178,24 @@ class LookupResult(BaseModel):
     @classmethod
     def _l(cls, v):
         return _to_dict_list(v)
+
+
+# ── Lookup contextual (lector de PDF) ────────────────────────────────────────
+class ContextualLookupResult(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    part_of_speech: str = ""
+    sense_es: str = ""
+    explanation_es: str = ""
+
+    @field_validator("sense_es", "explanation_es", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)
+
+    @field_validator("part_of_speech", mode="before")
+    @classmethod
+    def _pos(cls, v):
+        return canonical_pos(v)
 
 
 # ── Enriquecimiento por lote ─────────────────────────────────────────────────

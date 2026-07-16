@@ -32,6 +32,7 @@ function escHtml(s) {
 
 // ── Token JWT (reemplaza al viejo X-API-Key) ────────────────
 const TOKEN_KEY = "vocab_token";
+const API_BASE_KEY = "vocab_api_base";  // base donde se emitió el token
 let token = "";
 
 async function loadToken() {
@@ -46,6 +47,18 @@ async function setToken(t) {
 async function clearToken() {
   token = "";
   await chrome.storage.local.remove(TOKEN_KEY);
+}
+
+// El token JWT se firma con el JWT_SECRET del backend que lo emitió. Si local y
+// Render usan secretos distintos, un token de uno da 401 ("no autenticado") en
+// el otro. Guardamos la base donde se hizo login y la preferimos, para no saltar
+// de backend con un token que allí no vale.
+async function getPinnedBase() {
+  const d = await chrome.storage.local.get(API_BASE_KEY);
+  return d[API_BASE_KEY] || "";
+}
+async function setPinnedBase(base) {
+  await chrome.storage.local.set({ [API_BASE_KEY]: base || "" });
 }
 function authHeaders() {
   const h = { "Content-Type": "application/json" };
@@ -93,13 +106,14 @@ function showForm() {
   loadCapturedWord();
 }
 
-// ── Reachability: local primero, luego Render ───────────────
+// ── Reachability: base fijada primero, luego local, luego Render ─────
 // Cualquier respuesta HTTP (incluida 401 sin token) significa "alcanzable".
+// Timeout amplio: Render (free tier) tarda en despertar tras estar dormido.
 async function reachable(base) {
   try {
     await fetch(`${base}/auth/me`, {
       headers: authHeaders(),
-      signal: AbortSignal.timeout(1500),
+      signal: AbortSignal.timeout(8000),
     });
     return true;
   } catch {
@@ -107,18 +121,24 @@ async function reachable(base) {
   }
 }
 
+function markOnline(base) {
+  API = base;
+  statusDot.classList.add("online");
+  statusDot.title = base === API_LOCAL ? "Connected (local)" : "Connected (Render)";
+}
+
 async function checkConnection() {
-  if (await reachable(API_LOCAL)) {
-    API = API_LOCAL;
-    statusDot.classList.add("online");
-    statusDot.title = "Connected (local)";
-    return true;
-  }
-  if (await reachable(API_REMOTE)) {
-    API = API_REMOTE;
-    statusDot.classList.add("online");
-    statusDot.title = "Connected (Render)";
-    return true;
+  // Preferimos la base donde se emitió el token (el JWT solo vale allí). Solo si
+  // esa base está caída probamos la otra.
+  const pinned = await getPinnedBase();
+  const order = pinned
+    ? [pinned, pinned === API_LOCAL ? API_REMOTE : API_LOCAL]
+    : [API_LOCAL, API_REMOTE];
+  for (const base of order) {
+    if (await reachable(base)) {
+      markOnline(base);
+      return true;
+    }
   }
   statusDot.title = "Cannot reach VocabMaster";
   return false;
@@ -152,6 +172,7 @@ async function doLogin() {
     }
     const data = await res.json();
     await setToken(data.access_token);
+    await setPinnedBase(API);  // el token solo vale en este backend
     loginPassword.value = "";
     showForm();
   } catch (err) {
@@ -363,6 +384,8 @@ async function init() {
       showLogin("No se pudo verificar la sesión.");
       return;
     }
+    // El token es válido en esta base: fijarla para futuras aperturas.
+    await setPinnedBase(API);
   } catch {
     showLogin("No se pudo conectar con el servidor.");
     return;

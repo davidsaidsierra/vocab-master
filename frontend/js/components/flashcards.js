@@ -1,6 +1,7 @@
 import * as api from '../api.js';
 import { toast, cefrBadgeHTML } from '../utils/helpers.js';
 import { checkAnswer, checkAgainstList } from '../utils/grading.js';
+import { POS_OPTIONS, optionsHTML } from '../utils/wordFilters.js';
 
 // ── Web Speech API pronunciation ──────────────────────────────
 function speak(text, lang = 'en-US') {
@@ -86,6 +87,12 @@ export async function render(container) {
                             <option value="25">🔴 Worst (0–25%)</option>
                             <option value="50">🟠 Struggling (0–50%)</option>
                             <option value="74">🟡 Below average (0–74%)</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 min-w-[150px]">
+                        <label class="block text-xs text-slate-500 mb-1">Categoría gramatical</label>
+                        <select id="review-filter-pos" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
+                            ${optionsHTML(POS_OPTIONS)}
                         </select>
                     </div>
                     <!-- Custom days input (hidden by default) -->
@@ -206,6 +213,7 @@ export async function render(container) {
     const filterDays       = container.querySelector('#review-filter-days');
     const filterLevel      = container.querySelector('#review-filter-level');
     const filterMastery    = container.querySelector('#review-filter-mastery');
+    const filterPos        = container.querySelector('#review-filter-pos');
     const customWrapper    = container.querySelector('#custom-days-wrapper');
     const customInput      = container.querySelector('#custom-days-input');
     const startBtn         = container.querySelector('#start-review-btn');
@@ -321,6 +329,10 @@ export async function render(container) {
             params.mastery_max = filterMastery.value;
         }
 
+        if (filterPos.value) {
+            params.part_of_speech = filterPos.value;
+        }
+
         if (reviewType === 'synonym') {
             params.with_synonyms = 1;
         }
@@ -341,6 +353,7 @@ export async function render(container) {
     filterCat.addEventListener('change', updateWordCount);
     filterLevel.addEventListener('change', updateWordCount);
     filterMastery.addEventListener('change', updateWordCount);
+    filterPos.addEventListener('change', updateWordCount);
     customInput.addEventListener('input', updateWordCount);
     await updateWordCount();
 
@@ -563,10 +576,37 @@ export async function render(container) {
         typingInput.disabled = true;
         typingSubmit.classList.add('hidden');
         const quality = res.correct ? (res.exact ? 5 : 4) : 1;
-        renderTypingFeedback(res, expected, w, quality);
+        renderTypingFeedback(res, expected, w, quality, val.trim());
     }
 
-    function renderTypingFeedback(res, expectedRaw, w, quality) {
+    // Persiste una respuesta que el usuario marcó como válida, para que cuente
+    // siempre. Sinónimo → se añade al array `synonyms`; traducción EN→ES → se
+    // añade a las traducciones aceptadas (el calificador separa por comas).
+    // En modo inverso (ES→EN) no hay un campo donde guardar alternativas, así que
+    // solo se marca correcto esta vez.
+    async function persistAcceptedAnswer(w, answer) {
+        const ans = (answer || '').trim();
+        if (!ans) return;
+        const eq = (a, b) => a.toLowerCase() === b.toLowerCase();
+        if (reviewType === 'synonym') {
+            const list = Array.isArray(w.synonyms) ? w.synonyms.slice() : [];
+            if (!list.some(s => eq(s, ans))) {
+                list.push(ans);
+                await api.words.update(w.id, { synonyms: list });
+                w.synonyms = list;
+            }
+        } else if (!isReverseMode) {
+            const parts = String(w.translation || '').split(/[,;/]/).map(s => s.trim()).filter(Boolean);
+            if (!parts.some(p => eq(p, ans))) {
+                parts.push(ans);
+                const joined = parts.join(', ');
+                await api.words.update(w.id, { translation: joined });
+                w.translation = joined;
+            }
+        }
+    }
+
+    function renderTypingFeedback(res, expectedRaw, w, quality, userAnswer) {
         const ok = res.correct;
         const isSyn = reviewType === 'synonym';
         const head = ok
@@ -580,9 +620,14 @@ export async function render(container) {
         const revealAnswer = (!ok && !isSyn)
             ? `<div class="text-sm mt-1" style="color:var(--text-primary)">Respuesta: <span class="font-bold">${esc(expectedRaw)}</span></div>`
             : '';
-        // Override sin IA: si escribiste un sinónimo válido que no estaba en la lista.
-        const override = (!ok && isSyn)
-            ? `<button class="mt-2 text-xs font-medium" id="typing-override" style="color:#0071e3">✓ Mi sinónimo también vale — marcar como correcto</button>`
+        // Override sin IA: si escribiste una respuesta válida que la app no tenía.
+        // Disponible en sinónimo y en traducción EN→ES (no en modo inverso).
+        const canOverride = !ok && (isSyn || !isReverseMode);
+        const overrideLabel = isSyn
+            ? '✓ Mi sinónimo también vale — guardarlo'
+            : '✓ Mi respuesta también vale — guardarla';
+        const override = canOverride
+            ? `<button class="mt-2 text-xs font-medium" id="typing-override" style="color:#0071e3">${overrideLabel}</button>`
             : '';
         typingFeedback.innerHTML = `
             <div class="rounded-lg p-3 text-left" style="background:${ok ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.1)'}">
@@ -598,7 +643,17 @@ export async function render(container) {
         const nextBtn = typingFeedback.querySelector('#typing-next');
         nextBtn.addEventListener('click', () => submitAnswer(quality));
         const ov = typingFeedback.querySelector('#typing-override');
-        if (ov) ov.addEventListener('click', () => submitAnswer(4));  // marcar correcto sin IA
+        if (ov) ov.addEventListener('click', async () => {
+            ov.disabled = true;
+            ov.textContent = 'Guardando…';
+            try {
+                await persistAcceptedAnswer(w, userAnswer);
+                toast('Respuesta guardada — contará la próxima vez ✓');
+            } catch (err) {
+                toast(err.message || 'No se pudo guardar, pero cuenta como correcta', 'error');
+            }
+            submitAnswer(4);  // marcar correcto sin IA
+        });
         setTimeout(() => nextBtn.focus(), 50);
     }
 
