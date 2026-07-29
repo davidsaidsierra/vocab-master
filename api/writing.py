@@ -231,6 +231,7 @@ def submit_writing(
                 type=str(e.get("type", "")),
                 explanation_es=str(e.get("explanation_es", "")),
                 reference_quote=str(e.get("reference_quote", "")),
+                example_en=str(e.get("example_en", "")),
             ))
 
     vocab_suggestions = []

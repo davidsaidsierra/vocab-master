@@ -118,7 +118,8 @@ Analyze the text and return ONLY a JSON object with this EXACT structure:
       "fix": "corrected version of that substring",
       "type": "grammar|spelling|word-choice|punctuation|naturalness",
       "explanation_es": "explicación CORTA en español (max 25 palabras) — por qué está mal y cómo se corrige. Si la regla viene de conocimiento general (no del reference), dilo brevemente.",
-      "reference_quote": "EXACT sentence(s) copied verbatim from REFERENCE MATERIAL that justify this correction. Empty string if no specific rule in the reference applies."
+      "reference_quote": "EXACT sentence(s) copied verbatim from REFERENCE MATERIAL that justify this correction. Empty string if no specific rule in the reference applies.",
+      "example_en": "ONE clean, natural, pedagogically-written English sentence that clearly demonstrates the corrected rule, at a level appropriate for the topic — NOT copied from reference_material (that is reference_quote's job). Short and easy to grasp at a glance."
     }}
   ],
   "words_used_correctly": ["only the target words used naturally and grammatically correctly"],
@@ -143,6 +144,7 @@ Rules:
 - `score` is an integer 0-100: correctness + use of target grammar (yes=full credit, partial=most credit, no=little credit) + use of target words.
 - `errors` should be at most 6 items, ordered by importance.
 - `reference_quote` MUST be a verbatim copy from REFERENCE MATERIAL — do not paraphrase. Empty string if no specific rule fits.
+- `example_en` MUST be a fresh sentence YOU write (never copied from reference_material or from the student's text) — one clear illustrative example per error, never empty.
 - `grammar_topic_usage.used`: follow the FAMILIES table above. "yes" = exact reference match; "partial" = family variant not in reference; "no" = ZERO family structures present.
 - `vocabulary_suggestions`: 2-4 items, all picked FROM the user's text (not invented). Prefer collocations and C1-level lexis.
 - If the text is already perfect, return an empty `errors` array and a high score.
@@ -426,5 +428,66 @@ Return a JSON object with this EXACT structure and nothing else:
 Rules:
 - Base the meaning ONLY on the sentence given, even if the word has other common meanings elsewhere.
 - `sense_es` must be natural Latin American / neutral Spanish.
+- Return ONLY valid JSON. No markdown, no code fences, no extra text.
+"""
+
+
+# ── Grammar KB — clasificación de nivel CEFR por contenido ──────────────────
+# Usado por scripts/classify_grammar_levels.py (job de una sola vez, offline,
+# NO en el camino caliente de la app). A diferencia de infer_level() en
+# import_grammar_kb.py (que solo mira el título para evitar falsos positivos),
+# esto analiza el content_md real de cada sección para poder clasificar los
+# temas cuyo título no trae un nivel explícito (la gran mayoría).
+GRAMMAR_LEVEL_CLASSIFY_PROMPT = """You are a CEFR (Common European Framework) grammar-level classification expert
+for English-language teaching material. You will classify {n} grammar reference
+sections at once.
+
+For EACH section, decide the SINGLE CEFR level (A1, A2, B1, B2, C1, or C2) at
+which this grammar point is typically TAUGHT/TARGETED, based on the actual
+content (structures, complexity, typical use cases) — not just the title.
+
+Sections:
+{sections_block}
+
+EXISTING CATEGORY TAXONOMY (STRONGLY prefer reusing one of these exact labels
+for `category` — the app filters topics by this field, so fragmenting it into
+near-duplicate labels breaks that filter):
+conditionals, phrasal verbs, reported speech, relative clauses, subjunctive,
+passive, modals, gerunds & infinitives, comparison, questions, connectors,
+prepositions, pronouns, articles, perfect tenses, continuous tenses,
+past tenses, present tenses, future tenses.
+Only invent a new label if a section genuinely does not fit ANY of these
+(rare — e.g. a topic about numbers/quantifiers would be a legitimate new one).
+
+Guidance on typical CEFR grammar placement (use as a reference ladder, not a
+rigid rule — judge each section by its actual content):
+- A1: present simple, to be, basic articles, basic pronouns, plurals, simple questions.
+- A2: past simple, present continuous, comparatives/superlatives, basic prepositions, simple future (going to/will).
+- B1: present perfect, past continuous, first conditional, basic modals (must/should/can), gerunds vs infinitives (basic).
+- B2: second conditional, passive voice, reported speech, relative clauses, most modal deduction, perfect continuous forms.
+- C1: third conditional, mixed conditionals, advanced passive/reported speech nuances, inversion, subjunctive, advanced connectors.
+- C2: highly nuanced style/register distinctions, rare literary structures, subtle discourse markers — genuinely native-level nuance (use sparingly; most grammar RULES are fully taught by C1, C2 is mostly refinement).
+
+If a section's content is honestly ambiguous or spans multiple levels, pick the
+level at which a student would FIRST need this rule to progress, and lower your
+confidence accordingly.
+
+Return ONLY a JSON object with this EXACT structure:
+
+{{
+  "results": [
+    {{
+      "slug": "the exact slug given for this section",
+      "level": "EXACTLY ONE of: A1|A2|B1|B2|C1|C2",
+      "category": "short lowercase category label, e.g. 'conditionals', 'past tenses', 'phrasal verbs', 'passive', 'modals' (reuse a consistent label across sections that share a grammar family)",
+      "confidence": "high|medium|low",
+      "rationale": "max 15 words in English on why this level"
+    }}
+  ]
+}}
+
+Rules:
+- Return exactly {n} items, one per section given, in any order, matched by `slug`.
+- `level` must be one of the six exact tokens — never leave it empty or invent other labels.
 - Return ONLY valid JSON. No markdown, no code fences, no extra text.
 """

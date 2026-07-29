@@ -194,9 +194,15 @@ def upsert_topics(sections: list[dict]) -> tuple[int, int, list[dict]]:
                 db.add(row)
                 inserted += 1
             else:
+                # level/category solo se llenan si están en NULL: un backfill
+                # posterior (p. ej. scripts/classify_grammar_levels.py, basado
+                # en contenido en vez de solo el título) no debe perderse si
+                # este importador se vuelve a correr (secciones nuevas en el .md).
                 row.title = s["title"]
-                row.level = level
-                row.category = category
+                if row.level is None:
+                    row.level = level
+                if row.category is None:
+                    row.category = category
                 row.content_md = s["content_md"]
                 row.keywords = keywords
                 updated += 1
@@ -205,8 +211,8 @@ def upsert_topics(sections: list[dict]) -> tuple[int, int, list[dict]]:
                 "slug": slug,
                 "section_number": s["section_number"],
                 "title": s["title"],
-                "level": level,
-                "category": category,
+                "level": row.level,
+                "category": row.category,
             })
         db.commit()
     except Exception:

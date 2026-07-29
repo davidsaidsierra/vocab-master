@@ -13,6 +13,7 @@ import { writing as api, words as wordsApi } from '../api.js';
 import { WEEKS } from './englishClass.js';
 import { openPicker } from './grammarPicker.js';
 import { renderMetrics } from './metricsView.js';
+import { slugForWeeksTopic } from './weeksGrammarMap.js';
 
 const MAX_CHARS = 5000;
 const STORAGE_KEY = 'vocabmaster_writing_state';
@@ -80,21 +81,18 @@ let state = {
     error: '',
 };
 
-// Convierte un GrammarTopic del KB al shape que esperan topicCardHTML / topicToHint.
-// La intro se sintetiza de las primeras líneas del content_md (sin markdown ruidoso).
+// Convierte un GrammarTopic del KB al shape que espera topicCardHTML.
+// Usa el contenido ya curado (structure/examples/usage_es, generado offline y
+// grounded en content_md) en vez de recortar el markdown crudo — eso era un
+// párrafo denso de OCR, no una explicación pensada para leer rápido.
 function kbTopicToCardShape(kb) {
-    const stripped = String(kb.content_md || '')
-        .replace(/\*\*/g, '')
-        .replace(/\*/g, '')
-        .replace(/`/g, '')
-        .replace(/^#+\s*/gm, '')
-        .trim();
-    const intro = stripped.split('\n').filter(l => l.trim()).slice(0, 2).join(' ').slice(0, 280);
     return {
         icon: '📚',
         title: kb.title,
         subtitle: [kb.category, kb.level].filter(Boolean).join(' · '),
-        intro,
+        structureEn: kb.structure || '',
+        examples: Array.isArray(kb.examples) ? kb.examples.slice(0, 3) : [],
+        usageEs: kb.usage_es || '',
         groups: [],
         weekLabel: `Knowledge Base · Sección ${String(kb.section_number).padStart(3, '0')}`,
     };
@@ -110,9 +108,44 @@ function badgeColors(score) {
 
 function topicCardHTML(t) {
     if (!t) return '<div class="wc-topic-card"><em>No grammar topic available.</em></div>';
-    const groupChips = (t.groups || []).slice(0, 4).map(g =>
-        `<span class="wc-chip" style="--wc-chip:${g.color || '#0071e3'}">${escapeHtml(g.name)}</span>`
-    ).join('');
+
+    // Temas del KB (structure/examples curados) usan un layout en 3 casillas
+    // ordenadas; los temas de WEEKS (clase semanal) conservan su layout de
+    // grupos/chips, que ya trae sus propios ejemplos organizados.
+    const isKB = Boolean(t.structureEn) || (Array.isArray(t.examples) && t.examples.length > 0);
+
+    let bodyHTML;
+    if (isKB) {
+        bodyHTML = `
+            ${t.structureEn ? `
+                <div class="wc-topic-block wc-topic-structure">
+                    <div class="wc-topic-block-label">📐 Gramática</div>
+                    <code>${escapeHtml(t.structureEn)}</code>
+                </div>
+            ` : ''}
+            ${(t.examples && t.examples.length) ? `
+                <div class="wc-topic-block wc-topic-examples">
+                    <div class="wc-topic-block-label">✏️ Ejemplos</div>
+                    <ul>${t.examples.slice(0, 3).map(ex => `<li>${escapeHtml(ex)}</li>`).join('')}</ul>
+                </div>
+            ` : ''}
+            ${t.usageEs ? `
+                <div class="wc-topic-block wc-topic-usage">
+                    <div class="wc-topic-block-label">💡 Uso</div>
+                    <p>${escapeHtml(t.usageEs)}</p>
+                </div>
+            ` : ''}
+        `;
+    } else {
+        const groupChips = (t.groups || []).slice(0, 4).map(g =>
+            `<span class="wc-chip" style="--wc-chip:${g.color || '#0071e3'}">${escapeHtml(g.name)}</span>`
+        ).join('');
+        bodyHTML = `
+            ${t.intro ? `<p class="wc-topic-intro">${escapeHtml(t.intro)}</p>` : ''}
+            ${groupChips ? `<div class="wc-chips">${groupChips}</div>` : ''}
+        `;
+    }
+
     return `
         <div class="wc-topic-card">
             <div class="wc-topic-head">
@@ -122,8 +155,7 @@ function topicCardHTML(t) {
                     <div class="wc-topic-sub">${escapeHtml(t.subtitle || '')}</div>
                 </div>
             </div>
-            ${t.intro ? `<p class="wc-topic-intro">${escapeHtml(t.intro)}</p>` : ''}
-            ${groupChips ? `<div class="wc-chips">${groupChips}</div>` : ''}
+            ${bodyHTML}
             <div class="wc-week-label">${escapeHtml(t.weekLabel || '')}</div>
         </div>
     `;
@@ -187,6 +219,7 @@ function resultHTML(r) {
                 <span class="wc-err-fix">${escapeHtml(e.fix || '')}</span>
             </div>
             ${e.explanation_es ? `<div class="wc-err-exp">${escapeHtml(e.explanation_es)}</div>` : ''}
+            ${e.example_en ? `<div class="wc-err-example">✏️ ${escapeHtml(e.example_en)}</div>` : ''}
             ${e.reference_quote ? `<div class="wc-reference-quote">📖 ${escapeHtml(e.reference_quote)}</div>` : ''}
         </div>
     `).join('') || '<p style="color:var(--text-secondary);font-size:0.9rem;margin:0">¡Sin errores! 🎉</p>';
@@ -397,11 +430,12 @@ async function onAddVocab(btn) {
 }
 
 async function onShuffle() {
-    // Shuffle vuelve al flow V1: limpia el slug del KB para que submit no use V2.
+    // Si el nuevo tema tiene match en el KB (weeksGrammarMap.js), el submit
+    // también dispara el flujo V2 (KB-grounded); si no, cae al V1 real.
     state.topic = pickRandomTopic(state.topic ? state.topic.title : null);
-    state.topicSlug = null;
+    state.topicSlug = slugForWeeksTopic(state.topic);
     state.error = '';
-    saveState({ topic: state.topic, topicSlug: null, words: state.words, text: state.text });
+    saveState({ topic: state.topic, topicSlug: state.topicSlug, words: state.words, text: state.text });
     rerender();
 }
 
@@ -410,7 +444,7 @@ async function onNewChallenge() {
     state.text = '';
     state.error = '';
     state.topic = pickRandomTopic(state.topic ? state.topic.title : null);
-    state.topicSlug = null;
+    state.topicSlug = slugForWeeksTopic(state.topic);
     clearState();
     rerender();
     await refreshWords();
@@ -499,6 +533,7 @@ export async function render(container) {
         state.words = saved.words || [];
     } else {
         state.topic = pickRandomTopic();
+        state.topicSlug = slugForWeeksTopic(state.topic);
     }
 
     rerender();

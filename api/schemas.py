@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+import json
+from pydantic import BaseModel, field_validator
 from datetime import datetime
 
 
@@ -180,6 +181,7 @@ class WritingError(BaseModel):
     type: str = ""
     explanation_es: str = ""
     reference_quote: str = ""
+    example_en: str = ""
 
 class VocabularySuggestion(BaseModel):
     word: str
@@ -335,6 +337,22 @@ class GrammarTopicSummary(BaseModel):
 class GrammarTopicFull(GrammarTopicSummary):
     content_md: str
     keywords: str | None = None
+    structure: str | None = None   # fórmula gramatical limpia (ej. "Subject + should + base verb, ...")
+    examples: list[str] = []       # exactamente 3 oraciones de ejemplo en inglés
+    usage_es: str | None = None    # 1 frase en español: para qué se usa
+
+    @field_validator("examples", mode="before")
+    @classmethod
+    def _parse_examples(cls, v):
+        if v is None:
+            return []
+        if isinstance(v, str):
+            try:
+                parsed = json.loads(v)
+            except json.JSONDecodeError:
+                return []
+            return parsed if isinstance(parsed, list) else []
+        return v
 
 class GrammarTopicsOut(BaseModel):
     topics: list[GrammarTopicSummary]

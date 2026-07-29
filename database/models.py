@@ -299,7 +299,10 @@ class GrammarTopic(Base):
     title = Column(String(200), nullable=False)
     level = Column(String(10), nullable=True)       # A1/A2/B1/B2/C1 o NULL
     category = Column(String(100), nullable=True)   # "conditionals", "past tenses", ...
-    content_md = Column(Text, nullable=False)
+    content_md = Column(Text, nullable=False)        # texto crudo (OCR); sigue siendo la fuente de verdad para reference_quote en el prompt V2
     keywords = Column(Text, nullable=True)          # space-separated, lowercased
+    structure = Column(Text, nullable=True)         # fórmula gramatical en inglés, ej. "Subject + should + base verb, subject + would + base verb" — para mostrar limpio en el frontend (no reemplaza content_md)
+    examples = Column(Text, nullable=True)          # JSON: [ex1, ex2, ex3] — exactamente 3 oraciones de ejemplo en inglés
+    usage_es = Column(Text, nullable=True)          # 1 frase en español: para qué se usa este punto gramatical
     created_at = Column(DateTime, default=_utcnow)
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)

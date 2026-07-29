@@ -4,12 +4,16 @@
 Allow the user to pick **any grammar topic** from a 238-section knowledge base and practice writing about it. The AI correction must be **grounded in the chosen topic's reference material** (cite the exact rule from the KB in each error).
 
 ## Success criteria (how we know Phase 1 is done)
-- [ ] User can browse/search the 238 grammar topics in the UI.
-- [ ] User can pick a topic, write a text (up to ~800 words), and submit.
-- [ ] The AI correction includes a `reference_quote` per error, pulled from the KB.
-- [ ] The frontend displays the reference quote under each correction.
-- [ ] Daily limit and char limit are raised to sensible values for serious practice.
-- [ ] Existing functionality (random topic from `englishClass.WEEKS`, vocabulary review, mastery boost) keeps working unchanged.
+- [x] User can browse/search the 244 grammar topics in the UI (`grammarPicker.js`).
+- [x] User can pick a topic, write a text (up to 5000 chars), and submit.
+- [x] The AI correction includes a `reference_quote` per error, pulled from the KB (`WRITING_CHALLENGE_PROMPT_V2`).
+- [x] The frontend displays the reference quote under each correction (`writingChallenge.js` `resultHTML()`).
+- [x] Daily limit and char limit are raised to sensible values for serious practice (`DAILY_LIMIT = 50`, 5000 chars).
+- [x] Existing functionality (random topic from `englishClass.WEEKS`, vocabulary review, mastery boost) keeps working unchanged.
+
+(Nota 2026-07: este checklist quedó sin marcar por desfase de documentación —
+todo lo anterior ya estaba implementado y committeado. Ver `## Fase 2` abajo
+para el trabajo de pulido que sí faltaba de verdad.)
 
 ## Inputs available
 - `knowledge_base_clean.md` (provided by user) — 238 sections, each starting with `## Section NNN — Title`.
@@ -161,4 +165,46 @@ Match existing visual style (look at `.wc-*` classes for reference).
 ---
 
 ## After Phase 1 is done
-Stop. Do not start Phase 2 (error log + weaknesses) without the user's explicit go-ahead. Report what was built, what tests were run manually, and any deviations from the plan.
+Phase 1 was fully implemented (see checklist above). The user later asked for a
+follow-up round of polish — see `## Fase 2` below — approved via plan mode on
+2026-07-28.
+
+---
+
+## Fase 2 — Clasificación por nivel + ejemplo limpio por error (2026-07-28)
+
+### Objetivo
+Pulir dos puntos que el usuario sintió débiles en el Writing Challenge:
+1. La explicación de gramática por error no traía un ejemplo limpio y fácil
+   de captar (solo `explanation_es` + `reference_quote`, y esta última es una
+   cita cruda OCR'd del KB, no siempre clara).
+2. No se podía elegir el tema de práctica filtrando por nivel CEFR (A1-C2) —
+   el filtro backend existía (`api/grammar.py?level=`) pero el 95% de los 244
+   `GrammarTopic` tenían `level=NULL` (solo el título se usaba para inferirlo).
+
+### Checklist
+- [x] `scripts/import_grammar_kb.py`: `upsert_topics()` ya no sobreescribe
+      `level`/`category` en filas existentes que ya los tengan (fix de
+      idempotencia, para no perder un backfill posterior en un re-import).
+- [x] `scripts/classify_grammar_levels.py` (nuevo): clasifica nivel CEFR +
+      categoría por contenido (no solo título), en lotes de 12 vía Groq,
+      con `--dry-run` por defecto (preview + backup antes de `--commit`
+      contra Neon).
+- [x] `services/prompts.py`: `WRITING_CHALLENGE_PROMPT_V2` ahora pide
+      `example_en` (oración limpia generada por la IA) además de
+      `reference_quote`, en la misma llamada (sin romper la regla de un solo
+      round-trip).
+- [x] `services/ai_schemas.py` / `api/schemas.py` / `api/writing.py`: campo
+      `example_en` agregado a `WritingError` end-to-end.
+- [x] `frontend/js/components/weeksGrammarMap.js` (nuevo): mapeo manual de
+      los temas de `englishClass.WEEKS` a su `GrammarTopic.slug` más
+      parecido, para que el shuffle aleatorio también dispare el flujo V2
+      grounded (antes solo el picker del KB lo hacía).
+- [x] `frontend/js/components/grammarPicker.js`: filtro por nivel CEFR
+      (botones A1-C2 con conteo, niveles sin temas se muestran deshabilitados).
+- [x] `frontend/js/components/writingChallenge.js`: renderiza `example_en`
+      bajo la explicación de cada error.
+- [x] CSS: `.wc-err-example`, `.gp-level*`.
+- [ ] Correr `classify_grammar_levels.py --commit` contra Neon (pendiente de
+      confirmación del usuario tras revisar el preview).
+- [ ] Verificación end-to-end (ver Fase E del plan de arquitectura).

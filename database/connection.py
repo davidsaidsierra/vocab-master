@@ -81,6 +81,32 @@ def _migrate_metrics_columns():
                 conn.execute(text(f"ALTER TABLE {table} ADD COLUMN metrics TEXT"))
 
 
+def _migrate_grammar_topic_columns():
+    """
+    Añade `structure`, `examples`, `usage_es` a grammar_topics si faltan.
+    Contenido curado (fórmula + 3 ejemplos + uso en español) para mostrar
+    limpio en el frontend, aparte de `content_md` (que sigue siendo la fuente
+    de verdad para `reference_quote` en el prompt V2). Idempotente, no
+    destructivo; el backfill lo hace scripts/apply_grammar_structured_content.py.
+    """
+    insp = inspect(engine)
+    if "grammar_topics" not in insp.get_table_names():
+        return
+    existing = {c["name"] for c in insp.get_columns("grammar_topics")}
+    to_add = []
+    if "structure" not in existing:
+        to_add.append("ADD COLUMN structure TEXT")
+    if "examples" not in existing:
+        to_add.append("ADD COLUMN examples TEXT")
+    if "usage_es" not in existing:
+        to_add.append("ADD COLUMN usage_es TEXT")
+    if not to_add:
+        return
+    with engine.begin() as conn:
+        for clause in to_add:
+            conn.execute(text(f"ALTER TABLE grammar_topics {clause}"))
+
+
 def _bootstrap_admin():
     """
     Crea el usuario admin desde env (ADMIN_EMAIL / ADMIN_PASSWORD) si aún no
@@ -167,5 +193,6 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     _migrate_word_columns()
     _migrate_metrics_columns()
+    _migrate_grammar_topic_columns()
     _bootstrap_admin()
     _migrate_user_columns()

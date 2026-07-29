@@ -229,6 +229,40 @@ class EnrichBatch(BaseModel):
         return _to_dict_list(v)
 
 
+# ── Clasificación de nivel CEFR del Grammar KB (scripts/classify_grammar_levels.py) ──
+_CEFR_LEVELS = {"A1", "A2", "B1", "B2", "C1", "C2"}
+
+
+class GrammarClassifyItem(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    slug: str = ""
+    level: str = ""       # "" si el modelo no devolvió un token válido
+    category: str = ""
+    confidence: str = ""  # high | medium | low
+    rationale: str = ""
+
+    @field_validator("slug", "category", "confidence", "rationale", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)
+
+    @field_validator("level", mode="before")
+    @classmethod
+    def _lvl(cls, v):
+        s = _to_str(v).strip().upper()
+        return s if s in _CEFR_LEVELS else ""
+
+
+class GrammarClassifyBatch(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    results: list[GrammarClassifyItem] = []
+
+    @field_validator("results", mode="before")
+    @classmethod
+    def _l(cls, v):
+        return _to_dict_list(v)
+
+
 # ── Writing Challenge (V1 y V2 comparten forma) ──────────────────────────────
 class WritingError(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -237,6 +271,7 @@ class WritingError(BaseModel):
     type: str = ""
     explanation_es: str = ""
     reference_quote: str = ""
+    example_en: str = ""
 
     @field_validator("*", mode="before")
     @classmethod

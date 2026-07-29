@@ -13,6 +13,7 @@
 import { grammar as api } from '../api.js';
 
 const SEARCH_DEBOUNCE_MS = 200;
+const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
 function escapeHtml(s) {
     return String(s ?? '')
@@ -29,9 +30,21 @@ function initialState() {
         categories: [],          // [{ category, count }]
         topics: [],              // [{ id, slug, section_number, title, level, category }]
         selectedCategory: null,  // string | null (null = "todas")
+        selectedLevel: null,     // string | null (null = "todos")
         query: '',
         loading: true,
     };
+}
+
+// Conteo de temas por nivel, sobre TODOS los topics ya cargados (no afectado
+// por el filtro de categoría/búsqueda) — mismo criterio "global" que usan los
+// conteos de categoría (vienen de /api/grammar/categories, sin filtrar).
+function levelCounts(state) {
+    const counts = {};
+    for (const t of state.topics) {
+        if (t.level) counts[t.level] = (counts[t.level] || 0) + 1;
+    }
+    return counts;
 }
 
 function modalHTML(state) {
@@ -57,6 +70,26 @@ function modalHTML(state) {
             </button>
         `;
     }).join('');
+
+    const counts = levelCounts(state);
+    const levelRowHTML = `
+        <div class="gp-level-row">
+            <button class="gp-level ${state.selectedLevel === null ? 'gp-level-active' : ''}" data-level="__all">
+                Todos
+            </button>
+            ${LEVELS.map(lvl => {
+                const n = counts[lvl] || 0;
+                const active = state.selectedLevel === lvl;
+                const disabled = n === 0;
+                return `
+                    <button class="gp-level ${active ? 'gp-level-active' : ''} ${disabled ? 'gp-level-disabled' : ''}"
+                            data-level="${lvl}" ${disabled ? 'disabled title="Sin temas clasificados en este nivel todavía"' : ''}>
+                        ${lvl} <span class="gp-level-count">${n}</span>
+                    </button>
+                `;
+            }).join('')}
+        </div>
+    `;
 
     const filtered = filterTopics(state);
     const listHTML = filtered.length
@@ -88,6 +121,7 @@ function modalHTML(state) {
                            autofocus>
                     <div class="gp-result-count">${filtered.length} resultado${filtered.length === 1 ? '' : 's'}</div>
                 </div>
+                ${levelRowHTML}
                 <div class="gp-body">
                     <aside class="gp-sidebar">${sidebarHTML}</aside>
                     <div class="gp-list">
@@ -102,6 +136,11 @@ function modalHTML(state) {
 function filterTopics(state) {
     const q = state.query.trim().toLowerCase();
     return state.topics.filter(t => {
+        // El nivel es un filtro "duro": se aplica siempre, incluso durante
+        // una búsqueda (a diferencia de la categoría, que la búsqueda ignora).
+        if (state.selectedLevel !== null && t.level !== state.selectedLevel) {
+            return false;
+        }
         // Búsqueda cross-categoría: si hay query, ignora el filtro de categoría
         // (así no se "pierde" un resultado al estar en una categoría no seleccionada).
         if (q) {
@@ -162,6 +201,16 @@ export function openPicker() {
                     const v = btn.getAttribute('data-cat');
                     state.selectedCategory = v === '__all' ? null : (v === '__none' ? null : v);
                     state.query = '';  // limpiar búsqueda al cambiar categoría
+                    rerender();
+                });
+            });
+
+            root.querySelectorAll('.gp-level').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (btn.disabled) return;
+                    const v = btn.getAttribute('data-level');
+                    state.selectedLevel = v === '__all' ? null : v;
+                    state.query = '';  // mismo criterio que el filtro de categoría
                     rerender();
                 });
             });

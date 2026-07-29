@@ -43,6 +43,7 @@ from services.prompts import (
     CONTEXTUAL_LOOKUP_PROMPT,
     WRITING_CHALLENGE_PROMPT,
     WRITING_CHALLENGE_PROMPT_V2,
+    GRAMMAR_LEVEL_CLASSIFY_PROMPT,
     TOEFL_EMAIL_GRADING_PROMPT,
     TOEFL_DISCUSSION_GRADING_PROMPT,
     TOEFL_QUESTION_GEN_PROMPT,
@@ -188,6 +189,50 @@ def enrich_words_batch(words: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "synonyms_en": [s.strip().lower() for s in item["synonyms_en"] if s.strip()],
         })
     return out
+
+
+def classify_grammar_topics_batch(topics: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    Clasifica nivel CEFR + categoría para un lote de GrammarTopic, basándose en
+    el content_md real (no solo el título). Usado únicamente por
+    scripts/classify_grammar_levels.py — un job offline de una sola vez, por
+    lo que SÍ es correcto agrupar varios temas por llamada (a diferencia de la
+    regla de "un solo round-trip" del Writing Challenge, que aplica a la ruta
+    caliente por-submission).
+
+    `topics`: lista de {"slug": str, "title": str, "content_md": str}.
+    Devuelve una lista de dicts: slug, level ("" si no concluyente), category,
+    confidence, rationale.
+    """
+    if not topics:
+        return []
+
+    client = _ensure_client()
+    sections_block = "\n\n".join(
+        f"### {t['slug']}\nTitle: {t['title']}\n{t['content_md'][:1000]}"
+        for t in topics
+    )
+    prompt = GRAMMAR_LEVEL_CLASSIFY_PROMPT.format(n=len(topics), sections_block=sections_block)
+
+    resp = _create(
+        client,
+        model=_MODEL_NAME,
+        messages=[{"role": "user", "content": prompt}],
+        response_format={"type": "json_object"},
+        temperature=0.2,
+    )
+
+    text = (resp.choices[0].message.content or "").strip()
+    if not text:
+        raise RuntimeError("Groq devolvió una respuesta vacía")
+
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
+
+    validated = ai_schemas.validate(ai_schemas.GrammarClassifyBatch, data)
+    return validated["results"]
 
 
 def _call_json(prompt: str) -> dict[str, Any]:

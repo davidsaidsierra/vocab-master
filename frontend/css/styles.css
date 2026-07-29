@@ -985,6 +985,53 @@ body.force-desktop #floating-view-toggle {
     border-top: 1px dashed var(--border);
 }
 
+/* ── Casillas del tema del KB (Gramática / Ejemplos / Uso) ── */
+.wc-topic-block {
+    margin: 0.6rem 0;
+    padding: 0.55rem 0.75rem;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+.wc-topic-block-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--text-tertiary);
+    margin-bottom: 0.35rem;
+}
+.wc-topic-structure { border-left: 3px solid #0071e3; }
+.wc-topic-structure code {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    background: none;
+    padding: 0;
+    white-space: normal;
+    word-break: break-word;
+}
+.wc-topic-examples { border-left: 3px solid #34c759; }
+.wc-topic-examples ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+.wc-topic-examples li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+.wc-topic-usage { border-left: 3px solid #ff9500; }
+.wc-topic-usage p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
 .wc-chips {
     display: flex;
     flex-wrap: wrap;
@@ -1301,6 +1348,18 @@ body.force-desktop #floating-view-toggle {
     font-size: 0.9rem;
 }
 
+/* ── Ejemplo limpio generado por la IA bajo cada error (V2) ── */
+.wc-err-example {
+    margin-top: 0.4rem;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    border-left: 2px solid #34c759;
+    border-radius: var(--radius-sm);
+    line-height: 1.45;
+}
+
 /* ── Reference quote bajo cada error (V2 / KB-grounded) ── */
 .wc-reference-quote {
     margin-top: 0.4rem;
@@ -1424,6 +1483,45 @@ body.force-desktop #floating-view-toggle {
     color: var(--text-tertiary);
     white-space: nowrap;
 }
+
+.gp-level-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.65rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+}
+.gp-level {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.65rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+.gp-level:hover:not(.gp-level-disabled) { background: var(--bg-hover); }
+.gp-level-active {
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 500;
+}
+.gp-level-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.gp-level-count {
+    font-size: 0.7rem;
+    color: var(--text-tertiary);
+    background: var(--bg-subtle);
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+}
+.gp-level-active .gp-level-count { color: var(--accent); }
 
 .gp-body {
     display: grid;
