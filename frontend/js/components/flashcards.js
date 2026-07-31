@@ -168,7 +168,8 @@ export async function render(container) {
                         <div class="flex items-center justify-center gap-2 mb-3" id="typing-badges"></div>
                         <p class="text-xs uppercase tracking-wider mb-2" id="typing-label" style="color:#a5b4fc">Escribe la traducción</p>
                         <p class="text-3xl font-bold mb-1" id="typing-prompt"></p>
-                        <p class="text-sm text-slate-500 mb-4" id="typing-hint"></p>
+                        <p class="text-sm text-slate-500 mb-1" id="typing-hint"></p>
+                        <p class="text-sm italic mb-4 px-4 leading-relaxed" id="typing-example" style="color:#a5b4fc"></p>
                         <input type="text" id="typing-input" class="form-input" style="text-align:center;max-width:320px;margin:0 auto" placeholder="Escribe aquí…" autocomplete="off" autocapitalize="off" spellcheck="false">
                         <div class="mt-4 flex items-center justify-center gap-4" id="typing-actions">
                             <button class="btn-primary" id="typing-submit" style="padding:0.5rem 1.5rem">Check</button>
@@ -233,6 +234,7 @@ export async function render(container) {
     const typingLabel        = container.querySelector('#typing-label');
     const typingPrompt       = container.querySelector('#typing-prompt');
     const typingHint         = container.querySelector('#typing-hint');
+    const typingExample      = container.querySelector('#typing-example');
     const typingInput        = container.querySelector('#typing-input');
     const typingSubmit       = container.querySelector('#typing-submit');
     const typingSkip         = container.querySelector('#typing-skip');
@@ -473,6 +475,21 @@ export async function render(container) {
             .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    // Oculta la palabra objetivo dentro del ejemplo (modo ES→EN), para dar
+    // contexto de uso sin regalar la respuesta. Cubre inflexiones simples.
+    function maskWordInExample(example, word) {
+        const text = String(example || '');
+        const w = String(word || '').trim();
+        if (!text || !w) return text;
+        // Reducimos la palabra a su raíz para que también case cuando el ejemplo
+        // usa otra inflexión (guardada "shifts", ejemplo "shift").
+        const stem = w.replace(/(?:ies|es|s|ing|ed|ly)$/i, m =>
+            (w.length - m.length >= 3 ? '' : m));
+        const escaped = stem.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s+');
+        const re = new RegExp(`\\b${escaped}(?:ies|es|s|ing|ed|d|ly)?\\b`, 'gi');
+        return text.replace(re, '_____');
+    }
+
     function updateProgress() {
         const total = practiceWords.length;
         const pct   = Math.round((currentIndex / total) * 100);
@@ -539,6 +556,15 @@ export async function render(container) {
             typingLabel.textContent = 'Escribe la palabra en inglés';
             typingHint.textContent = '';
         }
+
+        // Frase de ejemplo como contexto de uso. En ES→EN la palabra objetivo va
+        // enmascarada para que el ejemplo ayude sin dar la respuesta.
+        const exampleText = w.example
+            ? (isReverseMode && reviewType !== 'synonym'
+                ? maskWordInExample(w.example, w.word)
+                : w.example)
+            : '';
+        typingExample.textContent = exampleText ? `"${exampleText}"` : '';
 
         const cat = w.category_name
             ? `<span class="badge" style="background:${w.category_color || '#8b5cf6'}22;color:${w.category_color || '#8b5cf6'}">${w.category_icon || ''} ${esc(w.category_name)}</span>`
