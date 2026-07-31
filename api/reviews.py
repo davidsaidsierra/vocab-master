@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from database.connection import get_db
 from database.models import Word, Review, User
 from api.auth import get_current_user, owner_id, scope_to_owner
-from api.schemas import ReviewCreate, ReviewOut, WordOut
+from api.schemas import ReviewCreate, ReviewOut, WordOut, DailySessionOut
 
 router = APIRouter(prefix="/api/reviews", tags=["reviews"])
 
@@ -107,6 +107,73 @@ def get_practice_words(
         words = q.order_by(Word.created_at.desc()).all()
 
     return [_word_to_out(w) for w in words]
+
+
+@router.get("/daily", response_model=DailySessionOut)
+def get_daily_session(
+    size: int = Query(50, ge=10, le=200, description="Cupo de palabras para la sesión"),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Mazo del día con cupo fijo, usando el SM-2 que ya se calcula al responder.
+
+    Reparto por defecto (sobre `size`):
+      60% vencidas  → `next_review` ya pasó; es lo que estás por olvidar
+      30% nuevas    → `repetitions == 0`; entran al ciclo a ritmo constante
+      10% débiles   → ya vistas con el peor `mastery_level`
+
+    Si un cupo no se llena, el sobrante se reparte entre los otros dos, así que
+    la sesión siempre trae `size` palabras mientras haya material.
+    """
+    now = datetime.now(timezone.utc)
+    base = lambda: scope_to_owner(db.query(Word), Word, current_user)
+
+    # Nunca repasadas. Se excluyen de "vencidas" aunque su next_review ya pasó,
+    # porque no son olvido: son material sin estrenar.
+    new_q = base().filter(Word.repetitions == 0).order_by(Word.created_at.asc())
+    due_q = (base()
+             .filter(Word.repetitions > 0, Word.next_review <= now)
+             .order_by(Word.next_review.asc()))
+    weak_q = (base()
+              .filter(Word.repetitions > 0, Word.next_review > now)
+              .order_by(Word.mastery_level.asc()))
+
+    due_total = due_q.count()
+
+    quota_due, quota_new = int(size * 0.6), int(size * 0.3)
+    quota_weak = size - quota_due - quota_new
+
+    due = due_q.limit(quota_due).all()
+    new = new_q.limit(quota_new).all()
+    weak = weak_q.limit(quota_weak).all()
+
+    # Rellenar el cupo con lo que sí haya, sin repetir palabras ya elegidas.
+    # El relleno va aparte para no falsear los contadores por origen.
+    chosen = {w.id for w in due + new + weak}
+    relleno = []
+    faltan = size - len(chosen)
+    for q in (due_q, new_q, weak_q):
+        if faltan <= 0:
+            break
+        for w in q.limit(size).all():
+            if w.id in chosen:
+                continue
+            chosen.add(w.id)
+            relleno.append(w)
+            faltan -= 1
+            if faltan <= 0:
+                break
+
+    words = due + new + weak + relleno
+    return DailySessionOut(
+        words=[_word_to_out(w) for w in words],
+        due_count=len(due),
+        new_count=len(new),
+        weak_count=len(weak),
+        due_total=due_total,
+        due_remaining=max(0, due_total - len(due)),
+        size=size,
+    )
 
 
 @router.post("/", response_model=ReviewOut, status_code=201)

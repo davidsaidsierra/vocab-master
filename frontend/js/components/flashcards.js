@@ -19,7 +19,29 @@ let isFlipped = false;
 let sessionCorrect = 0;
 let sessionIncorrect = 0;
 let isReverseMode = false;  // false = EN→ES (normal), true = ES→EN (reverse)
-let reviewType = 'recognition';  // recognition | translation | synonym
+let dailyMeta = null;       // respuesta de /reviews/daily (contadores de la sesión)
+// recognition | translation | synonym | cloze | choice | daily
+let reviewType = 'recognition';
+
+// Formato por defecto de la tarjeta. La sesión diaria no tiene uno fijo: mezcla
+// varios por palabra (ver buildDailyItems), así que aquí solo da el fallback.
+function cardType() {
+    return reviewType === 'daily' ? 'translation' : reviewType;
+}
+
+// ── Item de sesión ───────────────────────────────────────────
+// Cada entrada de `practiceWords` es una copia de la palabra con dos campos
+// extra: `_ex` (formato de ejercicio) y `_rev` (dirección forzada). Así una
+// misma palabra puede aparecer dos veces en la sesión con ejercicios distintos.
+function curItem()  { return practiceWords[currentIndex] || null; }
+function curEx()    { return curItem()?._ex || cardType(); }
+function curRev()   {
+    const it = curItem();
+    return it && it._rev !== undefined ? it._rev : isReverseMode;
+}
+
+// Los formatos que se resuelven con la tarjeta escrita.
+const TYPED_EX = ['translation', 'synonym', 'cloze'];
 
 export async function render(container) {
     sessionCorrect = 0;
@@ -42,9 +64,13 @@ export async function render(container) {
                         <button type="button" data-type="recognition" class="rtype-btn px-3 py-1.5 font-medium transition-colors">👁 Recognition</button>
                         <button type="button" data-type="translation" class="rtype-btn px-3 py-1.5 font-medium transition-colors">✍️ Type translation</button>
                         <button type="button" data-type="synonym" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🔀 Synonym</button>
+                        <button type="button" data-type="cloze" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🧩 Fill the blank</button>
+                        <button type="button" data-type="choice" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🔢 Multiple choice</button>
+                        <button type="button" data-type="daily" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🎯 Sesión diaria</button>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-3 items-end">
+                  <div class="flex flex-wrap gap-3 items-end flex-1" id="filters-grid">
                     <div class="flex-1 min-w-[140px]">
                         <label class="block text-xs text-slate-500 mb-1">Category</label>
                         <select id="review-filter-cat" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
@@ -100,6 +126,16 @@ export async function render(container) {
                         <label class="block text-xs text-slate-500 mb-1">How many days?</label>
                         <input type="number" id="custom-days-input" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem" min="0" max="365" placeholder="e.g. 10">
                     </div>
+                  </div>
+                  <!-- Panel de sesión diaria (sustituye a los filtros) -->
+                  <div class="hidden flex-1 min-w-[180px]" id="daily-panel">
+                        <label class="block text-xs text-slate-500 mb-1">Palabras por sesión</label>
+                        <select id="daily-size" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem;max-width:200px">
+                            <option value="30">30 · sostenible</option>
+                            <option value="50" selected>50 · ritmo normal</option>
+                            <option value="80">80 · ponerse al día</option>
+                        </select>
+                  </div>
                     <button class="btn-primary" id="start-review-btn" style="padding:0.5rem 1.25rem;font-size:0.8rem">
                         Start Practice
                     </button>
@@ -173,9 +209,22 @@ export async function render(container) {
                         <input type="text" id="typing-input" class="form-input" style="text-align:center;max-width:320px;margin:0 auto" placeholder="Escribe aquí…" autocomplete="off" autocapitalize="off" spellcheck="false">
                         <div class="mt-4 flex items-center justify-center gap-4" id="typing-actions">
                             <button class="btn-primary" id="typing-submit" style="padding:0.5rem 1.5rem">Check</button>
-                            <button class="text-xs text-slate-500 hover:text-slate-400 transition-colors" id="typing-skip">⏭ Skip</button>
+                            <button class="btn-secondary" id="typing-noidea" style="padding:0.5rem 1.25rem;font-size:0.8rem">🤷 No idea</button>
+                            <button class="text-xs text-slate-500 hover:text-slate-400 transition-colors" id="typing-skip" title="No cuenta para el algoritmo — úsalo solo si la palabra está mal guardada">⏭ Skip</button>
                         </div>
                         <div id="typing-feedback" class="hidden mt-4" style="max-width:360px;margin-left:auto;margin-right:auto"></div>
+                    </div>
+                </div>
+
+                <!-- ── Multiple choice card ── -->
+                <div id="choice-container" class="hidden">
+                    <div class="card" style="padding:2rem 1.5rem;text-align:center">
+                        <div class="flex items-center justify-center gap-2 mb-3" id="choice-badges"></div>
+                        <p class="text-xs uppercase tracking-wider mb-3" id="choice-label" style="color:#a5b4fc">Elige la palabra correcta</p>
+                        <p class="text-lg font-medium mb-1 px-2 leading-relaxed" id="choice-prompt"></p>
+                        <p class="text-sm text-slate-500 mb-4" id="choice-hint"></p>
+                        <div class="grid grid-cols-2 gap-2" id="choice-options" style="max-width:420px;margin:0 auto"></div>
+                        <div id="choice-feedback" class="hidden mt-4" style="max-width:380px;margin-left:auto;margin-right:auto"></div>
                     </div>
                 </div>
 
@@ -237,8 +286,20 @@ export async function render(container) {
     const typingExample      = container.querySelector('#typing-example');
     const typingInput        = container.querySelector('#typing-input');
     const typingSubmit       = container.querySelector('#typing-submit');
+    const typingNoIdea       = container.querySelector('#typing-noidea');
     const typingSkip         = container.querySelector('#typing-skip');
+    const typingActions      = container.querySelector('#typing-actions');
     const typingFeedback     = container.querySelector('#typing-feedback');
+    const choiceContainer    = container.querySelector('#choice-container');
+    const choiceBadges       = container.querySelector('#choice-badges');
+    const choiceLabel        = container.querySelector('#choice-label');
+    const choicePrompt       = container.querySelector('#choice-prompt');
+    const choiceHint         = container.querySelector('#choice-hint');
+    const choiceOptions      = container.querySelector('#choice-options');
+    const choiceFeedback     = container.querySelector('#choice-feedback');
+    const filtersGrid        = container.querySelector('#filters-grid');
+    const dailyPanel         = container.querySelector('#daily-panel');
+    const dailySize          = container.querySelector('#daily-size');
     const synonymTools       = container.querySelector('#synonym-tools');
     const genSynonymsBtn     = container.querySelector('#gen-synonyms-btn');
     const genSynonymsStatus  = container.querySelector('#gen-synonyms-status');
@@ -251,9 +312,15 @@ export async function render(container) {
             b.style.background = active ? 'rgba(0,113,227,0.12)' : '';
             b.style.color = active ? '#0071e3' : '#64748b';
         });
-        // La dirección EN↔ES no aplica al sinónimo (siempre inglés→inglés).
-        studyModeRow.style.display = type === 'synonym' ? 'none' : '';
+        // La dirección EN↔ES no aplica cuando el ejercicio siempre produce
+        // inglés: sinónimo, hueco en la frase y opción múltiple.
+        const fixedDirection = ['synonym', 'cloze', 'choice'].includes(type);
+        studyModeRow.style.display = fixedDirection ? 'none' : '';
         synonymTools.classList.toggle('hidden', type !== 'synonym');
+        // En sesión diaria el mazo lo decide el algoritmo: los filtros no aplican.
+        filtersGrid.classList.toggle('hidden', type === 'daily');
+        dailyPanel.classList.toggle('hidden', type !== 'daily');
+        startBtn.textContent = type === 'daily' ? 'Empezar sesión' : 'Start Practice';
     }
     reviewTypeToggle.querySelectorAll('.rtype-btn').forEach(b => {
         b.addEventListener('click', () => {
@@ -342,15 +409,70 @@ export async function render(container) {
         return params;
     }
 
+    // El hueco en la frase necesita un ejemplo donde la palabra aparezca de
+    // verdad; si no, no hay nada que tapar. Se filtra en el cliente porque el
+    // backend no distingue ejemplos útiles de ejemplos que no citan la palabra.
+    function usableForCloze(w) {
+        return !!w.example && maskWordInExample(w.example, w.word) !== w.example;
+    }
+
+    function filterForType(words, type) {
+        return type === 'cloze' ? words.filter(usableForCloze) : words;
+    }
+
+    // Mezcla de ejercicios de la sesión diaria. Rota hueco / opción múltiple /
+    // traducción para que una palabra no se practique siempre igual, y devuelve
+    // un tercio de ellas al final en ES→EN (cadena EN→ES→EN): reconocer una
+    // palabra no prueba que puedas producirla.
+    function buildDailyItems(deck) {
+        const items = deck.map((w, i) => {
+            let ex = 'translation';
+            if (i % 3 === 0 && usableForCloze(w)) ex = 'cloze';
+            else if (i % 3 === 1 && deck.length >= 4) ex = 'choice';
+            return { ...w, _ex: ex, _rev: false };
+        });
+        // Las de resto 2 son justo las que van EN→ES arriba, así que su segunda
+        // vuelta cierra la cadena. Se barajan y van al final para que haya
+        // distancia real entre las dos apariciones.
+        const chain = deck
+            .filter((_, i) => i % 3 === 2)
+            .map(w => ({ ...w, _ex: 'translation', _rev: true }));
+        shuffleArray(chain);
+        return items.concat(chain);
+    }
+
     // ── Update word count on filter change ──────────────
     async function updateWordCount() {
         try {
-            const words = await api.reviews.practice(buildParams());
-            wordCountLabel.textContent = `${words.length} word${words.length !== 1 ? 's' : ''} available to practice`;
+            if (reviewType === 'daily') {
+                const d = await api.reviews.daily(parseInt(dailySize.value) || 50);
+                dailyMeta = d;
+                const partes = [];
+                if (d.due_count)  partes.push(`${d.due_count} por repasar`);
+                if (d.new_count)  partes.push(`${d.new_count} nuevas`);
+                if (d.weak_count) partes.push(`${d.weak_count} flojas`);
+                const pendientes = d.due_remaining
+                    ? ` · quedan ${d.due_remaining} vencidas para mañana`
+                    : '';
+                const ejercicios = d.words.length + Math.floor(d.words.length / 3);
+                wordCountLabel.textContent = d.words.length
+                    ? `Sesión de hoy: ${d.words.length} palabras · ~${ejercicios} ejercicios `
+                      + `(${partes.join(' · ')})${pendientes}`
+                    : 'Nada pendiente por hoy. Agrega palabras o vuelve mañana.';
+                return;
+            }
+            const all = await api.reviews.practice(buildParams());
+            const words = filterForType(all, reviewType);
+            const nota = reviewType === 'cloze' && words.length < all.length
+                ? ` (de ${all.length}; el resto no tiene una frase de ejemplo usable)`
+                : '';
+            wordCountLabel.textContent =
+                `${words.length} word${words.length !== 1 ? 's' : ''} available to practice${nota}`;
         } catch {
             wordCountLabel.textContent = 'Error loading count';
         }
     }
+    dailySize.addEventListener('change', updateWordCount);
 
     filterCat.addEventListener('change', updateWordCount);
     filterLevel.addEventListener('change', updateWordCount);
@@ -361,7 +483,18 @@ export async function render(container) {
 
     // ── Start practice session ──────────────────────────
     startBtn.addEventListener('click', async () => {
-        practiceWords = await api.reviews.practice(buildParams());
+        if (reviewType === 'daily') {
+            const d = await api.reviews.daily(parseInt(dailySize.value) || 50);
+            dailyMeta = d;
+            const deck = d.words.slice();
+            shuffleArray(deck);
+            practiceWords = buildDailyItems(deck);
+        } else {
+            const words = filterForType(await api.reviews.practice(buildParams()), reviewType);
+            shuffleArray(words);
+            // Un solo formato: el elegido en el toggle, dirección según el modo.
+            practiceWords = words.map(w => ({ ...w, _ex: reviewType }));
+        }
         currentIndex = 0;
         isFlipped = false;
         sessionCorrect = 0;
@@ -372,9 +505,6 @@ export async function render(container) {
             emptyState.classList.remove('hidden');
             return;
         }
-
-        // Shuffle the words for variety
-        shuffleArray(practiceWords);
 
         emptyState.classList.add('hidden');
         reviewArea.classList.remove('hidden');
@@ -387,7 +517,7 @@ export async function render(container) {
         e.stopPropagation();
         const w = practiceWords[currentIndex];
         if (!w) return;
-        speak(isReverseMode ? w.translation : w.word, isReverseMode ? 'es-ES' : 'en-US');
+        speak(curRev() ? w.translation : w.word, curRev() ? 'es-ES' : 'en-US');
     });
     container.querySelector('#btn-speak-back').addEventListener('click', e => {
         e.stopPropagation();
@@ -410,7 +540,11 @@ export async function render(container) {
         if (reviewArea.classList.contains('hidden')) return;
         // Modo escrito: Enter califica (mientras no haya feedback). Con feedback
         // visible, el botón "Next" tiene el foco y Enter lo activa de forma nativa.
-        if (reviewType !== 'recognition') {
+        const ex = curEx();
+        // La opción múltiple se responde con el ratón; Enter solo avanza desde
+        // el botón "Next", que ya tiene el foco.
+        if (ex === 'choice') return;
+        if (ex !== 'recognition') {
             if (e.key === 'Enter' && typingFeedback.classList.contains('hidden')) {
                 e.preventDefault();
                 gradeTyping();
@@ -429,8 +563,9 @@ export async function render(container) {
     container.querySelector('#btn-correct').addEventListener('click', () => submitAnswer(4));
     container.querySelector('#btn-incorrect').addEventListener('click', () => submitAnswer(1));
 
-    // ── Typing mode: check + skip ───────────────────────
+    // ── Typing mode: check + no idea + skip ─────────────
     typingSubmit.addEventListener('click', gradeTyping);
+    typingNoIdea.addEventListener('click', noIdea);
     typingSkip.addEventListener('click', () => {
         currentIndex++;
         if (currentIndex >= practiceWords.length) { showSessionComplete(); return; }
@@ -500,18 +635,21 @@ export async function render(container) {
 
     function showCard() {
         updateProgress();
-        if (reviewType === 'recognition') showRecognitionCard();
+        const ex = curEx();
+        if (ex === 'choice') showChoiceCard();
+        else if (ex === 'recognition') showRecognitionCard();
         else showTypingCard();
     }
 
     function showRecognitionCard() {
         flashcardContainer.classList.remove('hidden');
         typingContainer.classList.add('hidden');
+        choiceContainer.classList.add('hidden');
 
         const w = practiceWords[currentIndex];
         const cat = w.category_name ? `${w.category_icon} ${w.category_name}` : '';
 
-        if (!isReverseMode) {
+        if (!curRev()) {
             // ── Normal: front = English word ────────────────
             container.querySelector('#card-front-label').textContent = 'What does this mean?';
             container.querySelector('#card-word').textContent = w.word;
@@ -540,14 +678,23 @@ export async function render(container) {
 
     function showTypingCard() {
         flashcardContainer.classList.add('hidden');
+        choiceContainer.classList.add('hidden');
         typingContainer.classList.remove('hidden');
 
         const w = practiceWords[currentIndex];
-        if (reviewType === 'synonym') {
+        const ex = curEx();
+        const rev = curRev();
+        // La frase con hueco necesita más ancho y menos tamaño que una palabra.
+        typingPrompt.style.fontSize = ex === 'cloze' ? '1.3rem' : '';
+        if (ex === 'synonym') {
             typingPrompt.textContent = w.word;
             typingLabel.textContent = 'Escribe un sinónimo (en inglés)';
             typingHint.textContent = w.translation || '';
-        } else if (!isReverseMode) {
+        } else if (ex === 'cloze') {
+            typingPrompt.textContent = maskWordInExample(w.example, w.word);
+            typingLabel.textContent = 'Completa la frase (en inglés)';
+            typingHint.textContent = w.translation || '';
+        } else if (!rev) {
             typingPrompt.textContent = w.word;
             typingLabel.textContent = 'Escribe la traducción';
             typingHint.textContent = '';
@@ -558,11 +705,10 @@ export async function render(container) {
         }
 
         // Frase de ejemplo como contexto de uso. En ES→EN la palabra objetivo va
-        // enmascarada para que el ejemplo ayude sin dar la respuesta.
-        const exampleText = w.example
-            ? (isReverseMode && reviewType !== 'synonym'
-                ? maskWordInExample(w.example, w.word)
-                : w.example)
+        // enmascarada para que el ejemplo ayude sin dar la respuesta. En el hueco
+        // no se repite: la frase ya *es* el enunciado.
+        const exampleText = (w.example && ex !== 'cloze')
+            ? (rev && ex !== 'synonym' ? maskWordInExample(w.example, w.word) : w.example)
             : '';
         typingExample.textContent = exampleText ? `"${exampleText}"` : '';
 
@@ -573,6 +719,7 @@ export async function render(container) {
 
         typingInput.value = '';
         typingInput.disabled = false;
+        typingActions.classList.remove('hidden');
         typingSubmit.classList.remove('hidden');
         typingSubmit.disabled = false;
         typingFeedback.classList.add('hidden');
@@ -586,12 +733,16 @@ export async function render(container) {
         const val = typingInput.value;
         if (!val.trim()) { typingInput.focus(); return; }
 
+        const ex = curEx();
         let expected, res;
-        if (reviewType === 'synonym') {
+        if (ex === 'synonym') {
             const list = Array.isArray(w.synonyms) ? w.synonyms : [];
             res = checkAgainstList(val, list);
             expected = list.join(', ');
-        } else if (!isReverseMode) {
+        } else if (ex === 'cloze') {
+            expected = w.word;
+            res = checkAnswer(val, expected);
+        } else if (!curRev()) {
             expected = w.translation;
             res = checkAnswer(val, expected);
         } else {
@@ -600,9 +751,127 @@ export async function render(container) {
         }
 
         typingInput.disabled = true;
-        typingSubmit.classList.add('hidden');
+        typingActions.classList.add('hidden');
         const quality = res.correct ? (res.exact ? 5 : 4) : 1;
         renderTypingFeedback(res, expected, w, quality, val.trim());
+    }
+
+    // "No idea": admitir que no la sabes cuenta como fallo (quality 1) y revela
+    // la respuesta. Antes, saltar la palabra la dejaba invisible para SM-2, así
+    // que las que peor sabías eran las que menos volvían.
+    function noIdea() {
+        const w = practiceWords[currentIndex];
+        if (!w) return;
+        const ex = curEx();
+        let expected;
+        if (ex === 'synonym') {
+            expected = (Array.isArray(w.synonyms) ? w.synonyms : []).join(', ');
+        } else if (ex === 'cloze') {
+            expected = w.word;
+        } else {
+            expected = curRev() ? w.word : w.translation;
+        }
+        typingInput.disabled = true;
+        typingActions.classList.add('hidden');
+        renderTypingFeedback({ correct: false, exact: false }, expected, w, 1, '');
+    }
+
+    // ── Opción múltiple ─────────────────────────────────
+    // Los distractores salen del mazo de la sesión, priorizando la misma
+    // categoría gramatical: un adjetivo entre sustantivos se descarta solo y el
+    // ejercicio deja de probar nada.
+    function buildChoiceOptions(w) {
+        const correcta = String(w.word).toLowerCase();
+        const pool = practiceWords.filter(x => x.id !== w.id);
+        const mismoPos = pool.filter(x => x.part_of_speech && x.part_of_speech === w.part_of_speech);
+        const fuente = (mismoPos.length >= 3 ? mismoPos : pool).slice();
+        shuffleArray(fuente);
+
+        const vistas = new Set([correcta]);
+        const distractores = [];
+        for (const x of fuente) {
+            const k = String(x.word).toLowerCase();
+            if (vistas.has(k)) continue;   // el mazo trae repetidas por la cadena
+            vistas.add(k);
+            distractores.push(x.word);
+            if (distractores.length === 3) break;
+        }
+        const opciones = [w.word, ...distractores];
+        shuffleArray(opciones);
+        return opciones;
+    }
+
+    function showChoiceCard() {
+        flashcardContainer.classList.add('hidden');
+        typingContainer.classList.add('hidden');
+        choiceContainer.classList.remove('hidden');
+
+        const w = practiceWords[currentIndex];
+        // Mejor enunciado disponible: frase con hueco > definición > traducción.
+        if (usableForCloze(w)) {
+            choiceLabel.textContent = '¿Qué palabra completa la frase?';
+            choicePrompt.textContent = maskWordInExample(w.example, w.word);
+            choiceHint.textContent = w.translation || '';
+        } else if (w.definition) {
+            choiceLabel.textContent = '¿Qué palabra corresponde?';
+            choicePrompt.textContent = w.definition;
+            choiceHint.textContent = w.translation || '';
+        } else {
+            choiceLabel.textContent = '¿Cómo se dice en inglés?';
+            choicePrompt.textContent = w.translation;
+            choiceHint.textContent = '';
+        }
+
+        const cat = w.category_name
+            ? `<span class="badge" style="background:${w.category_color || '#8b5cf6'}22;color:${w.category_color || '#8b5cf6'}">${w.category_icon || ''} ${esc(w.category_name)}</span>`
+            : '';
+        choiceBadges.innerHTML = cefrBadgeHTML(w.cefr_level) + cat;
+
+        choiceOptions.innerHTML = buildChoiceOptions(w).map(o =>
+            `<button class="btn-secondary choice-opt" data-w="${esc(o)}" style="padding:0.6rem 0.75rem;font-size:0.85rem">${esc(o)}</button>`
+        ).join('');
+        choiceOptions.querySelectorAll('.choice-opt').forEach(b =>
+            b.addEventListener('click', () => gradeChoice(b.dataset.w, w)));
+
+        choiceFeedback.classList.add('hidden');
+        choiceFeedback.innerHTML = '';
+    }
+
+    function gradeChoice(answer, w) {
+        const correcta = String(w.word).toLowerCase();
+        const ok = String(answer).toLowerCase() === correcta;
+
+        choiceOptions.querySelectorAll('.choice-opt').forEach(b => {
+            b.disabled = true;
+            if (String(b.dataset.w).toLowerCase() === correcta) {
+                b.style.background = 'rgba(52,199,89,0.18)';
+                b.style.color = '#34c759';
+            } else if (b.dataset.w === answer) {
+                b.style.background = 'rgba(255,59,48,0.15)';
+                b.style.color = '#ff3b30';
+            }
+        });
+
+        // Reconocer entre 4 opciones es más fácil que producir: nunca da 5.
+        const quality = ok ? 4 : 1;
+        choiceFeedback.innerHTML = `
+            <div class="rounded-lg p-3 text-left" style="background:${ok ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.1)'}">
+                <div class="font-semibold text-sm" style="color:${ok ? '#34c759' : '#ff3b30'}">${ok ? '✓ Correcto' : '✗ Incorrecto'}</div>
+                ${ok ? '' : `<div class="text-sm mt-1" style="color:var(--text-primary)">Respuesta: <span class="font-bold">${esc(w.word)}</span></div>`}
+                <div class="text-sm mt-1" style="color:var(--text-primary)">${esc(w.translation || '')}</div>
+                ${w.example ? `<div class="text-xs text-slate-500 italic mt-1">"${esc(w.example)}"</div>` : ''}
+            </div>
+            <button class="btn-primary mt-3 w-full" id="choice-next" style="padding:0.5rem 1.5rem">Next →</button>
+        `;
+        choiceFeedback.classList.remove('hidden');
+        const nextBtn = choiceFeedback.querySelector('#choice-next');
+        // Un segundo clic enviaría otra review de la misma palabra y saltaría la
+        // siguiente mientras el POST está en vuelo.
+        nextBtn.addEventListener('click', () => {
+            nextBtn.disabled = true;
+            submitAnswer(quality);
+        });
+        setTimeout(() => nextBtn.focus(), 50);
     }
 
     // Persiste una respuesta que el usuario marcó como válida, para que cuente
@@ -614,14 +883,15 @@ export async function render(container) {
         const ans = (answer || '').trim();
         if (!ans) return;
         const eq = (a, b) => a.toLowerCase() === b.toLowerCase();
-        if (reviewType === 'synonym') {
+        const ex = curEx();
+        if (ex === 'synonym') {
             const list = Array.isArray(w.synonyms) ? w.synonyms.slice() : [];
             if (!list.some(s => eq(s, ans))) {
                 list.push(ans);
                 await api.words.update(w.id, { synonyms: list });
                 w.synonyms = list;
             }
-        } else if (!isReverseMode) {
+        } else if (ex === 'translation' && !curRev()) {
             const parts = String(w.translation || '').split(/[,;/]/).map(s => s.trim()).filter(Boolean);
             if (!parts.some(p => eq(p, ans))) {
                 parts.push(ans);
@@ -634,10 +904,11 @@ export async function render(container) {
 
     function renderTypingFeedback(res, expectedRaw, w, quality, userAnswer) {
         const ok = res.correct;
-        const isSyn = reviewType === 'synonym';
+        const isSyn = curEx() === 'synonym';
+        const noAttempt = !userAnswer;
         const head = ok
             ? (res.exact ? '✓ Correcto' : '✓ Correcto (con un typo)')
-            : '✗ Incorrecto';
+            : (noAttempt ? '🤷 No la sabías — cuenta como fallo' : '✗ Incorrecto');
         // En sinónimos siempre mostramos la lista válida (es educativo). En
         // traducción solo revelamos la respuesta cuando falla.
         const synList = (isSyn && Array.isArray(w.synonyms) && w.synonyms.length)
@@ -647,8 +918,10 @@ export async function render(container) {
             ? `<div class="text-sm mt-1" style="color:var(--text-primary)">Respuesta: <span class="font-bold">${esc(expectedRaw)}</span></div>`
             : '';
         // Override sin IA: si escribiste una respuesta válida que la app no tenía.
-        // Disponible en sinónimo y en traducción EN→ES (no en modo inverso).
-        const canOverride = !ok && (isSyn || !isReverseMode);
+        // Solo donde hay un campo donde guardarla: sinónimo y traducción EN→ES.
+        // En ES→EN y en el hueco la respuesta esperada es la palabra misma.
+        const canOverride = !ok && !noAttempt
+            && (isSyn || (curEx() === 'translation' && !curRev()));
         const overrideLabel = isSyn
             ? '✓ Mi sinónimo también vale — guardarlo'
             : '✓ Mi respuesta también vale — guardarla';
@@ -667,7 +940,10 @@ export async function render(container) {
         `;
         typingFeedback.classList.remove('hidden');
         const nextBtn = typingFeedback.querySelector('#typing-next');
-        nextBtn.addEventListener('click', () => submitAnswer(quality));
+        nextBtn.addEventListener('click', () => {
+            nextBtn.disabled = true;
+            submitAnswer(quality);
+        });
         const ov = typingFeedback.querySelector('#typing-override');
         if (ov) ov.addEventListener('click', async () => {
             ov.disabled = true;
@@ -693,11 +969,18 @@ export async function render(container) {
         document.removeEventListener('keydown', onKeyDown);
         const total = sessionCorrect + sessionIncorrect;
         const pct = total > 0 ? Math.round((sessionCorrect / total) * 100) : 0;
+        // En sesión diaria el objetivo es cerrar el cupo, no vaciar el repositorio.
+        const dailyNote = (reviewType === 'daily' && dailyMeta)
+            ? `<p class="text-sm text-slate-500 mb-4">${dailyMeta.due_remaining
+                  ? `Objetivo del día cumplido. Quedan ${dailyMeta.due_remaining} vencidas: se reparten en los próximos días.`
+                  : 'Objetivo del día cumplido. No queda nada vencido — vuelve mañana.'}</p>`
+            : '';
         reviewArea.innerHTML = `
             <div class="page-enter text-center mt-8">
                 <div class="text-6xl mb-4">${pct >= 70 ? '🏆' : pct >= 40 ? '💪' : '📖'}</div>
                 <h3 class="text-2xl font-bold mb-2">Session Complete!</h3>
-                <p class="text-slate-400 mb-4">You practiced ${total} word${total > 1 ? 's' : ''}.</p>
+                <p class="text-slate-400 mb-4">You practiced ${total} ${reviewType === 'daily' ? 'ejercicio' : 'word'}${total > 1 ? 's' : ''}.</p>
+                ${dailyNote}
                 <div class="flex justify-center gap-8 mb-6">
                     <div class="text-center">
                         <div class="text-3xl font-bold text-emerald-400">${sessionCorrect}</div>

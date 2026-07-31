@@ -89,6 +89,7 @@ export const reviews = {
         const qs = new URLSearchParams(params).toString();
         return request(`/reviews/practice${qs ? '?' + qs : ''}`);
     },
+    daily: (size = 50) => request(`/reviews/daily?size=${size}`),
     submit: (data) => request('/reviews/', { method: 'POST', body: JSON.stringify(data) }),
 };
 

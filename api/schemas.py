@@ -155,6 +155,17 @@ class ReviewOut(BaseModel):
         from_attributes = True
 
 
+class DailySessionOut(BaseModel):
+    """Mazo del día: cupo fijo repartido entre vencidas, nuevas y débiles."""
+    words: list[WordOut]
+    due_count: int        # vencidas incluidas en la sesión
+    new_count: int        # nunca repasadas incluidas
+    weak_count: int       # peor mastery incluidas
+    due_total: int        # vencidas totales en el repositorio (haya cupo o no)
+    due_remaining: int    # vencidas que quedan fuera de esta sesión
+    size: int             # cupo solicitado
+
+
 # ── Writing Challenge ──────────────────────────────────────
 class WritingChallengeWord(BaseModel):
     id: int
