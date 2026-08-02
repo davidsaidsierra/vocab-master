@@ -2182,3 +2182,31 @@ body.force-desktop #floating-view-toggle {
     .reader-body { flex-direction: column; }
     .reader-sidebar { width: 100%; max-height: 180px; }
 }
+
+/* ── Selector de tipo de repaso ───────────────────────────── */
+/* Ocho formatos ya no caben en una sola fila: cada botón lleva su borde y el
+   contenedor los envuelve. `white-space: nowrap` evita que una etiqueta como
+   "-ing / -ed" se parta en tres líneas y descuadre la caja. */
+.rtype-btn {
+    padding: 0.4rem 0.8rem;
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    font-weight: 500;
+    font-size: 0.8rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+    font-family: inherit;
+}
+.rtype-btn:hover {
+    border-color: var(--border-strong);
+}
+.rtype-btn[data-active="1"] {
+    background: rgba(0, 113, 227, 0.1);
+    border-color: rgba(0, 113, 227, 0.35);
+    color: #0071e3;
+    font-weight: 600;
+}

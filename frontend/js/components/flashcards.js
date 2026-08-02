@@ -1,7 +1,11 @@
 import * as api from '../api.js';
 import { toast, cefrBadgeHTML } from '../utils/helpers.js';
-import { checkAnswer, checkAgainstList } from '../utils/grading.js';
+import { checkAnswer, checkAgainstList, checkFamilyAnswer } from '../utils/grading.js';
 import { POS_OPTIONS, optionsHTML } from '../utils/wordFilters.js';
+import {
+    openFamilyModal, SLOT_LABELS, filledSlots, cellFor,
+    cellTranslation, cellExample, cellDefinition, questionsFor,
+} from './familyMatrix.js';
 
 // ── Web Speech API pronunciation ──────────────────────────────
 function speak(text, lang = 'en-US') {
@@ -20,8 +24,10 @@ let sessionCorrect = 0;
 let sessionIncorrect = 0;
 let isReverseMode = false;  // false = EN→ES (normal), true = ES→EN (reverse)
 let dailyMeta = null;       // respuesta de /reviews/daily (contadores de la sesión)
-// recognition | translation | synonym | cloze | choice | daily
+// recognition | translation | synonym | cloze | choice | derivation | contrast | daily
 let reviewType = 'recognition';
+// Rota qué casilla de la familia se pregunta: en la sesión siguiente sale otra.
+let sessionRound = 0;
 
 // Formato por defecto de la tarjeta. La sesión diaria no tiene uno fijo: mezcla
 // varios por palabra (ver buildDailyItems), así que aquí solo da el fallback.
@@ -41,7 +47,103 @@ function curRev()   {
 }
 
 // Los formatos que se resuelven con la tarjeta escrita.
-const TYPED_EX = ['translation', 'synonym', 'cloze'];
+const TYPED_EX = ['translation', 'synonym', 'cloze', 'derivation', 'contrast', 'inflection', 'phrasal'];
+
+// ── Ejercicios de familia (fase 2) ───────────────────────────
+// Preguntas que la matriz hace posibles: saltar de una casilla a otra
+// (decide → decision), elegir entre -ing y -ed, recordar una flexión irregular
+// o un phrasal. El ítem lleva la pregunta ya resuelta en `_q`.
+const FAMILY_EX = ['derivation', 'contrast', 'inflection', 'phrasal'];
+
+function isFamilyEx(ex) { return FAMILY_EX.includes(ex); }
+
+// Una pregunta al azar del tipo pedido, o null si la familia no da para eso.
+function makeQuestion(w, kind, seed = 0) {
+    const qs = questionsFor(w.family, kind);
+    if (!qs.length) return null;
+    return qs[(seed + currentIndex + qs.length) % qs.length];
+}
+
+// ── Vista por CELDA de familia ───────────────────────────────
+// La familia es la unidad de progreso (un solo SM-2, como una palabra), pero
+// cada ejercicio apunta a UNA casilla: "stay como verbo" y "stay como
+// sustantivo" son preguntas distintas, con su traducción y su ejemplo. Si se
+// preguntara por la familia entera valdría la traducción de cualquier casilla
+// ("estancia" al preguntar el verbo) y el ejercicio dejaría de discriminar.
+function slotsOf(w) {
+    return w && w.family ? filledSlots(w.family) : [];
+}
+
+// Qué casilla toca. Manda el historial por casilla (`slot_stats`): primero las
+// que nunca has practicado, después la que peor llevas. El índice solo desempata,
+// para que dos casillas igual de flojas no salgan siempre en el mismo orden.
+function pickSlot(w, i = 0) {
+    const slots = slotsOf(w);
+    if (!slots.length) return null;
+    const stats = w.slot_stats || {};
+
+    // Sin historial todavía: la casilla propia de la palabra primero, luego rota.
+    const sinDatos = slots.filter(s => !stats[s]);
+    if (sinDatos.length) {
+        const own = w.family_slot && sinDatos.includes(w.family_slot) ? w.family_slot : null;
+        const order = own ? [own, ...sinDatos.filter(s => s !== own)] : sinDatos;
+        return order[i % order.length];
+    }
+
+    // Con historial: un fallo pesa el doble que un acierto, así que la casilla
+    // con peor saldo es la que vuelve.
+    const score = s => {
+        const st = stats[s] || { ok: 0, fail: 0 };
+        return (st.ok || 0) - 2 * (st.fail || 0);
+    };
+    const ordenadas = slots.slice().sort((a, b) => score(a) - score(b));
+    const peor = score(ordenadas[0]);
+    const empatadas = ordenadas.filter(s => score(s) === peor);
+    return empatadas[i % empatadas.length];
+}
+
+// Datos efectivos de la tarjeta: los de la celda si el ítem apunta a una; si
+// no, los de la palabra suelta de siempre.
+function viewOf(item) {
+    const cell = item && item._slot ? cellFor(item.family, item._slot) : null;
+    if (!cell) {
+        return {
+            word: item?.word || '', translation: item?.translation || '',
+            example: item?.example || '', definition: item?.definition || '',
+            slotLabel: '', root: null,
+        };
+    }
+    const ex = cellExample(cell);
+    return {
+        word: cell.form,
+        translation: cellTranslation(cell),
+        example: ex ? ex.en : '',
+        definition: cellDefinition(cell),
+        slotLabel: SLOT_LABELS[item._slot] || '',
+        root: (item.family && item.family.root) || null,
+    };
+}
+function curView() { return viewOf(curItem()); }
+
+// Distintivo del ejercicio de familia, para que se note que no es una tarjeta
+// de vocabulario normal sino una pregunta sobre la matriz.
+const FAMILY_EX_LABEL = {
+    derivation: '🧬 Derivación',
+    contrast:   '⚖️ -ing / -ed',
+    inflection: '🔁 Flexión irregular',
+    phrasal:    '🔗 Phrasal verb',
+};
+function familyExBadge(q) {
+    const label = FAMILY_EX_LABEL[q?.kind];
+    if (!label) return '';
+    return `<span class="badge" style="background:rgba(34,197,94,0.15);color:#4ade80">${label}</span>`;
+}
+
+// Etiqueta "· como verbo" para dejar claro qué casilla se está preguntando.
+function slotBadgeHTML(v) {
+    if (!v.slotLabel) return '';
+    return `<span class="badge" style="background:rgba(34,197,94,0.15);color:#4ade80" title="Casilla de la familia que se está practicando">🧬 ${v.slotLabel}</span>`;
+}
 
 export async function render(container) {
     sessionCorrect = 0;
@@ -60,13 +162,18 @@ export async function render(container) {
                 <!-- Review type -->
                 <div class="mb-3">
                     <label class="block text-xs text-slate-500 mb-1.5">Review type</label>
-                    <div class="inline-flex rounded-lg overflow-hidden border border-slate-700" style="font-size:0.8rem" id="review-type-toggle">
-                        <button type="button" data-type="recognition" class="rtype-btn px-3 py-1.5 font-medium transition-colors">👁 Recognition</button>
-                        <button type="button" data-type="translation" class="rtype-btn px-3 py-1.5 font-medium transition-colors">✍️ Type translation</button>
-                        <button type="button" data-type="synonym" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🔀 Synonym</button>
-                        <button type="button" data-type="cloze" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🧩 Fill the blank</button>
-                        <button type="button" data-type="choice" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🔢 Multiple choice</button>
-                        <button type="button" data-type="daily" class="rtype-btn px-3 py-1.5 font-medium transition-colors">🎯 Sesión diaria</button>
+                    <!-- Con 8 formatos ya no caben en una fila: se envuelven en
+                         varias y cada botón lleva su propio borde. Antes era un
+                         inline-flex único y el texto se partía dentro del botón. -->
+                    <div class="flex flex-wrap gap-1.5" style="font-size:0.8rem" id="review-type-toggle">
+                        <button type="button" data-type="recognition" class="rtype-btn">👁 Recognition</button>
+                        <button type="button" data-type="translation" class="rtype-btn">✍️ Type translation</button>
+                        <button type="button" data-type="synonym" class="rtype-btn">🔀 Synonym</button>
+                        <button type="button" data-type="cloze" class="rtype-btn">🧩 Fill the blank</button>
+                        <button type="button" data-type="choice" class="rtype-btn">🔢 Multiple choice</button>
+                        <button type="button" data-type="derivation" class="rtype-btn" title="Pasar de una casilla de la familia a otra: decide → decision">🧬 Derivación</button>
+                        <button type="button" data-type="contrast" class="rtype-btn" title="La pareja que más se falla: interesting vs interested">⚖️ -ing / -ed</button>
+                        <button type="button" data-type="daily" class="rtype-btn">🎯 Sesión diaria</button>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-3 items-end">
@@ -228,6 +335,12 @@ export async function render(container) {
                     </div>
                 </div>
 
+                <!-- ── Familia de la palabra actual (si la tiene) ── -->
+                <div id="family-bar" class="hidden text-center mb-4">
+                    <button class="btn-secondary" id="btn-family" style="padding:0.4rem 0.9rem;font-size:0.8rem"
+                            title="Ver la matriz completa: verbo, sustantivo, adjetivo, adverbio y phrasals">🧬 Ver familia</button>
+                </div>
+
                 <div id="rating-panel" class="hidden">
                     <p class="text-xs text-slate-500 text-center mb-3">Did you know it? <span class="text-slate-600">(← / →)</span></p>
                     <div class="flex gap-4">
@@ -272,6 +385,7 @@ export async function render(container) {
     const emptyState       = container.querySelector('#empty-state');
     const flashcard        = container.querySelector('#flashcard');
     const ratingPanel      = container.querySelector('#rating-panel');
+    const familyBar        = container.querySelector('#family-bar');
     const modeNormalBtn    = container.querySelector('#mode-normal');
     const modeReverseBtn   = container.querySelector('#mode-reverse');
     const modeLabel        = container.querySelector('#mode-label');
@@ -307,14 +421,14 @@ export async function render(container) {
     // ── Review type (recognition / translation / synonym) ─
     function setReviewType(type) {
         reviewType = type;
+        // El estado activo lo pinta el CSS (.rtype-btn[data-active="1"]), no
+        // estilos en línea: así el botón conserva su borde y su forma.
         reviewTypeToggle.querySelectorAll('.rtype-btn').forEach(b => {
-            const active = b.dataset.type === type;
-            b.style.background = active ? 'rgba(0,113,227,0.12)' : '';
-            b.style.color = active ? '#0071e3' : '#64748b';
+            b.dataset.active = b.dataset.type === type ? '1' : '0';
         });
         // La dirección EN↔ES no aplica cuando el ejercicio siempre produce
         // inglés: sinónimo, hueco en la frase y opción múltiple.
-        const fixedDirection = ['synonym', 'cloze', 'choice'].includes(type);
+        const fixedDirection = ['synonym', 'cloze', 'choice', ...FAMILY_EX].includes(type);
         studyModeRow.style.display = fixedDirection ? 'none' : '';
         synonymTools.classList.toggle('hidden', type !== 'synonym');
         // En sesión diaria el mazo lo decide el algoritmo: los filtros no aplican.
@@ -412,12 +526,17 @@ export async function render(container) {
     // El hueco en la frase necesita un ejemplo donde la palabra aparezca de
     // verdad; si no, no hay nada que tapar. Se filtra en el cliente porque el
     // backend no distingue ejemplos útiles de ejemplos que no citan la palabra.
-    function usableForCloze(w) {
-        return !!w.example && maskWordInExample(w.example, w.word) !== w.example;
+    function usableForCloze(w, slot = null) {
+        const v = viewOf(slot ? { ...w, _slot: slot } : w);
+        return !!v.example && maskWordInExample(v.example, v.word) !== v.example;
     }
 
     function filterForType(words, type) {
-        return type === 'cloze' ? words.filter(usableForCloze) : words;
+        if (type === 'cloze') return words.filter(w => usableForCloze(w));
+        // Los ejercicios de familia solo aplican donde la matriz da material:
+        // 'derivation' necesita 2+ casillas, 'contrast' necesita nota de contraste.
+        if (isFamilyEx(type)) return words.filter(w => questionsFor(w.family, type).length > 0);
+        return words;
     }
 
     // Mezcla de ejercicios de la sesión diaria. Rota hueco / opción múltiple /
@@ -426,17 +545,33 @@ export async function render(container) {
     // palabra no prueba que puedas producirla.
     function buildDailyItems(deck) {
         const items = deck.map((w, i) => {
+            // Una casilla por familia y por sesión: rotando con el índice, en
+            // otra sesión sale otra. Así `stay` no ocupa 3 huecos del cupo.
+            const slot = pickSlot(w, sessionRound + i);
             let ex = 'translation';
-            if (i % 3 === 0 && usableForCloze(w)) ex = 'cloze';
+            if (i % 3 === 0 && usableForCloze(w, slot)) ex = 'cloze';
             else if (i % 3 === 1 && deck.length >= 4) ex = 'choice';
-            return { ...w, _ex: ex, _rev: false };
+
+            // Una de cada cuatro palabras CON familia se practica con un
+            // ejercicio de matriz. El contraste -ing/-ed tiene prioridad: es el
+            // error que más se repite y hay pocas familias que lo permitan.
+            if (w.family && i % 4 === 3) {
+                for (const kind of ['contrast', 'derivation', 'inflection', 'phrasal']) {
+                    const qs = questionsFor(w.family, kind);
+                    if (qs.length) {
+                        return { ...w, _ex: kind, _rev: false, _slot: slot,
+                                 _q: qs[(sessionRound + i) % qs.length] };
+                    }
+                }
+            }
+            return { ...w, _ex: ex, _rev: false, _slot: slot };
         });
         // Las de resto 2 son justo las que van EN→ES arriba, así que su segunda
         // vuelta cierra la cadena. Se barajan y van al final para que haya
         // distancia real entre las dos apariciones.
         const chain = deck
             .filter((_, i) => i % 3 === 2)
-            .map(w => ({ ...w, _ex: 'translation', _rev: true }));
+            .map((w, i) => ({ ...w, _ex: 'translation', _rev: true, _slot: pickSlot(w, sessionRound + i) }));
         shuffleArray(chain);
         return items.concat(chain);
     }
@@ -463,9 +598,14 @@ export async function render(container) {
             }
             const all = await api.reviews.practice(buildParams());
             const words = filterForType(all, reviewType);
-            const nota = reviewType === 'cloze' && words.length < all.length
-                ? ` (de ${all.length}; el resto no tiene una frase de ejemplo usable)`
-                : '';
+            let nota = '';
+            if (reviewType === 'cloze' && words.length < all.length) {
+                nota = ` (de ${all.length}; el resto no tiene una frase de ejemplo usable)`;
+            } else if (reviewType === 'derivation') {
+                nota = ' con 2+ casillas en su familia';
+            } else if (reviewType === 'contrast') {
+                nota = ' con pareja -ing/-ed documentada';
+            }
             wordCountLabel.textContent =
                 `${words.length} word${words.length !== 1 ? 's' : ''} available to practice${nota}`;
         } catch {
@@ -483,6 +623,7 @@ export async function render(container) {
 
     // ── Start practice session ──────────────────────────
     startBtn.addEventListener('click', async () => {
+        sessionRound++;   // otra sesión → otra casilla de cada familia
         if (reviewType === 'daily') {
             const d = await api.reviews.daily(parseInt(dailySize.value) || 50);
             dailyMeta = d;
@@ -493,7 +634,14 @@ export async function render(container) {
             const words = filterForType(await api.reviews.practice(buildParams()), reviewType);
             shuffleArray(words);
             // Un solo formato: el elegido en el toggle, dirección según el modo.
-            practiceWords = words.map(w => ({ ...w, _ex: reviewType }));
+            practiceWords = words.map((w, i) => {
+                const item = { ...w, _ex: reviewType, _slot: pickSlot(w, sessionRound + i) };
+                if (isFamilyEx(reviewType)) {
+                    const qs = questionsFor(w.family, reviewType);
+                    item._q = qs[(sessionRound + i) % qs.length];
+                }
+                return item;
+            });
         }
         currentIndex = 0;
         isFlipped = false;
@@ -517,13 +665,14 @@ export async function render(container) {
         e.stopPropagation();
         const w = practiceWords[currentIndex];
         if (!w) return;
-        speak(curRev() ? w.translation : w.word, curRev() ? 'es-ES' : 'en-US');
+        const v = curView();
+        speak(curRev() ? v.translation : v.word, curRev() ? 'es-ES' : 'en-US');
     });
     container.querySelector('#btn-speak-back').addEventListener('click', e => {
         e.stopPropagation();
         const w = practiceWords[currentIndex];
         if (!w) return;
-        speak(isReverseMode ? w.word : w.word, 'en-US');
+        speak(curView().word, 'en-US');
     });
 
     // ── Flip on click / Space ───────────────────────────
@@ -585,7 +734,9 @@ export async function render(container) {
     async function submitAnswer(quality) {
         const word = practiceWords[currentIndex];
         try {
-            await api.reviews.submit({ word_id: word.id, quality });
+            // `slot` alimenta la memoria por casilla; en palabras sin familia va
+            // null y el backend simplemente lo ignora.
+            await api.reviews.submit({ word_id: word.id, quality, slot: word._slot || null });
 
             if (quality >= 3) sessionCorrect++;
             else sessionIncorrect++;
@@ -602,6 +753,20 @@ export async function render(container) {
         } catch (err) {
             toast(err.message, 'error');
         }
+    }
+
+    // El ejemplo de la pregunta, ya sin tapar: refuerza la forma correcta.
+    function qExampleHTML(q) {
+        if (!q || !q.example) return '';
+        return `<div class="text-xs text-slate-400 italic mt-2">"${esc(q.example.en)}"</div>`
+             + (q.example.es ? `<div class="text-xs text-slate-500 italic">${esc(q.example.es)}</div>` : '');
+    }
+
+    // La nota de contraste es LO que se está enseñando (interesting vs
+    // interested), así que se muestra destacada y siempre.
+    function qNoteHTML(q) {
+        if (!q || !q.note) return '';
+        return `<div class="text-xs mt-2 p-2 rounded" style="background:rgba(245,158,11,0.1);color:#fbbf24">${esc(q.note)}</div>`;
     }
 
     function esc(s) {
@@ -633,8 +798,17 @@ export async function render(container) {
         container.querySelector('#review-progress-bar').style.width = `${pct}%`;
     }
 
+    container.querySelector('#btn-family').addEventListener('click', () => {
+        const w = practiceWords[currentIndex];
+        if (w?.family) openFamilyModal(w);
+    });
+
     function showCard() {
         updateProgress();
+        // La familia se ofrece en cualquier tipo de repaso: es la referencia
+        // completa de la palabra (verbo/sustantivo/adjetivo + phrasals).
+        const w = practiceWords[currentIndex];
+        familyBar.classList.toggle('hidden', !w?.family);
         const ex = curEx();
         if (ex === 'choice') showChoiceCard();
         else if (ex === 'recognition') showRecognitionCard();
@@ -647,30 +821,35 @@ export async function render(container) {
         choiceContainer.classList.add('hidden');
 
         const w = practiceWords[currentIndex];
+        const v = curView();
         const cat = w.category_name ? `${w.category_icon} ${w.category_name}` : '';
+        // Qué casilla se pregunta, para que "stay" no sea ambiguo.
+        const slotTag = v.slotLabel ? `🧬 ${v.slotLabel}` : '';
 
         if (!curRev()) {
             // ── Normal: front = English word ────────────────
-            container.querySelector('#card-front-label').textContent = 'What does this mean?';
-            container.querySelector('#card-word').textContent = w.word;
-            container.querySelector('#card-example-hint').textContent = w.example ? `"${w.example}"` : '';
-            container.querySelector('#card-hint').textContent = cat;
+            container.querySelector('#card-front-label').textContent =
+                v.slotLabel ? `¿Qué significa como ${v.slotLabel.toLowerCase()}?` : 'What does this mean?';
+            container.querySelector('#card-word').textContent = v.word;
+            container.querySelector('#card-example-hint').textContent = v.example ? `"${v.example}"` : '';
+            container.querySelector('#card-hint').textContent = [slotTag, cat].filter(Boolean).join('  ·  ');
             // Back = Spanish translation
             container.querySelector('#card-back-label').textContent = 'Translation';
-            container.querySelector('#card-translation').textContent = w.translation;
-            container.querySelector('#card-example').textContent = w.example ? `"${w.example}"` : '';
-            container.querySelector('#card-definition').textContent = w.definition || '';
+            container.querySelector('#card-translation').textContent = v.translation;
+            container.querySelector('#card-example').textContent = v.example ? `"${v.example}"` : '';
+            container.querySelector('#card-definition').textContent = v.definition || '';
         } else {
             // ── Reverse: front = Spanish translation ─────────
-            container.querySelector('#card-front-label').textContent = '¿Cómo se dice en inglés?';
-            container.querySelector('#card-word').textContent = w.translation;
+            container.querySelector('#card-front-label').textContent =
+                v.slotLabel ? `¿Cómo se dice en inglés (${v.slotLabel.toLowerCase()})?` : '¿Cómo se dice en inglés?';
+            container.querySelector('#card-word').textContent = v.translation;
             container.querySelector('#card-example-hint').textContent = '';
-            container.querySelector('#card-hint').textContent = cat;
+            container.querySelector('#card-hint').textContent = [slotTag, cat].filter(Boolean).join('  ·  ');
             // Back = English word + example
             container.querySelector('#card-back-label').textContent = 'English word';
-            container.querySelector('#card-translation').textContent = w.word;
-            container.querySelector('#card-example').textContent = w.example ? `"${w.example}"` : '';
-            container.querySelector('#card-definition').textContent = w.definition || '';
+            container.querySelector('#card-translation').textContent = v.word;
+            container.querySelector('#card-example').textContent = v.example ? `"${v.example}"` : '';
+            container.querySelector('#card-definition').textContent = v.definition || '';
         }
 
         container.querySelector('#card-notes').textContent = w.notes ? `📝 ${w.notes}` : '';
@@ -682,40 +861,78 @@ export async function render(container) {
         typingContainer.classList.remove('hidden');
 
         const w = practiceWords[currentIndex];
+        const v = curView();
         const ex = curEx();
         const rev = curRev();
         // La frase con hueco necesita más ancho y menos tamaño que una palabra.
         typingPrompt.style.fontSize = ex === 'cloze' ? '1.3rem' : '';
+        // El enunciado dice qué casilla se pide: sin esto, "escribe la
+        // traducción de stay" no tendría una única respuesta correcta.
+        const comoSlot = v.slotLabel ? ` — ${v.slotLabel.toLowerCase()}` : '';
+        const q = w._q;
+        if (isFamilyEx(ex) && q) {
+            if (q.kind === 'derivation') {
+                typingPrompt.textContent = q.given;
+                typingLabel.innerHTML =
+                    `${SLOT_LABELS[q.givenSlot]} → escribe el <strong>${(SLOT_LABELS[q.targetSlot] || '').toLowerCase()}</strong>`;
+                typingHint.textContent = q.hint ? `pista: ${q.hint}` : '';
+            } else if (q.kind === 'contrast') {
+                typingPrompt.style.fontSize = '1.3rem';
+                typingPrompt.textContent = q.sentence;
+                typingLabel.innerHTML = `Completa con la forma correcta de <strong>${esc(q.cue)}</strong>`;
+                typingHint.textContent = q.hint || '';
+            } else if (q.kind === 'inflection') {
+                typingPrompt.textContent = q.given;
+                typingLabel.innerHTML = `Escribe <strong>${q.ask}</strong> de este verbo`;
+                typingHint.textContent = q.hint ? `pista: ${q.hint}` : '';
+            } else {
+                typingPrompt.textContent = q.hint;
+                typingLabel.innerHTML = `Escribe el phrasal verb de <strong>${esc(q.given)}</strong>`;
+                typingHint.textContent = '';
+            }
+            // El ejemplo se guarda para el feedback: aquí daría la respuesta.
+            typingExample.textContent = '';
+            typingBadges.innerHTML = cefrBadgeHTML(w.cefr_level) + familyExBadge(q);
+            typingInput.value = '';
+            typingInput.disabled = false;
+            typingActions.classList.remove('hidden');
+            typingSubmit.classList.remove('hidden');
+            typingSubmit.disabled = false;
+            typingFeedback.classList.add('hidden');
+            typingFeedback.innerHTML = '';
+            setTimeout(() => typingInput.focus(), 60);
+            return;
+        }
         if (ex === 'synonym') {
-            typingPrompt.textContent = w.word;
+            typingPrompt.textContent = v.word;
             typingLabel.textContent = 'Escribe un sinónimo (en inglés)';
-            typingHint.textContent = w.translation || '';
+            typingHint.textContent = v.translation || '';
         } else if (ex === 'cloze') {
-            typingPrompt.textContent = maskWordInExample(w.example, w.word);
+            typingPrompt.textContent = maskWordInExample(v.example, v.word);
             typingLabel.textContent = 'Completa la frase (en inglés)';
-            typingHint.textContent = w.translation || '';
+            typingHint.textContent = v.translation || '';
         } else if (!rev) {
-            typingPrompt.textContent = w.word;
-            typingLabel.textContent = 'Escribe la traducción';
+            typingPrompt.textContent = v.word;
+            typingLabel.textContent = `Escribe la traducción${comoSlot}`;
             typingHint.textContent = '';
         } else {
-            typingPrompt.textContent = w.translation;
-            typingLabel.textContent = 'Escribe la palabra en inglés';
+            typingPrompt.textContent = v.translation;
+            typingLabel.textContent = `Escribe la palabra en inglés${comoSlot}`;
             typingHint.textContent = '';
         }
 
         // Frase de ejemplo como contexto de uso. En ES→EN la palabra objetivo va
         // enmascarada para que el ejemplo ayude sin dar la respuesta. En el hueco
         // no se repite: la frase ya *es* el enunciado.
-        const exampleText = (w.example && ex !== 'cloze')
-            ? (rev && ex !== 'synonym' ? maskWordInExample(w.example, w.word) : w.example)
+        const exampleText = (v.example && ex !== 'cloze')
+            ? (rev && ex !== 'synonym' ? maskWordInExample(v.example, v.word) : v.example)
             : '';
         typingExample.textContent = exampleText ? `"${exampleText}"` : '';
 
         const cat = w.category_name
             ? `<span class="badge" style="background:${w.category_color || '#8b5cf6'}22;color:${w.category_color || '#8b5cf6'}">${w.category_icon || ''} ${esc(w.category_name)}</span>`
             : '';
-        typingBadges.innerHTML = cefrBadgeHTML(w.cefr_level) + cat;
+        typingBadges.innerHTML = cefrBadgeHTML(w.cefr_level) + slotBadgeHTML(v) + cat;
 
         typingInput.value = '';
         typingInput.disabled = false;
@@ -733,20 +950,30 @@ export async function render(container) {
         const val = typingInput.value;
         if (!val.trim()) { typingInput.focus(); return; }
 
+        const v = curView();
         const ex = curEx();
         let expected, res;
+        if (isFamilyEx(ex) && w._q) {
+            res = checkFamilyAnswer(val, w._q.accepted, w._q.rivals);
+            expected = w._q.answer;
+            typingInput.disabled = true;
+            typingActions.classList.add('hidden');
+            renderTypingFeedback(res, expected, w, res.correct ? (res.exact ? 5 : 4) : 1, val.trim());
+            return;
+        }
         if (ex === 'synonym') {
             const list = Array.isArray(w.synonyms) ? w.synonyms : [];
             res = checkAgainstList(val, list);
             expected = list.join(', ');
         } else if (ex === 'cloze') {
-            expected = w.word;
+            expected = v.word;
             res = checkAnswer(val, expected);
         } else if (!curRev()) {
-            expected = w.translation;
+            // Solo las traducciones de ESTA casilla, no las de la familia entera.
+            expected = v.translation;
             res = checkAnswer(val, expected);
         } else {
-            expected = w.word;
+            expected = v.word;
             res = checkAnswer(val, expected);
         }
 
@@ -762,14 +989,21 @@ export async function render(container) {
     function noIdea() {
         const w = practiceWords[currentIndex];
         if (!w) return;
+        const v = curView();
         const ex = curEx();
         let expected;
+        if (isFamilyEx(ex) && w._q) {
+            typingInput.disabled = true;
+            typingActions.classList.add('hidden');
+            renderTypingFeedback({ correct: false, exact: false }, w._q.answer, w, 1, '');
+            return;
+        }
         if (ex === 'synonym') {
             expected = (Array.isArray(w.synonyms) ? w.synonyms : []).join(', ');
         } else if (ex === 'cloze') {
-            expected = w.word;
+            expected = v.word;
         } else {
-            expected = curRev() ? w.word : w.translation;
+            expected = curRev() ? v.word : v.translation;
         }
         typingInput.disabled = true;
         typingActions.classList.add('hidden');
@@ -781,7 +1015,8 @@ export async function render(container) {
     // categoría gramatical: un adjetivo entre sustantivos se descarta solo y el
     // ejercicio deja de probar nada.
     function buildChoiceOptions(w) {
-        const correcta = String(w.word).toLowerCase();
+        const vw = viewOf(w);
+        const correcta = String(vw.word).toLowerCase();
         const pool = practiceWords.filter(x => x.id !== w.id);
         const mismoPos = pool.filter(x => x.part_of_speech && x.part_of_speech === w.part_of_speech);
         const fuente = (mismoPos.length >= 3 ? mismoPos : pool).slice();
@@ -790,13 +1025,16 @@ export async function render(container) {
         const vistas = new Set([correcta]);
         const distractores = [];
         for (const x of fuente) {
-            const k = String(x.word).toLowerCase();
+            // El distractor es la forma de SU casilla, no la palabra guardada:
+            // si no, entre las opciones aparecerían formas que no compiten.
+            const forma = viewOf(x).word;
+            const k = String(forma).toLowerCase();
             if (vistas.has(k)) continue;   // el mazo trae repetidas por la cadena
             vistas.add(k);
-            distractores.push(x.word);
+            distractores.push(forma);
             if (distractores.length === 3) break;
         }
-        const opciones = [w.word, ...distractores];
+        const opciones = [vw.word, ...distractores];
         shuffleArray(opciones);
         return opciones;
     }
@@ -807,25 +1045,26 @@ export async function render(container) {
         choiceContainer.classList.remove('hidden');
 
         const w = practiceWords[currentIndex];
+        const v = curView();
         // Mejor enunciado disponible: frase con hueco > definición > traducción.
-        if (usableForCloze(w)) {
+        if (v.example && maskWordInExample(v.example, v.word) !== v.example) {
             choiceLabel.textContent = '¿Qué palabra completa la frase?';
-            choicePrompt.textContent = maskWordInExample(w.example, w.word);
-            choiceHint.textContent = w.translation || '';
-        } else if (w.definition) {
+            choicePrompt.textContent = maskWordInExample(v.example, v.word);
+            choiceHint.textContent = v.translation || '';
+        } else if (v.definition) {
             choiceLabel.textContent = '¿Qué palabra corresponde?';
-            choicePrompt.textContent = w.definition;
-            choiceHint.textContent = w.translation || '';
+            choicePrompt.textContent = v.definition;
+            choiceHint.textContent = v.translation || '';
         } else {
             choiceLabel.textContent = '¿Cómo se dice en inglés?';
-            choicePrompt.textContent = w.translation;
+            choicePrompt.textContent = v.translation;
             choiceHint.textContent = '';
         }
 
         const cat = w.category_name
             ? `<span class="badge" style="background:${w.category_color || '#8b5cf6'}22;color:${w.category_color || '#8b5cf6'}">${w.category_icon || ''} ${esc(w.category_name)}</span>`
             : '';
-        choiceBadges.innerHTML = cefrBadgeHTML(w.cefr_level) + cat;
+        choiceBadges.innerHTML = cefrBadgeHTML(w.cefr_level) + slotBadgeHTML(v) + cat;
 
         choiceOptions.innerHTML = buildChoiceOptions(w).map(o =>
             `<button class="btn-secondary choice-opt" data-w="${esc(o)}" style="padding:0.6rem 0.75rem;font-size:0.85rem">${esc(o)}</button>`
@@ -838,7 +1077,8 @@ export async function render(container) {
     }
 
     function gradeChoice(answer, w) {
-        const correcta = String(w.word).toLowerCase();
+        const v = viewOf(w);
+        const correcta = String(v.word).toLowerCase();
         const ok = String(answer).toLowerCase() === correcta;
 
         choiceOptions.querySelectorAll('.choice-opt').forEach(b => {
@@ -857,9 +1097,9 @@ export async function render(container) {
         choiceFeedback.innerHTML = `
             <div class="rounded-lg p-3 text-left" style="background:${ok ? 'rgba(52,199,89,0.12)' : 'rgba(255,59,48,0.1)'}">
                 <div class="font-semibold text-sm" style="color:${ok ? '#34c759' : '#ff3b30'}">${ok ? '✓ Correcto' : '✗ Incorrecto'}</div>
-                ${ok ? '' : `<div class="text-sm mt-1" style="color:var(--text-primary)">Respuesta: <span class="font-bold">${esc(w.word)}</span></div>`}
-                <div class="text-sm mt-1" style="color:var(--text-primary)">${esc(w.translation || '')}</div>
-                ${w.example ? `<div class="text-xs text-slate-500 italic mt-1">"${esc(w.example)}"</div>` : ''}
+                ${ok ? '' : `<div class="text-sm mt-1" style="color:var(--text-primary)">Respuesta: <span class="font-bold">${esc(v.word)}</span></div>`}
+                <div class="text-sm mt-1" style="color:var(--text-primary)">${esc(v.translation || '')}</div>
+                ${v.example ? `<div class="text-xs text-slate-500 italic mt-1">"${esc(v.example)}"</div>` : ''}
             </div>
             <button class="btn-primary mt-3 w-full" id="choice-next" style="padding:0.5rem 1.5rem">Next →</button>
         `;
@@ -905,6 +1145,7 @@ export async function render(container) {
     function renderTypingFeedback(res, expectedRaw, w, quality, userAnswer) {
         const ok = res.correct;
         const isSyn = curEx() === 'synonym';
+        const q = isFamilyEx(curEx()) ? w._q : null;
         const noAttempt = !userAnswer;
         const head = ok
             ? (res.exact ? '✓ Correcto' : '✓ Correcto (con un typo)')
@@ -914,14 +1155,19 @@ export async function render(container) {
         const synList = (isSyn && Array.isArray(w.synonyms) && w.synonyms.length)
             ? `<div class="text-sm mt-1" style="color:var(--text-primary)">Sinónimos válidos: <span class="font-bold">${esc(w.synonyms.join(', '))}</span></div>`
             : '';
-        const revealAnswer = (!ok && !isSyn)
+        // En los ejercicios de familia la respuesta se muestra SIEMPRE, aciertes
+        // o no: la gracia es ver la forma correcta escrita.
+        const revealAnswer = ((!ok && !isSyn) || q)
             ? `<div class="text-sm mt-1" style="color:var(--text-primary)">Respuesta: <span class="font-bold">${esc(expectedRaw)}</span></div>`
             : '';
         // Override sin IA: si escribiste una respuesta válida que la app no tenía.
         // Solo donde hay un campo donde guardarla: sinónimo y traducción EN→ES.
         // En ES→EN y en el hueco la respuesta esperada es la palabra misma.
+        // El override guarda la respuesta en `translation`, que en una celda de
+        // familia la sobreescribiría la próxima vez que se aplique la matriz.
+        // Por eso solo se ofrece en palabras sin familia (o en sinónimos).
         const canOverride = !ok && !noAttempt
-            && (isSyn || (curEx() === 'translation' && !curRev()));
+            && (isSyn || (curEx() === 'translation' && !curRev() && !curItem()?._slot));
         const overrideLabel = isSyn
             ? '✓ Mi sinónimo también vale — guardarlo'
             : '✓ Mi respuesta también vale — guardarla';
@@ -933,7 +1179,8 @@ export async function render(container) {
                 <div class="font-semibold text-sm" style="color:${ok ? '#34c759' : '#ff3b30'}">${head}</div>
                 ${revealAnswer}
                 ${synList}
-                ${w.example ? `<div class="text-xs text-slate-500 italic mt-1">"${esc(w.example)}"</div>` : ''}
+                ${qExampleHTML(q) || (curView().example ? `<div class="text-xs text-slate-500 italic mt-1">"${esc(curView().example)}"</div>` : '')}
+                ${qNoteHTML(q)}
                 ${override}
             </div>
             <button class="btn-primary mt-3 w-full" id="typing-next" style="padding:0.5rem 1.5rem">Next →</button>

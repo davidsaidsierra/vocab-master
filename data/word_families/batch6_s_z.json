@@ -1,0 +1,1733 @@
+[
+  {
+    "root": "sad",
+    "slots": {
+      "verb": {
+        "form": "sadden",
+        "meanings": [
+          {
+            "translation_es": "entristecer",
+            "example_en": "The news saddened everyone.",
+            "example_es": "La noticia entristeció a todos."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "sadness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "tristeza",
+            "example_en": "There was a quiet sadness in the room.",
+            "example_es": "Había una tristeza callada en la sala."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "sad",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "triste",
+            "example_en": "I'm sad to see the lab close.",
+            "example_es": "Me da tristeza ver cerrar el laboratorio."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "sadly",
+        "meanings": [
+          {
+            "translation_es": "tristemente; lamentablemente",
+            "example_en": "Sadly, the data was lost.",
+            "example_es": "Lamentablemente, los datos se perdieron."
+          }
+        ]
+      }
+    },
+    "notes_es": "'Sadly' al inicio de oración significa 'lamentablemente', no 'con tristeza'."
+  },
+  {
+    "root": "safe",
+    "slots": {
+      "noun_thing": {
+        "form": "safety",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "seguridad (física)",
+            "example_en": "Safety comes before schedule.",
+            "example_es": "La seguridad va antes que el cronograma.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "safe",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "seguro (sin peligro)",
+            "example_en": "The area is safe now.",
+            "example_es": "El área está segura ahora."
+          },
+          {
+            "translation_es": "inseguro, peligroso (unsafe)",
+            "example_en": "That scaffold is unsafe.",
+            "example_es": "Ese andamio es inseguro."
+          }
+        ],
+        "variants": [
+          "unsafe"
+        ]
+      },
+      "adverb": {
+        "form": "safely",
+        "meanings": [
+          {
+            "translation_es": "de forma segura",
+            "example_en": "The load can safely reach 2 tons.",
+            "example_es": "La carga puede llegar con seguridad a 2 toneladas."
+          }
+        ]
+      }
+    },
+    "contrast_es": "safety = seguridad física (no hacerse daño). security = seguridad contra robo o ataque. En inglés son dos mundos distintos."
+  },
+  {
+    "root": "scrap",
+    "slots": {
+      "verb": {
+        "form": "scrap",
+        "inflections": {
+          "third": "scraps",
+          "ing": "scrapping",
+          "past": "scrapped",
+          "participle": "scrapped"
+        },
+        "meanings": [
+          {
+            "translation_es": "descartar, desechar",
+            "example_en": "They scrapped the whole prototype.",
+            "example_es": "Descartaron todo el prototipo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "scrap",
+        "meanings": [
+          {
+            "translation_es": "chatarra, desecho",
+            "example_en": "The scrap rate is under 2%.",
+            "example_es": "La tasa de desecho está bajo el 2%.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "scrapped",
+        "meanings": [
+          {
+            "translation_es": "descartado, desechado",
+            "example_en": "The scrapped design is still on file.",
+            "example_es": "El diseño descartado sigue archivado."
+          }
+        ]
+      }
+    },
+    "notes_es": "'scrap' en manufactura es el material perdido; en conversación, 'scrap the idea' = descartar la idea."
+  },
+  {
+    "root": "sculpture",
+    "slots": {
+      "verb": {
+        "form": "sculpt",
+        "meanings": [
+          {
+            "translation_es": "esculpir",
+            "example_en": "He sculpts in bronze.",
+            "example_es": "Esculpe en bronce."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "sculpture",
+        "meanings": [
+          {
+            "translation_es": "escultura",
+            "example_en": "The sculpture weighs two tons.",
+            "example_es": "La escultura pesa dos toneladas."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "sculptor",
+        "meanings": [
+          {
+            "translation_es": "escultor",
+            "example_en": "The sculptor worked for a year on it.",
+            "example_es": "El escultor trabajó un año en ella."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "seek",
+    "slots": {
+      "verb": {
+        "form": "seek",
+        "inflections": {
+          "third": "seeks",
+          "ing": "seeking",
+          "past": "sought",
+          "participle": "sought"
+        },
+        "meanings": [
+          {
+            "translation_es": "buscar (formal)",
+            "example_en": "We're seeking a lighter alloy.",
+            "example_es": "Estamos buscando una aleación más liviana.",
+            "register": "formal"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "sought-after",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "muy solicitado, codiciado",
+            "example_en": "It's a sought-after skill.",
+            "example_es": "Es una habilidad muy solicitada."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "seek out",
+        "meaning_es": "buscar activamente",
+        "example_en": "Seek out the original source.",
+        "example_es": "Busca la fuente original."
+      }
+    ],
+    "notes_es": "Irregular: seek → sought → sought. Es el 'look for' formal, típico de textos académicos y ofertas de empleo."
+  },
+  {
+    "root": "shade",
+    "slots": {
+      "verb": {
+        "form": "shade",
+        "meanings": [
+          {
+            "translation_es": "dar sombra, sombrear",
+            "example_en": "The roof shades the sensors.",
+            "example_es": "El techo da sombra a los sensores."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "shade",
+        "meanings": [
+          {
+            "translation_es": "sombra (zona sin sol)",
+            "example_en": "Store the resin in the shade.",
+            "example_es": "Guarda la resina a la sombra."
+          },
+          {
+            "translation_es": "tono, matiz",
+            "example_en": "Pick a darker shade of blue.",
+            "example_es": "Elige un tono de azul más oscuro."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "shady",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "sombreado; turbio, sospechoso",
+            "example_en": "That's a shady supplier.",
+            "example_es": "Ese es un proveedor turbio."
+          }
+        ]
+      }
+    },
+    "contrast_es": "shade = la zona con sombra (agradable). shadow = la silueta oscura que proyecta un objeto. En español ambas son 'sombra'."
+  },
+  {
+    "root": "shape",
+    "slots": {
+      "verb": {
+        "form": "shape",
+        "meanings": [
+          {
+            "translation_es": "dar forma, moldear",
+            "example_en": "The die shapes the sheet metal.",
+            "example_es": "El troquel da forma a la lámina."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "shape",
+        "meanings": [
+          {
+            "translation_es": "forma",
+            "example_en": "The blade has an aerofoil shape.",
+            "example_es": "El álabe tiene forma de perfil aerodinámico."
+          },
+          {
+            "translation_es": "estado, condición",
+            "example_en": "The machine is in good shape.",
+            "example_es": "La máquina está en buen estado."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "shaped",
+        "meanings": [
+          {
+            "translation_es": "con forma de",
+            "example_en": "It's a U-shaped channel.",
+            "example_es": "Es un canal con forma de U."
+          },
+          {
+            "translation_es": "informe, sin forma (shapeless)",
+            "example_en": "The melted part was shapeless.",
+            "example_es": "La pieza derretida quedó informe."
+          }
+        ],
+        "variants": [
+          "shapeless"
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "shape up",
+        "meaning_es": "ir tomando forma; mejorar",
+        "example_en": "The plan is shaping up nicely.",
+        "example_es": "El plan va tomando buena forma."
+      }
+    ]
+  },
+  {
+    "root": "sight",
+    "slots": {
+      "noun_thing": {
+        "form": "sight",
+        "meanings": [
+          {
+            "translation_es": "vista (sentido); lugar de interés",
+            "example_en": "We saw the main sights in a day.",
+            "example_es": "Vimos los lugares principales en un día."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "sighted",
+        "meanings": [
+          {
+            "translation_es": "vidente, que ve",
+            "example_en": "The tool works for sighted and blind users.",
+            "example_es": "La herramienta sirve para usuarios videntes e invidentes."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "sightseeing",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "turismo, hacer turismo",
+            "example_en": "We went sightseeing on Sunday.",
+            "example_es": "Fuimos a hacer turismo el domingo.",
+            "register": "incontable"
+          }
+        ]
+      }
+    },
+    "notes_es": "'at first sight' = a primera vista. 'lose sight of' = perder de vista (también en sentido figurado)."
+  },
+  {
+    "root": "single",
+    "slots": {
+      "verb": {
+        "form": "single",
+        "meanings": [
+          {
+            "translation_es": "señalar, destacar (single out)",
+            "example_en": "They singled out one supplier.",
+            "example_es": "Señalaron a un proveedor en particular."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "single",
+        "meanings": [
+          {
+            "translation_es": "único, solo; soltero",
+            "example_en": "A single bolt holds the cover.",
+            "example_es": "Un solo perno sostiene la tapa."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "singly",
+        "meanings": [
+          {
+            "translation_es": "individualmente, de a uno",
+            "example_en": "Test the cells singly first.",
+            "example_es": "Prueba las celdas de a una primero."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "single out",
+        "meaning_es": "señalar, escoger entre varios",
+        "example_en": "Don't single out one person.",
+        "example_es": "No señales a una sola persona."
+      }
+    ],
+    "notes_es": "'every single one' es un énfasis muy común: absolutamente todos."
+  },
+  {
+    "root": "sketch",
+    "slots": {
+      "verb": {
+        "form": "sketch",
+        "meanings": [
+          {
+            "translation_es": "bosquejar, esbozar",
+            "example_en": "He sketched the layout on a napkin.",
+            "example_es": "Bosquejó el trazado en una servilleta."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "sketch",
+        "inflections": {
+          "plural": "sketches"
+        },
+        "meanings": [
+          {
+            "translation_es": "bosquejo, croquis",
+            "example_en": "Send me a quick sketch.",
+            "example_es": "Mándame un croquis rápido."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "sketchy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "impreciso, incompleto; dudoso",
+            "example_en": "The details are still sketchy.",
+            "example_es": "Los detalles siguen siendo imprecisos."
+          }
+        ]
+      }
+    },
+    "notes_es": "'sketchy' en habla informal también significa sospechoso o de mala espina."
+  },
+  {
+    "root": "skill",
+    "slots": {
+      "noun_thing": {
+        "form": "skill",
+        "meanings": [
+          {
+            "translation_es": "habilidad, destreza",
+            "example_en": "Welding is a skill you build slowly.",
+            "example_es": "Soldar es una habilidad que se construye despacio."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "skilled",
+        "meanings": [
+          {
+            "translation_es": "cualificado, con experiencia",
+            "example_en": "We need a skilled machinist.",
+            "example_es": "Necesitamos un tornero cualificado."
+          },
+          {
+            "translation_es": "hábil, diestro (skillful)",
+            "example_en": "That was a skillful repair.",
+            "example_es": "Esa fue una reparación hábil."
+          }
+        ],
+        "variants": [
+          "skillful",
+          "unskilled"
+        ]
+      },
+      "adverb": {
+        "form": "skillfully",
+        "meanings": [
+          {
+            "translation_es": "hábilmente, con destreza",
+            "example_en": "He skillfully realigned the shaft.",
+            "example_es": "Realineó el eje con destreza."
+          }
+        ]
+      }
+    },
+    "notes_es": "skilled = con formación/experiencia (skilled labor). skillful = que lo hace bien. 'unskilled labor' = mano de obra no cualificada."
+  },
+  {
+    "root": "slope",
+    "slots": {
+      "verb": {
+        "form": "slope",
+        "meanings": [
+          {
+            "translation_es": "inclinarse, estar en pendiente",
+            "example_en": "The floor slopes toward the drain.",
+            "example_es": "El piso está en pendiente hacia el desagüe."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "slope",
+        "meanings": [
+          {
+            "translation_es": "pendiente, inclinación",
+            "example_en": "The slope of the curve gives the stiffness.",
+            "example_es": "La pendiente de la curva da la rigidez.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "sloped",
+        "meanings": [
+          {
+            "translation_es": "inclinado, en pendiente",
+            "example_en": "It has a sloped roof.",
+            "example_es": "Tiene un techo inclinado."
+          }
+        ]
+      }
+    },
+    "notes_es": "En gráficas, slope = pendiente (la m de y = mx + b)."
+  },
+  {
+    "root": "slow",
+    "slots": {
+      "verb": {
+        "form": "slow",
+        "meanings": [
+          {
+            "translation_es": "reducir la velocidad, frenar",
+            "example_en": "Slow the feed rate.",
+            "example_es": "Reduce la velocidad de avance."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "slow",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "lento",
+            "example_en": "The response is too slow.",
+            "example_es": "La respuesta es demasiado lenta."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "slowly",
+        "meanings": [
+          {
+            "translation_es": "lentamente, despacio",
+            "example_en": "Open the valve slowly.",
+            "example_es": "Abre la válvula despacio."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "slow down",
+        "meaning_es": "ir más despacio, frenar",
+        "example_en": "Slow down before the curve.",
+        "example_es": "Frena antes de la curva."
+      }
+    ],
+    "notes_es": "El adverbio correcto es 'slowly'. 'Go slow' existe pero es informal y solo en imperativos."
+  },
+  {
+    "root": "social",
+    "slots": {
+      "noun_thing": {
+        "form": "socialism",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "socialismo",
+            "example_en": "The book compares socialism and market models.",
+            "example_es": "El libro compara el socialismo y los modelos de mercado."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "socialist",
+        "meanings": [
+          {
+            "translation_es": "socialista",
+            "example_en": "He describes himself as a socialist.",
+            "example_es": "Se describe como socialista."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "social",
+        "meanings": [
+          {
+            "translation_es": "social",
+            "example_en": "The change had a social impact.",
+            "example_es": "El cambio tuvo un impacto social."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "socially",
+        "meanings": [
+          {
+            "translation_es": "socialmente",
+            "example_en": "It's a socially responsible policy.",
+            "example_es": "Es una política socialmente responsable."
+          }
+        ]
+      }
+    },
+    "notes_es": "El sufijo -ism nombra la doctrina y -ist a quien la sigue: capitalism/capitalist, activism/activist."
+  },
+  {
+    "root": "sole",
+    "slots": {
+      "adjective": {
+        "form": "sole",
+        "meanings": [
+          {
+            "translation_es": "único, exclusivo",
+            "example_en": "That's the sole reason for the delay.",
+            "example_es": "Esa es la única razón del retraso."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "solely",
+        "meanings": [
+          {
+            "translation_es": "únicamente, exclusivamente",
+            "example_en": "The failure is solely due to fatigue.",
+            "example_es": "La falla se debe únicamente a la fatiga."
+          }
+        ]
+      }
+    },
+    "notes_es": "'sole' es más formal que 'only' y va antes del sustantivo. También es la suela del zapato y un pez (lenguado)."
+  },
+  {
+    "root": "sort",
+    "slots": {
+      "verb": {
+        "form": "sort",
+        "meanings": [
+          {
+            "translation_es": "ordenar, clasificar",
+            "example_en": "Sort the samples by batch.",
+            "example_es": "Ordena las muestras por lote."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "sort",
+        "meanings": [
+          {
+            "translation_es": "tipo, clase",
+            "example_en": "What sort of failure was it?",
+            "example_es": "¿Qué tipo de falla fue?"
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "sort out",
+        "meaning_es": "resolver, arreglar",
+        "example_en": "We sorted out the wiring issue.",
+        "example_es": "Resolvimos el problema del cableado."
+      }
+    ],
+    "notes_es": "'sort of' en conversación es 'más o menos, como que': 'It's sort of working'."
+  },
+  {
+    "root": "sour",
+    "slots": {
+      "verb": {
+        "form": "sour",
+        "meanings": [
+          {
+            "translation_es": "agriar(se), deteriorarse",
+            "example_en": "The relationship soured after the audit.",
+            "example_es": "La relación se deterioró tras la auditoría."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "sourness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "acidez, agrura",
+            "example_en": "The sourness balances the sugar.",
+            "example_es": "La acidez equilibra el azúcar."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "sour",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "agrio, ácido",
+            "example_en": "The lemon is very sour.",
+            "example_es": "El limón es muy agrio."
+          }
+        ]
+      }
+    },
+    "notes_es": "Los cuatro sabores base en inglés: sweet, salty, sour, bitter. 'Tangy' (que también tienes) es un ácido agradable."
+  },
+  {
+    "root": "spark",
+    "slots": {
+      "verb": {
+        "form": "spark",
+        "meanings": [
+          {
+            "translation_es": "provocar, desencadenar",
+            "example_en": "The article sparked a long debate.",
+            "example_es": "El artículo desencadenó un largo debate."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "spark",
+        "meanings": [
+          {
+            "translation_es": "chispa",
+            "example_en": "A spark ignites the mixture.",
+            "example_es": "Una chispa enciende la mezcla.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "notes_es": "'spark plug' = bujía. En sentido figurado, spark = detonar una idea o una discusión."
+  },
+  {
+    "root": "sprawl",
+    "slots": {
+      "verb": {
+        "form": "sprawl",
+        "meanings": [
+          {
+            "translation_es": "extenderse desordenadamente; despatarrarse",
+            "example_en": "The city sprawls into the valley.",
+            "example_es": "La ciudad se extiende hacia el valle."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "sprawl",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "expansión descontrolada",
+            "example_en": "Urban sprawl raised transport costs.",
+            "example_es": "La expansión urbana descontrolada subió los costos de transporte."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "sprawled",
+        "meanings": [
+          {
+            "translation_es": "despatarrado, tendido",
+            "example_en": "He was sprawled across the couch.",
+            "example_es": "Estaba despatarrado en el sofá."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "steer",
+    "slots": {
+      "verb": {
+        "form": "steer",
+        "meanings": [
+          {
+            "translation_es": "dirigir, guiar (un vehículo)",
+            "example_en": "The rudder steers the boat.",
+            "example_es": "El timón dirige el bote."
+          },
+          {
+            "translation_es": "orientar, encaminar",
+            "example_en": "She steered the meeting back on topic.",
+            "example_es": "Reencaminó la reunión al tema."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "steering",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "dirección (sistema)",
+            "example_en": "The steering feels loose.",
+            "example_es": "La dirección se siente floja.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "steer clear of",
+        "meaning_es": "evitar, mantenerse lejos de",
+        "example_en": "Steer clear of that vendor.",
+        "example_es": "Evita a ese proveedor."
+      }
+    ],
+    "notes_es": "'steering committee' = comité directivo, muy común en proyectos."
+  },
+  {
+    "root": "steward",
+    "slots": {
+      "noun_person": {
+        "form": "steward",
+        "meanings": [
+          {
+            "translation_es": "administrador, encargado",
+            "example_en": "Engineers are stewards of public safety.",
+            "example_es": "Los ingenieros son garantes de la seguridad pública."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "stewardship",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "administración responsable, custodia",
+            "example_en": "Environmental stewardship is part of the policy.",
+            "example_es": "La custodia ambiental es parte de la política."
+          }
+        ]
+      }
+    },
+    "notes_es": "El sufijo -ship crea sustantivos abstractos de rol: leadership, ownership, membership, stewardship."
+  },
+  {
+    "root": "strength",
+    "slots": {
+      "verb": {
+        "form": "strengthen",
+        "meanings": [
+          {
+            "translation_es": "reforzar, fortalecer",
+            "example_en": "We strengthened the bracket with a rib.",
+            "example_es": "Reforzamos el soporte con una nervadura."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "strength",
+        "meanings": [
+          {
+            "translation_es": "resistencia (mecánica); fuerza",
+            "example_en": "Tensile strength dropped after welding.",
+            "example_es": "La resistencia a tracción bajó tras soldar.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "punto fuerte",
+            "example_en": "Attention to detail is his strength.",
+            "example_es": "La atención al detalle es su punto fuerte."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "strong",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "fuerte, resistente",
+            "example_en": "The joint is strong enough.",
+            "example_es": "La unión es suficientemente resistente."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "strongly",
+        "meanings": [
+          {
+            "translation_es": "fuertemente, enérgicamente",
+            "example_en": "I strongly recommend retesting.",
+            "example_es": "Recomiendo enérgicamente volver a probar."
+          }
+        ]
+      }
+    },
+    "notes_es": "Clave para ti: en mecánica 'strength' es RESISTENCIA (yield strength = límite elástico), no 'fuerza' (force)."
+  },
+  {
+    "root": "strike",
+    "slots": {
+      "verb": {
+        "form": "strike",
+        "inflections": {
+          "third": "strikes",
+          "ing": "striking",
+          "past": "struck",
+          "participle": "struck"
+        },
+        "meanings": [
+          {
+            "translation_es": "golpear, impactar",
+            "example_en": "The debris struck the blade.",
+            "example_es": "Los restos golpearon el álabe."
+          },
+          {
+            "translation_es": "parecerle a uno, impresionar",
+            "example_en": "It strikes me as risky.",
+            "example_es": "Me parece arriesgado."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "strike",
+        "meanings": [
+          {
+            "translation_es": "huelga",
+            "example_en": "The plant is on strike.",
+            "example_es": "La planta está en huelga."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "striking",
+        "meanings": [
+          {
+            "translation_es": "llamativo, sorprendente",
+            "example_en": "There's a striking difference between the two.",
+            "example_es": "Hay una diferencia sorprendente entre ambos."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "strikingly",
+        "meanings": [
+          {
+            "translation_es": "sorprendentemente, notablemente",
+            "example_en": "The curves are strikingly similar.",
+            "example_es": "Las curvas son sorprendentemente parecidas."
+          }
+        ]
+      }
+    },
+    "notes_es": "Irregular: strike → struck → struck. 'It strikes me that...' es una fórmula elegante para dar tu opinión por escrito."
+  },
+  {
+    "root": "subsequent",
+    "slots": {
+      "adjective": {
+        "form": "subsequent",
+        "meanings": [
+          {
+            "translation_es": "posterior, siguiente",
+            "example_en": "Subsequent tests confirmed it.",
+            "example_es": "Las pruebas posteriores lo confirmaron."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "subsequently",
+        "meanings": [
+          {
+            "translation_es": "posteriormente, después",
+            "example_en": "The valve was subsequently replaced.",
+            "example_es": "La válvula fue reemplazada posteriormente."
+          }
+        ]
+      }
+    },
+    "notes_es": "Conector formal de secuencia. 'subsequent TO' = después de (muy formal)."
+  },
+  {
+    "root": "subtle",
+    "slots": {
+      "noun_thing": {
+        "form": "subtlety",
+        "inflections": {
+          "plural": "subtleties"
+        },
+        "meanings": [
+          {
+            "translation_es": "sutileza, matiz",
+            "example_en": "The subtleties of the model matter here.",
+            "example_es": "Las sutilezas del modelo importan aquí."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "subtle",
+        "meanings": [
+          {
+            "translation_es": "sutil, poco evidente",
+            "example_en": "There's a subtle difference in the finish.",
+            "example_es": "Hay una diferencia sutil en el acabado."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "subtly",
+        "meanings": [
+          {
+            "translation_es": "sutilmente",
+            "example_en": "The tone shifts subtly.",
+            "example_es": "El tono cambia sutilmente."
+          }
+        ]
+      }
+    },
+    "notes_es": "La B es muda: se pronuncia /ˈsʌtəl/. El adverbio pierde la e: subtle → subtly."
+  },
+  {
+    "root": "sudden",
+    "slots": {
+      "adjective": {
+        "form": "sudden",
+        "meanings": [
+          {
+            "translation_es": "repentino, súbito",
+            "example_en": "There was a sudden drop in pressure.",
+            "example_es": "Hubo una caída repentina de presión."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "suddenly",
+        "meanings": [
+          {
+            "translation_es": "de repente, súbitamente",
+            "example_en": "Suddenly the motor stopped.",
+            "example_es": "De repente el motor se detuvo."
+          }
+        ]
+      }
+    },
+    "notes_es": "'all of a sudden' es la forma idiomática de 'de repente'."
+  },
+  {
+    "root": "surround",
+    "slots": {
+      "verb": {
+        "form": "surround",
+        "meanings": [
+          {
+            "translation_es": "rodear",
+            "example_en": "Insulation surrounds the pipe.",
+            "example_es": "El aislante rodea la tubería."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "surroundings",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "entorno, alrededores",
+            "example_en": "The sensor adapts to its surroundings.",
+            "example_es": "El sensor se adapta a su entorno.",
+            "register": "siempre plural"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "surrounded",
+        "meanings": [
+          {
+            "translation_es": "rodeado",
+            "example_en": "The core is surrounded by coolant.",
+            "example_es": "El núcleo está rodeado de refrigerante."
+          }
+        ]
+      }
+    },
+    "notes_es": "surrounded BY. 'surroundings' siempre va en plural cuando significa entorno físico."
+  },
+  {
+    "root": "tailor",
+    "slots": {
+      "verb": {
+        "form": "tailor",
+        "meanings": [
+          {
+            "translation_es": "adaptar, personalizar",
+            "example_en": "We tailored the report to the client.",
+            "example_es": "Adaptamos el informe al cliente."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "tailor",
+        "meanings": [
+          {
+            "translation_es": "sastre",
+            "example_en": "The tailor adjusted the jacket.",
+            "example_es": "El sastre ajustó la chaqueta."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "tailored",
+        "meanings": [
+          {
+            "translation_es": "adaptado, a la medida",
+            "example_en": "It's a tailored solution.",
+            "example_es": "Es una solución a la medida."
+          }
+        ]
+      }
+    },
+    "notes_es": "'tailor-made' y 'tailored to your needs' son fórmulas muy usadas en propuestas comerciales."
+  },
+  {
+    "root": "teach",
+    "slots": {
+      "verb": {
+        "form": "teach",
+        "inflections": {
+          "third": "teaches",
+          "ing": "teaching",
+          "past": "taught",
+          "participle": "taught"
+        },
+        "meanings": [
+          {
+            "translation_es": "enseñar",
+            "example_en": "She taught me how to read a P&ID.",
+            "example_es": "Ella me enseñó a leer un P&ID."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "teacher",
+        "meanings": [
+          {
+            "translation_es": "profesor, maestro",
+            "example_en": "My English teacher corrects my writing.",
+            "example_es": "Mi profesor de inglés corrige mis textos."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "teaching",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "enseñanza, docencia",
+            "example_en": "Teaching forces you to understand.",
+            "example_es": "Enseñar te obliga a entender."
+          }
+        ]
+      }
+    },
+    "notes_es": "Irregular: teach → taught → taught. Ojo con la ortografía 'augh', igual que caught y bought."
+  },
+  {
+    "root": "think",
+    "slots": {
+      "verb": {
+        "form": "think",
+        "inflections": {
+          "third": "thinks",
+          "ing": "thinking",
+          "past": "thought",
+          "participle": "thought"
+        },
+        "meanings": [
+          {
+            "translation_es": "pensar, creer",
+            "example_en": "I think the seal is the problem.",
+            "example_es": "Creo que el sello es el problema."
+          }
+        ],
+        "variants": [
+          "overthink",
+          "rethink"
+        ]
+      },
+      "noun_thing": {
+        "form": "thought",
+        "meanings": [
+          {
+            "translation_es": "pensamiento, idea",
+            "example_en": "That's an interesting thought.",
+            "example_es": "Ese es un pensamiento interesante."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "thinker",
+        "meanings": [
+          {
+            "translation_es": "pensador",
+            "example_en": "He's a careful thinker.",
+            "example_es": "Es un pensador cuidadoso."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "thinking",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "razonamiento, forma de pensar",
+            "example_en": "Critical thinking is the goal.",
+            "example_es": "El pensamiento crítico es el objetivo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "thoughtful",
+        "variants": [
+          "thought-provoking",
+          "thoughtless"
+        ],
+        "meanings": [
+          {
+            "translation_es": "reflexivo, considerado",
+            "example_en": "That's a thoughtful analysis.",
+            "example_es": "Ese es un análisis reflexivo."
+          },
+          {
+            "translation_es": "que hace pensar (thought-provoking)",
+            "example_en": "It's a thought-provoking article.",
+            "example_es": "Es un artículo que hace pensar."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "think over",
+        "meaning_es": "meditar, darle vueltas",
+        "example_en": "Think it over before signing.",
+        "example_es": "Piénsalo bien antes de firmar."
+      },
+      {
+        "phrase": "overthink",
+        "meaning_es": "darle demasiadas vueltas",
+        "example_en": "Don't overthink the naming.",
+        "example_es": "No le des tantas vueltas a los nombres."
+      }
+    ],
+    "notes_es": "Irregular: think → thought → thought. 'thought-provoking' = que hace pensar."
+  },
+  {
+    "root": "tight",
+    "slots": {
+      "verb": {
+        "form": "tighten",
+        "meanings": [
+          {
+            "translation_es": "apretar, ajustar",
+            "example_en": "Tighten the bolts to 40 Nm.",
+            "example_es": "Aprieta los pernos a 40 Nm."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "tightness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "estanqueidad; tensión",
+            "example_en": "Check the tightness of the seal.",
+            "example_es": "Verifica la estanqueidad del sello."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "tight",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "apretado, ajustado",
+            "example_en": "It's a tight deadline.",
+            "example_es": "Es un plazo ajustado."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "tightly",
+        "meanings": [
+          {
+            "translation_es": "firmemente, apretadamente",
+            "example_en": "The components are tightly packed.",
+            "example_es": "Los componentes están muy juntos."
+          }
+        ]
+      }
+    },
+    "notes_es": "El verbo lleva -en (tighten), como strengthen, weaken, harden, soften. Es un patrón regular con adjetivos."
+  },
+  {
+    "root": "tradition",
+    "slots": {
+      "noun_thing": {
+        "form": "tradition",
+        "meanings": [
+          {
+            "translation_es": "tradición",
+            "example_en": "It's a family tradition.",
+            "example_es": "Es una tradición familiar."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "traditional",
+        "meanings": [
+          {
+            "translation_es": "tradicional",
+            "example_en": "Traditional machining is still cheaper here.",
+            "example_es": "El mecanizado tradicional sigue siendo más barato aquí."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "traditionally",
+        "meanings": [
+          {
+            "translation_es": "tradicionalmente",
+            "example_en": "Traditionally, the test runs for 24 hours.",
+            "example_es": "Tradicionalmente, la prueba dura 24 horas."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "tremendous",
+    "slots": {
+      "adjective": {
+        "form": "tremendous",
+        "meanings": [
+          {
+            "translation_es": "enorme, tremendo",
+            "example_en": "It takes a tremendous amount of energy.",
+            "example_es": "Requiere una cantidad enorme de energía."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "tremendously",
+        "meanings": [
+          {
+            "translation_es": "enormemente",
+            "example_en": "That helped tremendously.",
+            "example_es": "Eso ayudó enormemente."
+          }
+        ]
+      }
+    },
+    "notes_es": "En inglés 'tremendous' es casi siempre POSITIVO o solo grande (a tremendous effort), no aterrador como sugiere el español."
+  },
+  {
+    "root": "trouble",
+    "slots": {
+      "verb": {
+        "form": "trouble",
+        "meanings": [
+          {
+            "translation_es": "preocupar, molestar",
+            "example_en": "One thing troubles me about the data.",
+            "example_es": "Una cosa me preocupa de los datos."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "trouble",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "problema, dificultad",
+            "example_en": "We had trouble starting the pump.",
+            "example_es": "Tuvimos problemas para arrancar la bomba.",
+            "register": "normalmente incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "troubling",
+        "meanings": [
+          {
+            "translation_es": "preocupante (lo que CAUSA)",
+            "example_en": "The trend is troubling.",
+            "example_es": "La tendencia es preocupante."
+          },
+          {
+            "translation_es": "preocupado, afectado (troubled)",
+            "example_en": "He looked troubled after the call.",
+            "example_es": "Se veía preocupado tras la llamada."
+          }
+        ],
+        "variants": [
+          "troubled"
+        ]
+      }
+    },
+    "notes_es": "'have trouble + -ing' (tener problemas para hacer algo). 'troubleshooting' = diagnóstico de fallas, palabra clave en ingeniería."
+  },
+  {
+    "root": "true",
+    "slots": {
+      "noun_thing": {
+        "form": "truth",
+        "meanings": [
+          {
+            "translation_es": "verdad",
+            "example_en": "The truth is in the raw data.",
+            "example_es": "La verdad está en los datos crudos."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "true",
+        "meanings": [
+          {
+            "translation_es": "cierto, verdadero",
+            "example_en": "That's true for low speeds only.",
+            "example_es": "Eso es cierto solo para bajas velocidades."
+          },
+          {
+            "translation_es": "veraz, sincero (truthful)",
+            "example_en": "Give me a truthful estimate.",
+            "example_es": "Dame una estimación sincera."
+          }
+        ],
+        "variants": [
+          "truthful"
+        ]
+      },
+      "adverb": {
+        "form": "truly",
+        "meanings": [
+          {
+            "translation_es": "verdaderamente, realmente",
+            "example_en": "It's a truly original design.",
+            "example_es": "Es un diseño verdaderamente original."
+          }
+        ]
+      }
+    },
+    "notes_es": "Ortografía: true → truly (pierde la e). 'Yours truly' cierra cartas formales."
+  },
+  {
+    "root": "ugly",
+    "slots": {
+      "noun_thing": {
+        "form": "ugliness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "fealdad",
+            "example_en": "The ugliness of the fix bothered him.",
+            "example_es": "La fealdad del arreglo le molestaba."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "ugly",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "feo",
+            "example_en": "It's an ugly but effective solution.",
+            "example_es": "Es una solución fea pero efectiva."
+          }
+        ]
+      }
+    },
+    "notes_es": "No tiene adverbio: 'uglily' no se usa. Se dice 'in an ugly way'."
+  },
+  {
+    "root": "variety",
+    "slots": {
+      "verb": {
+        "form": "vary",
+        "inflections": {
+          "third": "varies",
+          "ing": "varying",
+          "past": "varied",
+          "participle": "varied"
+        },
+        "meanings": [
+          {
+            "translation_es": "variar",
+            "example_en": "The readings vary with temperature.",
+            "example_es": "Las lecturas varían con la temperatura."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "variety",
+        "inflections": {
+          "plural": "varieties"
+        },
+        "meanings": [
+          {
+            "translation_es": "variedad, diversidad",
+            "example_en": "There's a wide variety of alloys.",
+            "example_es": "Hay una amplia variedad de aleaciones."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "various",
+        "meanings": [
+          {
+            "translation_es": "varios, diversos",
+            "example_en": "We tried various configurations.",
+            "example_es": "Probamos varias configuraciones."
+          },
+          {
+            "translation_es": "variable (variable)",
+            "example_en": "The load is variable.",
+            "example_es": "La carga es variable."
+          }
+        ],
+        "variants": [
+          "variable"
+        ]
+      },
+      "adverb": {
+        "form": "variously",
+        "meanings": [
+          {
+            "translation_es": "de diversas maneras",
+            "example_en": "It's variously described as a bug or a feature.",
+            "example_es": "Se describe de diversas maneras: como error o como función."
+          }
+        ]
+      }
+    },
+    "notes_es": "'a variety of' lleva verbo en plural: 'a variety of methods ARE used'."
+  },
+  {
+    "root": "versatile",
+    "slots": {
+      "noun_thing": {
+        "form": "versatility",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "versatilidad",
+            "example_en": "The versatility of the tool saved us money.",
+            "example_es": "La versatilidad de la herramienta nos ahorró dinero."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "versatile",
+        "meanings": [
+          {
+            "translation_es": "versátil, polivalente",
+            "example_en": "It's a versatile machine.",
+            "example_es": "Es una máquina versátil."
+          }
+        ]
+      }
+    },
+    "notes_es": "Sin verbo ni adverbio comunes. Pronunciación US: /ˈvɜːrsətl/, la última sílaba casi no se oye."
+  },
+  {
+    "root": "weak",
+    "slots": {
+      "verb": {
+        "form": "weaken",
+        "meanings": [
+          {
+            "translation_es": "debilitar(se)",
+            "example_en": "Heat weakened the joint.",
+            "example_es": "El calor debilitó la unión."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "weakness",
+        "inflections": {
+          "plural": "weaknesses"
+        },
+        "meanings": [
+          {
+            "translation_es": "debilidad, punto débil",
+            "example_en": "The weld is the main weakness.",
+            "example_es": "La soldadura es el principal punto débil."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "weak",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "débil, flojo",
+            "example_en": "The signal is too weak.",
+            "example_es": "La señal es demasiado débil."
+          },
+          {
+            "translation_es": "debilitado (weakened)",
+            "example_en": "The weakened section failed first.",
+            "example_es": "La sección debilitada falló primero."
+          }
+        ],
+        "variants": [
+          "weakened"
+        ]
+      },
+      "adverb": {
+        "form": "weakly",
+        "meanings": [
+          {
+            "translation_es": "débilmente",
+            "example_en": "The two variables are weakly correlated.",
+            "example_es": "Las dos variables están débilmente correlacionadas."
+          }
+        ]
+      }
+    },
+    "notes_es": "Par opuesto de strength/strong: weakness/weak/weaken."
+  },
+  {
+    "root": "widow",
+    "slots": {
+      "noun_person": {
+        "form": "widow",
+        "meanings": [
+          {
+            "translation_es": "viuda",
+            "example_en": "The widow inherited the workshop.",
+            "example_es": "La viuda heredó el taller."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "widowed",
+        "meanings": [
+          {
+            "translation_es": "viudo, enviudado",
+            "example_en": "She was widowed at forty.",
+            "example_es": "Enviudó a los cuarenta."
+          }
+        ]
+      }
+    },
+    "notes_es": "widow = viuda, widower = viudo (hombre). El adjetivo 'widowed' sirve para ambos."
+  },
+  {
+    "root": "witness",
+    "slots": {
+      "verb": {
+        "form": "witness",
+        "meanings": [
+          {
+            "translation_es": "presenciar, ser testigo de",
+            "example_en": "We witnessed the failure in real time.",
+            "example_es": "Presenciamos la falla en tiempo real."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "witness",
+        "inflections": {
+          "plural": "witnesses"
+        },
+        "meanings": [
+          {
+            "translation_es": "testigo",
+            "example_en": "There were two witnesses to the incident.",
+            "example_es": "Hubo dos testigos del incidente."
+          }
+        ]
+      }
+    },
+    "notes_es": "witness NO lleva preposición: 'we witnessed the accident', no 'witnessed to'."
+  },
+  {
+    "root": "wide",
+    "slots": {
+      "verb": {
+        "form": "widen",
+        "meanings": [
+          {
+            "translation_es": "ampliar, ensanchar",
+            "example_en": "They widened the tolerance band.",
+            "example_es": "Ampliaron la banda de tolerancia."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "width",
+        "meanings": [
+          {
+            "translation_es": "ancho, anchura",
+            "example_en": "Measure the width of the slot.",
+            "example_es": "Mide el ancho de la ranura."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "wide",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "ancho, amplio",
+            "example_en": "A wide range of materials.",
+            "example_es": "Una amplia gama de materiales."
+          },
+          {
+            "translation_es": "extendido, generalizado (widespread)",
+            "example_en": "The problem is widespread.",
+            "example_es": "El problema está generalizado."
+          }
+        ],
+        "variants": [
+          "widespread"
+        ]
+      },
+      "adverb": {
+        "form": "widely",
+        "meanings": [
+          {
+            "translation_es": "ampliamente, mucho",
+            "example_en": "The method is widely used.",
+            "example_es": "El método se usa ampliamente."
+          }
+        ]
+      }
+    },
+    "notes_es": "wide → width, igual que long → length, strong → strength, deep → depth. Es un patrón de sustantivos de dimensión."
+  }
+]

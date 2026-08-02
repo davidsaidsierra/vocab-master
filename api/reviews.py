@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta, timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
@@ -75,7 +76,9 @@ def get_practice_words(
     current_user: User = Depends(get_current_user),
 ):
     """Return ALL words matching filters — for free practice regardless of schedule."""
-    q = scope_to_owner(db.query(Word), Word, current_user)
+    # family_head != 0 → los miembros absorbidos por una familia no se repasan
+    # aparte; el progreso lo lleva la cabeza (la familia es la unidad de repaso).
+    q = scope_to_owner(db.query(Word).filter(Word.family_head != 0), Word, current_user)
 
     if category_id:
         q = q.filter(Word.category_id == category_id)
@@ -126,7 +129,10 @@ def get_daily_session(
     la sesión siempre trae `size` palabras mientras haya material.
     """
     now = datetime.now(timezone.utc)
-    base = lambda: scope_to_owner(db.query(Word), Word, current_user)
+    # Igual que en /practice: solo cabezas de familia (o palabras sin familia).
+    base = lambda: scope_to_owner(
+        db.query(Word).filter(Word.family_head != 0), Word, current_user
+    )
 
     # Nunca repasadas. Se excluyen de "vencidas" aunque su next_review ya pasó,
     # porque no son olvido: son material sin estrenar.
@@ -191,6 +197,18 @@ def submit_review(
     ).one_or_none()
     if not word:
         raise HTTPException(404, "Word not found")
+
+    # Memoria por casilla: qué celda de la familia se practicó y cómo fue. No
+    # toca el SM-2 (que sigue siendo uno por familia); solo sirve para que la
+    # próxima sesión pregunte la casilla más floja en vez de una al azar.
+    if data.slot and word.family:
+        try:
+            stats = json.loads(word.slot_stats) if word.slot_stats else {}
+        except ValueError:
+            stats = {}
+        entry = stats.setdefault(data.slot, {"ok": 0, "fail": 0})
+        entry["ok" if data.quality >= 3 else "fail"] += 1
+        word.slot_stats = json.dumps(stats, ensure_ascii=False)
 
     reps, ef, ivl = _sm2(data.quality, word.repetitions, word.ease_factor, word.interval)
     word.repetitions = reps

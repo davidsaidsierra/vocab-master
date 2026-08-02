@@ -62,6 +62,38 @@ def _migrate_word_columns():
             conn.execute(text(f"ALTER TABLE words {clause}"))
 
 
+def _migrate_family_columns():
+    """
+    Añade `family_root`, `family` y `family_head` a `words` si faltan, y pone
+    `family_head = 1` en las filas viejas (toda palabra existente es cabeza de su
+    propia familia mientras no se la absorba). Idempotente, SQLite y Postgres,
+    no destructivo.
+    """
+    insp = inspect(engine)
+    if "words" not in insp.get_table_names():
+        return
+    existing = {c["name"] for c in insp.get_columns("words")}
+    to_add = []
+    if "family_root" not in existing:
+        to_add.append("ADD COLUMN family_root VARCHAR(80)")
+    if "family" not in existing:
+        to_add.append("ADD COLUMN family TEXT")
+    if "family_head" not in existing:
+        to_add.append("ADD COLUMN family_head INTEGER DEFAULT 1")
+    if "family_slot" not in existing:
+        to_add.append("ADD COLUMN family_slot VARCHAR(20)")
+    if "slot_stats" not in existing:
+        to_add.append("ADD COLUMN slot_stats TEXT")
+    if to_add:
+        with engine.begin() as conn:
+            for clause in to_add:
+                conn.execute(text(f"ALTER TABLE words {clause}"))
+    # Backfill del default: ALTER TABLE ... DEFAULT no rellena las filas previas
+    # en todos los motores, y un NULL aquí sacaría la palabra del repaso.
+    with engine.begin() as conn:
+        conn.execute(text("UPDATE words SET family_head = 1 WHERE family_head IS NULL"))
+
+
 def _migrate_metrics_columns():
     """
     Añade la columna `metrics` (JSON de services.writing_metrics: errores por
@@ -192,6 +224,7 @@ def init_db():
     )
     Base.metadata.create_all(bind=engine)
     _migrate_word_columns()
+    _migrate_family_columns()
     _migrate_metrics_columns()
     _migrate_grammar_topic_columns()
     _bootstrap_admin()

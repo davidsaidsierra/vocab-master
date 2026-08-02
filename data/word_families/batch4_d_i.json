@@ -1,0 +1,1363 @@
+[
+  {
+    "root": "danger",
+    "slots": {
+      "verb": {
+        "form": "endanger",
+        "meanings": [
+          {
+            "translation_es": "poner en peligro",
+            "example_en": "Skipping the check endangers the crew.",
+            "example_es": "Saltarse la revisión pone en peligro a la tripulación."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "danger",
+        "meanings": [
+          {
+            "translation_es": "peligro",
+            "example_en": "There's a danger of overheating.",
+            "example_es": "Hay peligro de sobrecalentamiento."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "dangerous",
+        "meanings": [
+          {
+            "translation_es": "peligroso",
+            "example_en": "That's a dangerous assumption.",
+            "example_es": "Ese es un supuesto peligroso."
+          },
+          {
+            "translation_es": "en peligro de extinción (endangered)",
+            "example_en": "The species is endangered.",
+            "example_es": "La especie está en peligro de extinción."
+          }
+        ],
+        "variants": [
+          "endangered"
+        ]
+      },
+      "adverb": {
+        "form": "dangerously",
+        "meanings": [
+          {
+            "translation_es": "peligrosamente",
+            "example_en": "The temperature is dangerously high.",
+            "example_es": "La temperatura está peligrosamente alta."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "dangle",
+    "slots": {
+      "verb": {
+        "form": "dangle",
+        "meanings": [
+          {
+            "translation_es": "colgar, balancearse",
+            "example_en": "A cable was dangling from the panel.",
+            "example_es": "Un cable colgaba del panel."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "dangling",
+        "meanings": [
+          {
+            "translation_es": "colgante, suelto",
+            "example_en": "Secure any dangling wires.",
+            "example_es": "Asegura cualquier cable suelto."
+          }
+        ]
+      }
+    },
+    "notes_es": "En gramática, 'dangling modifier' es el modificador mal colocado que parece describir al sujeto equivocado."
+  },
+  {
+    "root": "deplete",
+    "slots": {
+      "verb": {
+        "form": "deplete",
+        "meanings": [
+          {
+            "translation_es": "agotar, mermar",
+            "example_en": "The process depletes the coolant.",
+            "example_es": "El proceso agota el refrigerante."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "depletion",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "agotamiento, disminución",
+            "example_en": "Ozone depletion slowed after the ban.",
+            "example_es": "El agotamiento del ozono se frenó tras la prohibición."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "depleted",
+        "meanings": [
+          {
+            "translation_es": "agotado, empobrecido",
+            "example_en": "The battery is depleted.",
+            "example_es": "La batería está agotada."
+          }
+        ]
+      }
+    },
+    "notes_es": "deplete se usa para recursos (agua, energía, reservas), no para personas cansadas."
+  },
+  {
+    "root": "deploy",
+    "slots": {
+      "verb": {
+        "form": "deploy",
+        "meanings": [
+          {
+            "translation_es": "desplegar, poner en marcha",
+            "example_en": "We deployed the update last night.",
+            "example_es": "Desplegamos la actualización anoche."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "deployment",
+        "meanings": [
+          {
+            "translation_es": "despliegue, puesta en marcha",
+            "example_en": "The deployment took ten minutes.",
+            "example_es": "El despliegue tomó diez minutos."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "deployed",
+        "meanings": [
+          {
+            "translation_es": "desplegado, en operación",
+            "example_en": "The deployed version is v4.",
+            "example_es": "La versión desplegada es la v4."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "deep",
+    "slots": {
+      "verb": {
+        "form": "deepen",
+        "meanings": [
+          {
+            "translation_es": "profundizar, ahondar",
+            "example_en": "The crack deepened over time.",
+            "example_es": "La grieta se profundizó con el tiempo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "depth",
+        "meanings": [
+          {
+            "translation_es": "profundidad",
+            "example_en": "Measure the depth of the groove.",
+            "example_es": "Mide la profundidad de la ranura."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "deep",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "profundo, hondo",
+            "example_en": "It's a deep analysis.",
+            "example_es": "Es un análisis profundo."
+          }
+        ],
+        "variants": [
+          "in-depth"
+        ]
+      },
+      "adverb": {
+        "form": "deeply",
+        "meanings": [
+          {
+            "translation_es": "profundamente",
+            "example_en": "I'm deeply concerned about the trend.",
+            "example_es": "Estoy profundamente preocupado por la tendencia."
+          }
+        ]
+      }
+    },
+    "notes_es": "'in-depth' (con guion) es adjetivo: an in-depth review. 'deep down' = en el fondo."
+  },
+  {
+    "root": "desire",
+    "slots": {
+      "verb": {
+        "form": "desire",
+        "meanings": [
+          {
+            "translation_es": "desear",
+            "example_en": "The client desires a faster response.",
+            "example_es": "El cliente desea una respuesta más rápida.",
+            "register": "formal"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "desire",
+        "meanings": [
+          {
+            "translation_es": "deseo, ganas",
+            "example_en": "I have no desire to redo it.",
+            "example_es": "No tengo ganas de rehacerlo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "desirable",
+        "meanings": [
+          {
+            "translation_es": "deseable, conveniente",
+            "example_en": "A lighter frame is desirable.",
+            "example_es": "Un bastidor más liviano es deseable."
+          },
+          {
+            "translation_es": "indeseable (undesirable)",
+            "example_en": "That causes undesirable vibration.",
+            "example_es": "Eso causa vibración indeseable."
+          }
+        ],
+        "variants": [
+          "undesirable"
+        ]
+      }
+    },
+    "notes_es": "En inglés cotidiano se prefiere 'want'; desire suena formal o literario."
+  },
+  {
+    "root": "detail",
+    "slots": {
+      "verb": {
+        "form": "detail",
+        "meanings": [
+          {
+            "translation_es": "detallar",
+            "example_en": "The annex details every step.",
+            "example_es": "El anexo detalla cada paso."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "detail",
+        "meanings": [
+          {
+            "translation_es": "detalle",
+            "example_en": "The devil is in the details.",
+            "example_es": "El diablo está en los detalles."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "detailed",
+        "meanings": [
+          {
+            "translation_es": "detallado, minucioso",
+            "example_en": "We need a detailed drawing.",
+            "example_es": "Necesitamos un plano detallado."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "dizzy",
+    "slots": {
+      "noun_thing": {
+        "form": "dizziness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "mareo, vértigo",
+            "example_en": "Dizziness is a common side effect.",
+            "example_es": "El mareo es un efecto secundario común."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "dizzy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "mareado",
+            "example_en": "I felt dizzy after the climb.",
+            "example_es": "Me sentí mareado tras la subida."
+          }
+        ]
+      }
+    },
+    "notes_es": "Sin verbo. 'dizzying' (vertiginoso) describe lo que causa el mareo: a dizzying pace."
+  },
+  {
+    "root": "earn",
+    "slots": {
+      "verb": {
+        "form": "earn",
+        "meanings": [
+          {
+            "translation_es": "ganar (dinero), ganarse",
+            "example_en": "She earns more than the market average.",
+            "example_es": "Gana más que el promedio del mercado."
+          },
+          {
+            "translation_es": "merecer, ganarse (respeto)",
+            "example_en": "He earned their trust.",
+            "example_es": "Se ganó su confianza."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "earnings",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "ingresos, ganancias",
+            "example_en": "Quarterly earnings beat the forecast.",
+            "example_es": "Las ganancias trimestrales superaron el pronóstico.",
+            "register": "siempre plural"
+          }
+        ]
+      }
+    },
+    "contrast_es": "earn = ganar trabajando. win = ganar una competencia o un premio. gain = obtener/aumentar. 'I won money at work' está mal: es 'I earned it'."
+  },
+  {
+    "root": "easy",
+    "slots": {
+      "verb": {
+        "form": "ease",
+        "meanings": [
+          {
+            "translation_es": "aliviar, facilitar",
+            "example_en": "The new jig eases assembly.",
+            "example_es": "La nueva plantilla facilita el ensamblaje."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "ease",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "facilidad",
+            "example_en": "He solved it with ease.",
+            "example_es": "Lo resolvió con facilidad."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "easy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "fácil, sencillo",
+            "example_en": "That part is easy to machine.",
+            "example_es": "Esa pieza es fácil de mecanizar."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "easily",
+        "meanings": [
+          {
+            "translation_es": "fácilmente",
+            "example_en": "It easily handles twice the load.",
+            "example_es": "Soporta fácilmente el doble de carga."
+          }
+        ]
+      }
+    },
+    "notes_es": "El adverbio es easily, no 'easy'. 'Take it easy' es una excepción fija (relájate)."
+  },
+  {
+    "root": "eavesdrop",
+    "slots": {
+      "verb": {
+        "form": "eavesdrop",
+        "inflections": {
+          "third": "eavesdrops",
+          "ing": "eavesdropping",
+          "past": "eavesdropped",
+          "participle": "eavesdropped"
+        },
+        "meanings": [
+          {
+            "translation_es": "escuchar a escondidas",
+            "example_en": "He eavesdropped on the call.",
+            "example_es": "Escuchó la llamada a escondidas."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "eavesdropper",
+        "meanings": [
+          {
+            "translation_es": "fisgón, quien escucha a escondidas",
+            "example_en": "Encryption protects against eavesdroppers.",
+            "example_es": "El cifrado protege contra fisgones."
+          }
+        ]
+      }
+    },
+    "notes_es": "Siempre 'eavesdrop ON someone'. En seguridad informática, eavesdropping es la interceptación pasiva."
+  },
+  {
+    "root": "even",
+    "slots": {
+      "verb": {
+        "form": "even",
+        "meanings": [
+          {
+            "translation_es": "nivelar, emparejar",
+            "example_en": "Even out the surface before painting.",
+            "example_es": "Nivela la superficie antes de pintar."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "even",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "uniforme, parejo",
+            "example_en": "Apply an even coat.",
+            "example_es": "Aplica una capa uniforme."
+          },
+          {
+            "translation_es": "par (número)",
+            "example_en": "Pick an even number of bolts.",
+            "example_es": "Elige un número par de pernos."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "evenly",
+        "meanings": [
+          {
+            "translation_es": "uniformemente, por igual",
+            "example_en": "Distribute the load evenly.",
+            "example_es": "Distribuye la carga uniformemente."
+          }
+        ]
+      }
+    },
+    "notes_es": "'even' como adverbio de énfasis (incluso: 'even I know that') es otro uso distinto del adjetivo."
+  },
+  {
+    "root": "eventual",
+    "slots": {
+      "adjective": {
+        "form": "eventual",
+        "meanings": [
+          {
+            "translation_es": "final, definitivo (el que ocurre al final)",
+            "example_en": "The eventual solution was simpler.",
+            "example_es": "La solución final fue más simple."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "eventually",
+        "meanings": [
+          {
+            "translation_es": "finalmente, con el tiempo",
+            "example_en": "Eventually, the bearing failed.",
+            "example_es": "Con el tiempo, el rodamiento falló."
+          }
+        ]
+      }
+    },
+    "contrast_es": "FALSO AMIGO grave: eventually NO es 'eventualmente' (ocasionalmente). Significa 'al final, tarde o temprano'. Para 'eventualmente' usa occasionally o possibly."
+  },
+  {
+    "root": "evoke",
+    "slots": {
+      "verb": {
+        "form": "evoke",
+        "meanings": [
+          {
+            "translation_es": "evocar, suscitar",
+            "example_en": "The design evokes the 1960s.",
+            "example_es": "El diseño evoca los años 60."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "evocative",
+        "meanings": [
+          {
+            "translation_es": "evocador, sugerente",
+            "example_en": "It's an evocative piece of writing.",
+            "example_es": "Es un texto evocador."
+          }
+        ]
+      }
+    },
+    "notes_es": "evocative OF something. Distinto de 'invoke' (invocar, llamar a algo/alguien para que actúe)."
+  },
+  {
+    "root": "expensive",
+    "slots": {
+      "verb": {
+        "form": "spend",
+        "inflections": {
+          "third": "spends",
+          "ing": "spending",
+          "past": "spent",
+          "participle": "spent"
+        },
+        "meanings": [
+          {
+            "translation_es": "gastar",
+            "example_en": "We spent too much on tooling.",
+            "example_es": "Gastamos demasiado en herramental."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "expense",
+        "meanings": [
+          {
+            "translation_es": "gasto, costo",
+            "example_en": "Travel is the biggest expense.",
+            "example_es": "Los viajes son el mayor gasto."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "expensive",
+        "meanings": [
+          {
+            "translation_es": "caro, costoso",
+            "example_en": "Titanium is expensive but light.",
+            "example_es": "El titanio es caro pero liviano."
+          },
+          {
+            "translation_es": "económico, barato (inexpensive)",
+            "example_en": "It's an inexpensive fix.",
+            "example_es": "Es un arreglo económico."
+          }
+        ],
+        "variants": [
+          "inexpensive"
+        ]
+      }
+    },
+    "notes_es": "'at the expense of' = a costa de. Ojo: expensive describe la COSA, no a la persona; 'I am expensive' suena raro."
+  },
+  {
+    "root": "fault",
+    "slots": {
+      "noun_thing": {
+        "form": "fault",
+        "meanings": [
+          {
+            "translation_es": "falla, defecto",
+            "example_en": "The fault was in the wiring.",
+            "example_es": "La falla estaba en el cableado."
+          },
+          {
+            "translation_es": "culpa",
+            "example_en": "It's not your fault.",
+            "example_es": "No es tu culpa."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "faulty",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "defectuoso",
+            "example_en": "They replaced the faulty sensor.",
+            "example_es": "Reemplazaron el sensor defectuoso."
+          },
+          {
+            "translation_es": "impecable, sin fallas (faultless)",
+            "example_en": "Her reasoning was faultless.",
+            "example_es": "Su razonamiento fue impecable."
+          }
+        ],
+        "variants": [
+          "faultless"
+        ]
+      }
+    },
+    "notes_es": "'faulty reasoning' = razonamiento con errores lógicos, muy útil en escritura académica."
+  },
+  {
+    "root": "feel",
+    "slots": {
+      "verb": {
+        "form": "feel",
+        "inflections": {
+          "third": "feels",
+          "ing": "feeling",
+          "past": "felt",
+          "participle": "felt"
+        },
+        "meanings": [
+          {
+            "translation_es": "sentir, sentirse",
+            "example_en": "I felt confident about the result.",
+            "example_es": "Me sentí seguro del resultado."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "feeling",
+        "meanings": [
+          {
+            "translation_es": "sentimiento, sensación",
+            "example_en": "I have a feeling it will fail again.",
+            "example_es": "Tengo la sensación de que va a fallar otra vez."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "feel like",
+        "meaning_es": "tener ganas de",
+        "example_en": "I feel like taking a break.",
+        "example_es": "Tengo ganas de tomar un descanso."
+      },
+      {
+        "phrase": "feel up to",
+        "meaning_es": "sentirse capaz de",
+        "example_en": "I don't feel up to another test today.",
+        "example_es": "No me siento capaz de otra prueba hoy."
+      }
+    ],
+    "notes_es": "Irregular: feel → felt → felt. 'feel like + -ing' = tener ganas de hacer algo."
+  },
+  {
+    "root": "final",
+    "slots": {
+      "verb": {
+        "form": "finalize",
+        "meanings": [
+          {
+            "translation_es": "finalizar, cerrar",
+            "example_en": "We finalized the drawings yesterday.",
+            "example_es": "Cerramos los planos ayer."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "final",
+        "meanings": [
+          {
+            "translation_es": "final, definitivo",
+            "example_en": "That's the final version.",
+            "example_es": "Esa es la versión definitiva."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "finally",
+        "meanings": [
+          {
+            "translation_es": "finalmente, por fin",
+            "example_en": "Finally, we present the conclusions.",
+            "example_es": "Por último, presentamos las conclusiones."
+          }
+        ]
+      }
+    },
+    "notes_es": "Como conector de orden: first, second, finally. 'At last' expresa alivio; 'finally' solo marca el último punto."
+  },
+  {
+    "root": "forecast",
+    "slots": {
+      "verb": {
+        "form": "forecast",
+        "inflections": {
+          "third": "forecasts",
+          "ing": "forecasting",
+          "past": "forecast",
+          "participle": "forecast"
+        },
+        "meanings": [
+          {
+            "translation_es": "pronosticar, prever",
+            "example_en": "They forecast a 5% rise.",
+            "example_es": "Pronostican un alza del 5%."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "forecast",
+        "meanings": [
+          {
+            "translation_es": "pronóstico, previsión",
+            "example_en": "The demand forecast was wrong.",
+            "example_es": "El pronóstico de demanda estaba mal."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "forecaster",
+        "meanings": [
+          {
+            "translation_es": "pronosticador",
+            "example_en": "Forecasters missed the storm.",
+            "example_es": "Los pronosticadores no vieron venir la tormenta."
+          }
+        ]
+      }
+    },
+    "notes_es": "El pasado puede ser forecast o forecasted; ambos se aceptan, forecast es más común."
+  },
+  {
+    "root": "fortunate",
+    "slots": {
+      "noun_thing": {
+        "form": "fortune",
+        "meanings": [
+          {
+            "translation_es": "fortuna, suerte",
+            "example_en": "We had the good fortune to test early.",
+            "example_es": "Tuvimos la fortuna de probar temprano."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "fortunate",
+        "meanings": [
+          {
+            "translation_es": "afortunado",
+            "example_en": "We were fortunate to catch it.",
+            "example_es": "Fuimos afortunados de detectarlo."
+          },
+          {
+            "translation_es": "desafortunado (unfortunate)",
+            "example_en": "That was an unfortunate choice of words.",
+            "example_es": "Esa fue una elección desafortunada de palabras."
+          }
+        ],
+        "variants": [
+          "unfortunate"
+        ]
+      },
+      "adverb": {
+        "form": "fortunately",
+        "meanings": [
+          {
+            "translation_es": "afortunadamente, por suerte",
+            "example_en": "Fortunately, nobody was hurt.",
+            "example_es": "Por suerte, nadie salió herido."
+          }
+        ]
+      }
+    },
+    "notes_es": "Fortunately / unfortunately son conectores de oración: van al inicio con coma."
+  },
+  {
+    "root": "fund",
+    "slots": {
+      "verb": {
+        "form": "fund",
+        "meanings": [
+          {
+            "translation_es": "financiar",
+            "example_en": "The lab is funded by the university.",
+            "example_es": "El laboratorio está financiado por la universidad."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "fund",
+        "meanings": [
+          {
+            "translation_es": "fondo (de dinero)",
+            "example_en": "The research fund runs out in June.",
+            "example_es": "El fondo de investigación se agota en junio."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "funding",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "financiamiento",
+            "example_en": "We lost funding for the second phase.",
+            "example_es": "Perdimos el financiamiento de la segunda fase.",
+            "register": "incontable"
+          }
+        ]
+      }
+    },
+    "notes_es": "'funds' en plural = fondos disponibles (dinero). 'funding' es el hecho de financiar."
+  },
+  {
+    "root": "guess",
+    "slots": {
+      "verb": {
+        "form": "guess",
+        "meanings": [
+          {
+            "translation_es": "adivinar, suponer",
+            "example_en": "I guess we'll find out tomorrow.",
+            "example_es": "Supongo que lo sabremos mañana."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "guess",
+        "inflections": {
+          "plural": "guesses"
+        },
+        "meanings": [
+          {
+            "translation_es": "conjetura, suposición",
+            "example_en": "That's just an educated guess.",
+            "example_es": "Eso es solo una suposición informada."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "guesswork",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "conjeturas, adivinanza",
+            "example_en": "Good data removes the guesswork.",
+            "example_es": "Los buenos datos eliminan las conjeturas.",
+            "register": "incontable"
+          }
+        ]
+      }
+    },
+    "notes_es": "'I guess' en conversación es 'supongo'. 'educated guess' = suposición fundamentada, muy útil en ingeniería."
+  },
+  {
+    "root": "harm",
+    "slots": {
+      "verb": {
+        "form": "harm",
+        "meanings": [
+          {
+            "translation_es": "dañar, perjudicar",
+            "example_en": "The additive can harm the coating.",
+            "example_es": "El aditivo puede dañar el recubrimiento."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "harm",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "daño, perjuicio",
+            "example_en": "No harm was done.",
+            "example_es": "No hubo ningún daño.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "harmful",
+        "meanings": [
+          {
+            "translation_es": "dañino, perjudicial",
+            "example_en": "The fumes are harmful.",
+            "example_es": "Los vapores son dañinos."
+          },
+          {
+            "translation_es": "inofensivo (harmless)",
+            "example_en": "The leak is harmless at this rate.",
+            "example_es": "La fuga es inofensiva a este ritmo."
+          }
+        ],
+        "variants": [
+          "harmless"
+        ]
+      },
+      "adverb": {
+        "form": "harmlessly",
+        "meanings": [
+          {
+            "translation_es": "inofensivamente, sin causar daño",
+            "example_en": "The gas dissipates harmlessly.",
+            "example_es": "El gas se disipa sin causar daño."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "harvest",
+    "slots": {
+      "verb": {
+        "form": "harvest",
+        "meanings": [
+          {
+            "translation_es": "cosechar, recolectar",
+            "example_en": "The panels harvest energy all day.",
+            "example_es": "Los paneles recolectan energía todo el día."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "harvest",
+        "meanings": [
+          {
+            "translation_es": "cosecha",
+            "example_en": "This year's harvest was poor.",
+            "example_es": "La cosecha de este año fue mala."
+          }
+        ]
+      }
+    },
+    "notes_es": "En ingeniería se usa mucho 'energy harvesting' (recolección de energía)."
+  },
+  {
+    "root": "heavy",
+    "slots": {
+      "noun_thing": {
+        "form": "heaviness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "pesadez",
+            "example_en": "There's a heaviness to the steering.",
+            "example_es": "Hay una pesadez en la dirección."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "heavy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "pesado; intenso",
+            "example_en": "Heavy rain delayed the test.",
+            "example_es": "La lluvia intensa retrasó la prueba."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "heavily",
+        "meanings": [
+          {
+            "translation_es": "fuertemente, en gran medida",
+            "example_en": "The design relies heavily on simulation.",
+            "example_es": "El diseño depende en gran medida de la simulación."
+          }
+        ]
+      }
+    },
+    "notes_es": "'heavily' rara vez significa 'pesadamente': casi siempre es 'mucho, en gran medida' (heavily used, heavily dependent)."
+  },
+  {
+    "root": "high",
+    "slots": {
+      "verb": {
+        "form": "heighten",
+        "meanings": [
+          {
+            "translation_es": "intensificar, aumentar",
+            "example_en": "The failure heightened the concern.",
+            "example_es": "La falla intensificó la preocupación."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "height",
+        "meanings": [
+          {
+            "translation_es": "altura",
+            "example_en": "Measure the height from the base.",
+            "example_es": "Mide la altura desde la base."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "high",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "alto (nivel, valor)",
+            "example_en": "The pressure is too high.",
+            "example_es": "La presión está muy alta."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "highly",
+        "meanings": [
+          {
+            "translation_es": "muy, altamente",
+            "example_en": "It's a highly reliable design.",
+            "example_es": "Es un diseño altamente confiable."
+          }
+        ]
+      }
+    },
+    "contrast_es": "high (adverbio) = a gran altura física: 'the drone flew high'. highly = muy, en grado alto: 'highly recommended'. No son intercambiables."
+  },
+  {
+    "root": "hilarious",
+    "slots": {
+      "noun_thing": {
+        "form": "hilarity",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "hilaridad, risa general",
+            "example_en": "The typo caused some hilarity.",
+            "example_es": "El error de tipeo causó cierta hilaridad."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "hilarious",
+        "meanings": [
+          {
+            "translation_es": "graciosísimo, divertidísimo",
+            "example_en": "The presentation was hilarious.",
+            "example_es": "La presentación fue graciosísima."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "hilariously",
+        "meanings": [
+          {
+            "translation_es": "de forma graciosísima",
+            "example_en": "It went hilariously wrong.",
+            "example_es": "Salió graciosísimamente mal."
+          }
+        ]
+      }
+    },
+    "notes_es": "hilarious es un adjetivo extremo: no admite 'very hilarious'. Se dice absolutely hilarious."
+  },
+  {
+    "root": "hire",
+    "slots": {
+      "verb": {
+        "form": "hire",
+        "meanings": [
+          {
+            "translation_es": "contratar",
+            "example_en": "They hired two more engineers.",
+            "example_es": "Contrataron dos ingenieros más."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "hire",
+        "meanings": [
+          {
+            "translation_es": "contratación; alquiler (UK)",
+            "example_en": "The new hire starts Monday.",
+            "example_es": "El nuevo contratado empieza el lunes."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "hired",
+        "meanings": [
+          {
+            "translation_es": "contratado, alquilado",
+            "example_en": "We used a hired crane.",
+            "example_es": "Usamos una grúa alquilada."
+          }
+        ]
+      }
+    },
+    "notes_es": "En EE. UU. hire = contratar personas. En UK 'hire a car' = alquilar un carro (en EE. UU. sería rent)."
+  },
+  {
+    "root": "hope",
+    "slots": {
+      "verb": {
+        "form": "hope",
+        "meanings": [
+          {
+            "translation_es": "esperar (con deseo)",
+            "example_en": "I hope the test passes.",
+            "example_es": "Espero que la prueba pase."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "hope",
+        "meanings": [
+          {
+            "translation_es": "esperanza",
+            "example_en": "There's still hope for the deadline.",
+            "example_es": "Todavía hay esperanza para el plazo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "hopeful",
+        "meanings": [
+          {
+            "translation_es": "esperanzado, optimista",
+            "example_en": "I'm hopeful about the results.",
+            "example_es": "Estoy esperanzado con los resultados."
+          },
+          {
+            "translation_es": "desesperanzado; inútil (hopeless)",
+            "example_en": "The old pump is hopeless.",
+            "example_es": "La bomba vieja no tiene arreglo."
+          }
+        ],
+        "variants": [
+          "hopeless"
+        ]
+      },
+      "adverb": {
+        "form": "hopefully",
+        "meanings": [
+          {
+            "translation_es": "ojalá, con suerte",
+            "example_en": "Hopefully we'll finish today.",
+            "example_es": "Ojalá terminemos hoy."
+          }
+        ]
+      }
+    },
+    "contrast_es": "Tres 'esperar' distintos: hope (desear que pase), expect (creer que pasará), wait (esperar en el tiempo). 'I'm waiting the results' está mal: es 'waiting FOR the results'."
+  },
+  {
+    "root": "house",
+    "slots": {
+      "verb": {
+        "form": "house",
+        "meanings": [
+          {
+            "translation_es": "alojar, albergar",
+            "example_en": "The casing houses the electronics.",
+            "example_es": "La carcasa aloja la electrónica."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "house",
+        "meanings": [
+          {
+            "translation_es": "casa",
+            "example_en": "They bought a house near the plant.",
+            "example_es": "Compraron una casa cerca de la planta."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "housing",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "carcasa, alojamiento (mecánico)",
+            "example_en": "The bearing housing cracked.",
+            "example_es": "La carcasa del rodamiento se agrietó.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "vivienda",
+            "example_en": "Housing prices rose sharply.",
+            "example_es": "Los precios de la vivienda subieron mucho."
+          }
+        ]
+      }
+    },
+    "notes_es": "Muy útil para ti: 'housing' en mecánica es la carcasa que aloja una pieza. El verbo 'house' se pronuncia con z final."
+  },
+  {
+    "root": "include",
+    "slots": {
+      "verb": {
+        "form": "include",
+        "meanings": [
+          {
+            "translation_es": "incluir",
+            "example_en": "The kit includes all the seals.",
+            "example_es": "El kit incluye todos los sellos."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "inclusion",
+        "meanings": [
+          {
+            "translation_es": "inclusión",
+            "example_en": "The inclusion of a filter helped.",
+            "example_es": "La inclusión de un filtro ayudó."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "inclusive",
+        "meanings": [
+          {
+            "translation_es": "inclusivo; incluido",
+            "example_en": "The price is inclusive of taxes.",
+            "example_es": "El precio incluye impuestos."
+          }
+        ]
+      }
+    },
+    "notes_es": "'including' funciona como preposición: 'three parts, including the gasket'."
+  },
+  {
+    "root": "inevitable",
+    "slots": {
+      "noun_thing": {
+        "form": "inevitability",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "inevitabilidad",
+            "example_en": "They accepted the inevitability of the delay.",
+            "example_es": "Aceptaron la inevitabilidad del retraso."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "inevitable",
+        "meanings": [
+          {
+            "translation_es": "inevitable",
+            "example_en": "Wear is inevitable at that speed.",
+            "example_es": "El desgaste es inevitable a esa velocidad."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "inevitably",
+        "meanings": [
+          {
+            "translation_es": "inevitablemente",
+            "example_en": "Inevitably, the seal degrades.",
+            "example_es": "Inevitablemente, el sello se degrada."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "intellect",
+    "slots": {
+      "noun_thing": {
+        "form": "intellect",
+        "meanings": [
+          {
+            "translation_es": "intelecto, capacidad intelectual",
+            "example_en": "The problem demands real intellect.",
+            "example_es": "El problema exige verdadero intelecto."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "intellectual",
+        "meanings": [
+          {
+            "translation_es": "intelectual (persona)",
+            "example_en": "He's regarded as a public intellectual.",
+            "example_es": "Se le considera un intelectual público."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "intellectual",
+        "meanings": [
+          {
+            "translation_es": "intelectual",
+            "example_en": "It's an intellectual challenge, not a physical one.",
+            "example_es": "Es un reto intelectual, no físico."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "intellectually",
+        "meanings": [
+          {
+            "translation_es": "intelectualmente",
+            "example_en": "The work is intellectually demanding.",
+            "example_es": "El trabajo es intelectualmente exigente."
+          }
+        ]
+      }
+    },
+    "notes_es": "'intellectual property' (propiedad intelectual) es de los usos más frecuentes en ingeniería."
+  },
+  {
+    "root": "interfere",
+    "slots": {
+      "verb": {
+        "form": "interfere",
+        "meanings": [
+          {
+            "translation_es": "interferir, entrometerse",
+            "example_en": "The signal interferes with the sensor.",
+            "example_es": "La señal interfiere con el sensor."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "interference",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "interferencia",
+            "example_en": "Electromagnetic interference ruined the reading.",
+            "example_es": "La interferencia electromagnética arruinó la lectura."
+          }
+        ]
+      }
+    },
+    "notes_es": "interfere WITH something. En mecánica, 'interference fit' es un ajuste con interferencia (a presión)."
+  },
+  {
+    "root": "jeopardize",
+    "slots": {
+      "verb": {
+        "form": "jeopardize",
+        "meanings": [
+          {
+            "translation_es": "poner en riesgo, comprometer",
+            "example_en": "Cutting the test jeopardizes the whole launch.",
+            "example_es": "Recortar la prueba pone en riesgo todo el lanzamiento."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "jeopardy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "riesgo, peligro",
+            "example_en": "The schedule is in jeopardy.",
+            "example_es": "El cronograma está en riesgo."
+          }
+        ]
+      }
+    },
+    "notes_es": "Casi siempre en la fórmula 'in jeopardy' (en riesgo). Es más fuerte que 'at risk'."
+  }
+]

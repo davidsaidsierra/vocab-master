@@ -1,0 +1,880 @@
+[
+  {
+    "root": "help",
+    "slots": {
+      "verb": {
+        "form": "help",
+        "meanings": [
+          {
+            "translation_es": "ayudar",
+            "definition_en": "to make it easier for someone to do something",
+            "example_en": "Can you help me move this table?",
+            "example_es": "¿Me puedes ayudar a mover esta mesa?"
+          },
+          {
+            "translation_es": "evitar, remediar",
+            "definition_en": "to avoid or prevent (used with can't/couldn't)",
+            "example_en": "I couldn't help laughing.",
+            "example_es": "No pude evitar reírme."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "help",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "ayuda",
+            "definition_en": "assistance; the act of helping",
+            "example_en": "Thanks for your help with the report.",
+            "example_es": "Gracias por tu ayuda con el reporte.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "helper",
+        "meanings": [
+          {
+            "translation_es": "ayudante",
+            "definition_en": "a person who helps someone",
+            "example_en": "We hired a helper for the workshop.",
+            "example_es": "Contratamos un ayudante para el taller."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "helpful",
+        "meanings": [
+          {
+            "translation_es": "útil, servicial",
+            "definition_en": "giving useful assistance",
+            "example_en": "Your feedback was really helpful.",
+            "example_es": "Tu retroalimentación fue muy útil."
+          },
+          {
+            "translation_es": "inútil, indefenso (helpless)",
+            "definition_en": "helpless: unable to help oneself or act",
+            "example_en": "I felt helpless watching the machine fail.",
+            "example_es": "Me sentí indefenso viendo fallar la máquina."
+          }
+        ],
+        "variants": [
+          "helpless"
+        ]
+      },
+      "adverb": {
+        "form": "helpfully",
+        "meanings": [
+          {
+            "translation_es": "de forma servicial",
+            "definition_en": "in a way that gives useful assistance",
+            "example_en": "She helpfully pointed out the error.",
+            "example_es": "Ella, servicial, señaló el error."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "help out",
+        "meaning_es": "echar una mano, apoyar",
+        "example_en": "He helped out with the setup.",
+        "example_es": "Echó una mano con la instalación."
+      },
+      {
+        "phrase": "help yourself",
+        "meaning_es": "sírvete (tú mismo)",
+        "example_en": "Help yourself to some coffee.",
+        "example_es": "Sírvete café."
+      }
+    ],
+    "notes_es": "Ojo con el par helpful / helpless: mismo sustantivo, sufijos opuestos (-ful = con, -less = sin)."
+  },
+  {
+    "root": "stay",
+    "slots": {
+      "verb": {
+        "form": "stay",
+        "meanings": [
+          {
+            "translation_es": "quedarse, permanecer",
+            "definition_en": "to remain in a place",
+            "example_en": "I stayed home all weekend.",
+            "example_es": "Me quedé en casa todo el fin de semana."
+          },
+          {
+            "translation_es": "alojarse, hospedarse",
+            "definition_en": "to live somewhere temporarily",
+            "example_en": "We stayed at a small hotel downtown.",
+            "example_es": "Nos alojamos en un hotel pequeño del centro."
+          },
+          {
+            "translation_es": "mantenerse",
+            "definition_en": "to remain in a particular state",
+            "example_en": "Stay calm and check the pressure first.",
+            "example_es": "Mantén la calma y revisa la presión primero."
+          },
+          {
+            "translation_es": "aplazar, suspender",
+            "definition_en": "to postpone or halt a legal action",
+            "example_en": "The court stayed the execution of the order.",
+            "example_es": "El tribunal suspendió la ejecución de la orden.",
+            "register": "legal / formal"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "stay",
+        "meanings": [
+          {
+            "translation_es": "estancia",
+            "definition_en": "a period of time spent somewhere",
+            "example_en": "It was a two-night stay.",
+            "example_es": "Fue una estancia de dos noches."
+          },
+          {
+            "translation_es": "suspensión (judicial)",
+            "definition_en": "a legal order stopping a process",
+            "example_en": "They were granted a stay of execution.",
+            "example_es": "Les concedieron una suspensión de la ejecución.",
+            "register": "legal"
+          }
+        ]
+      },
+      "gerund": {
+        "form": "staying",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "el quedarse (como sujeto)",
+            "definition_en": "gerund: the act of staying, used as a noun",
+            "example_en": "Staying home is cheaper than traveling.",
+            "example_es": "Quedarse en casa es más barato que viajar."
+          },
+          {
+            "translation_es": "aguante (staying power)",
+            "definition_en": "attributive use: staying power = endurance",
+            "example_en": "That design has real staying power.",
+            "example_es": "Ese diseño tiene verdadero aguante."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "stay up",
+        "meaning_es": "trasnochar, quedarse despierto",
+        "example_en": "I stayed up until 2 a.m. finishing the drawing.",
+        "example_es": "Me quedé despierto hasta las 2 terminando el plano."
+      },
+      {
+        "phrase": "stay out",
+        "meaning_es": "quedarse fuera (de casa)",
+        "example_en": "Don't stay out too late.",
+        "example_es": "No te quedes fuera hasta muy tarde."
+      },
+      {
+        "phrase": "stay away from",
+        "meaning_es": "alejarse de, evitar",
+        "example_en": "Stay away from that supplier.",
+        "example_es": "Aléjate de ese proveedor."
+      },
+      {
+        "phrase": "stay over",
+        "meaning_es": "quedarse a dormir",
+        "example_en": "You can stay over if it gets late.",
+        "example_es": "Puedes quedarte a dormir si se hace tarde."
+      },
+      {
+        "phrase": "stay on",
+        "meaning_es": "seguir, permanecer (en un puesto)",
+        "example_en": "She stayed on as a consultant.",
+        "example_es": "Siguió como consultora."
+      }
+    ],
+    "notes_es": "No tiene adjetivo ni adverbio propios. 'stay at' NO es adjetivo: es el verbo + preposición. El compuesto stay-at-home sí funciona como adjetivo (a stay-at-home parent)."
+  },
+  {
+    "root": "know",
+    "slots": {
+      "verb": {
+        "form": "know",
+        "meanings": [
+          {
+            "translation_es": "saber",
+            "definition_en": "to have information in your mind",
+            "example_en": "I know how the valve works.",
+            "example_es": "Sé cómo funciona la válvula."
+          },
+          {
+            "translation_es": "conocer",
+            "definition_en": "to be familiar with a person or place",
+            "example_en": "I've known him since college.",
+            "example_es": "Lo conozco desde la universidad."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "knowledge",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "conocimiento",
+            "definition_en": "information and understanding you have",
+            "example_en": "He has deep knowledge of thermodynamics.",
+            "example_es": "Tiene un conocimiento profundo de termodinámica.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "known",
+        "meanings": [
+          {
+            "translation_es": "conocido, sabido",
+            "definition_en": "recognized or established",
+            "example_en": "That's a known issue in this model.",
+            "example_es": "Ese es un problema conocido en este modelo."
+          },
+          {
+            "translation_es": "desconocido (unknown)",
+            "definition_en": "unknown: not known",
+            "example_en": "The cause is still unknown.",
+            "example_es": "La causa sigue siendo desconocida."
+          }
+        ],
+        "variants": [
+          "unknown",
+          "well-known"
+        ]
+      },
+      "adverb": {
+        "form": "knowingly",
+        "meanings": [
+          {
+            "translation_es": "a sabiendas",
+            "definition_en": "deliberately, being aware of what you do",
+            "example_en": "He knowingly signed a false report.",
+            "example_es": "Firmó a sabiendas un informe falso."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "know about",
+        "meaning_es": "saber de, estar enterado de",
+        "example_en": "Did you know about the delay?",
+        "example_es": "¿Sabías del retraso?"
+      },
+      {
+        "phrase": "well-known",
+        "meaning_es": "muy conocido, famoso",
+        "example_en": "It's a well-known standard in the industry.",
+        "example_es": "Es un estándar muy conocido en la industria."
+      }
+    ],
+    "notes_es": "know es irregular: know → knew → known. El participio 'known' hace de adjetivo (a known issue), que es distinto del sustantivo 'knowledge'."
+  },
+  {
+    "root": "interest",
+    "slots": {
+      "verb": {
+        "form": "interest",
+        "meanings": [
+          {
+            "translation_es": "interesar",
+            "definition_en": "to make someone want to pay attention",
+            "example_en": "The proposal interested the whole team.",
+            "example_es": "La propuesta interesó a todo el equipo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "interest",
+        "meanings": [
+          {
+            "translation_es": "interés (curiosidad)",
+            "definition_en": "the feeling of wanting to know about something",
+            "example_en": "She has a real interest in robotics.",
+            "example_es": "Tiene un interés real en la robótica."
+          },
+          {
+            "translation_es": "interés (financiero)",
+            "definition_en": "money paid for the use of money",
+            "example_en": "The loan has a 6% interest rate.",
+            "example_es": "El préstamo tiene una tasa de interés del 6%."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "interesting",
+        "meanings": [
+          {
+            "translation_es": "interesante (lo que CAUSA el interés)",
+            "definition_en": "-ing form: describes the thing that causes the feeling",
+            "example_en": "The lecture was interesting.",
+            "example_es": "La conferencia fue interesante."
+          },
+          {
+            "translation_es": "interesado (el que SIENTE el interés)",
+            "definition_en": "-ed form (interested): describes the person who feels it",
+            "example_en": "I'm interested in the lecture.",
+            "example_es": "Estoy interesado en la conferencia."
+          }
+        ],
+        "variants": [
+          "interested"
+        ]
+      },
+      "adverb": {
+        "form": "interestingly",
+        "meanings": [
+          {
+            "translation_es": "curiosamente",
+            "definition_en": "used to introduce a surprising fact",
+            "example_en": "Interestingly, the cheaper part lasted longer.",
+            "example_es": "Curiosamente, la pieza más barata duró más."
+          }
+        ]
+      }
+    },
+    "contrast_es": "interesting = lo que causa la sensación (la clase es interesante). interested = quien la siente (yo estoy interesado). Decir 'I am interesting' significa que TÚ resultas interesante para los demás, no que algo te interesa."
+  },
+  {
+    "root": "bore",
+    "slots": {
+      "verb": {
+        "form": "bore",
+        "inflections": {
+          "third": "bores",
+          "ing": "boring",
+          "past": "bored",
+          "participle": "bored"
+        },
+        "meanings": [
+          {
+            "translation_es": "aburrir",
+            "definition_en": "to make someone feel tired and uninterested",
+            "example_en": "Long meetings bore me.",
+            "example_es": "Las reuniones largas me aburren."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "boredom",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "aburrimiento",
+            "definition_en": "the state of being bored",
+            "example_en": "He quit out of sheer boredom.",
+            "example_es": "Renunció de puro aburrimiento.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "boring",
+        "meanings": [
+          {
+            "translation_es": "aburrido (lo que CAUSA el aburrimiento)",
+            "definition_en": "-ing form: the thing that causes the feeling",
+            "example_en": "The training video was boring.",
+            "example_es": "El video de capacitación era aburrido."
+          },
+          {
+            "translation_es": "aburrido (el que SIENTE el aburrimiento)",
+            "definition_en": "-ed form (bored): the person who feels it",
+            "example_en": "I was bored during the video.",
+            "example_es": "Yo estaba aburrido durante el video."
+          }
+        ],
+        "variants": [
+          "bored"
+        ]
+      }
+    },
+    "contrast_es": "El español usa 'aburrido' para las dos cosas; el inglés no. boring = la cosa que aburre. bored = la persona aburrida. 'I am boring' = yo soy la persona aburridora. Misma regla que interesting/interested, tiring/tired, confusing/confused."
+  },
+  {
+    "root": "achieve",
+    "slots": {
+      "verb": {
+        "form": "achieve",
+        "meanings": [
+          {
+            "translation_es": "lograr, alcanzar",
+            "definition_en": "to succeed in doing or getting something",
+            "example_en": "We achieved the target ahead of schedule.",
+            "example_es": "Logramos la meta antes de lo previsto."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "achievement",
+        "meanings": [
+          {
+            "translation_es": "logro",
+            "definition_en": "something done successfully",
+            "example_en": "Finishing the thesis was a real achievement.",
+            "example_es": "Terminar la tesis fue un verdadero logro."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "achiever",
+        "meanings": [
+          {
+            "translation_es": "persona exitosa, triunfador",
+            "definition_en": "someone who achieves a lot",
+            "example_en": "She's a high achiever.",
+            "example_es": "Ella es una persona de altos logros."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "achievable",
+        "meanings": [
+          {
+            "translation_es": "alcanzable, realizable",
+            "definition_en": "possible to achieve",
+            "example_en": "Set achievable deadlines.",
+            "example_es": "Pon plazos alcanzables."
+          }
+        ]
+      }
+    },
+    "notes_es": "No tiene adverbio de uso normal. El sufijo -able convierte el verbo en 'que se puede hacer' (achieve → achievable), igual que en manage → manageable."
+  },
+  {
+    "root": "succeed",
+    "slots": {
+      "verb": {
+        "form": "succeed",
+        "meanings": [
+          {
+            "translation_es": "tener éxito, lograr",
+            "definition_en": "to achieve what you wanted",
+            "example_en": "They succeeded in reducing the vibration.",
+            "example_es": "Lograron reducir la vibración."
+          },
+          {
+            "translation_es": "suceder a, reemplazar",
+            "definition_en": "to take someone's position after them",
+            "example_en": "He succeeded her as head of design.",
+            "example_es": "La sucedió como jefe de diseño."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "success",
+        "meanings": [
+          {
+            "translation_es": "éxito",
+            "definition_en": "the achievement of a goal",
+            "example_en": "The launch was a success.",
+            "example_es": "El lanzamiento fue un éxito."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "successful",
+        "meanings": [
+          {
+            "translation_es": "exitoso",
+            "definition_en": "having achieved the intended result",
+            "example_en": "It was a successful test run.",
+            "example_es": "Fue una prueba exitosa."
+          },
+          {
+            "translation_es": "fallido, sin éxito (unsuccessful)",
+            "definition_en": "unsuccessful: not achieving the result",
+            "example_en": "The first attempt was unsuccessful.",
+            "example_es": "El primer intento fue fallido."
+          }
+        ],
+        "variants": [
+          "unsuccessful"
+        ]
+      },
+      "adverb": {
+        "form": "successfully",
+        "meanings": [
+          {
+            "translation_es": "exitosamente, con éxito",
+            "definition_en": "in a way that achieves the goal",
+            "example_en": "The model ran successfully overnight.",
+            "example_es": "El modelo corrió con éxito toda la noche."
+          }
+        ]
+      }
+    },
+    "notes_es": "Familia irregular en la derivación: succeed → success (no 'succeedment'). Es justo por esto que las familias no se pueden calcular con reglas."
+  },
+  {
+    "root": "decide",
+    "slots": {
+      "verb": {
+        "form": "decide",
+        "meanings": [
+          {
+            "translation_es": "decidir",
+            "definition_en": "to choose after thinking",
+            "example_en": "We decided to postpone the test.",
+            "example_es": "Decidimos posponer la prueba."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "decision",
+        "meanings": [
+          {
+            "translation_es": "decisión",
+            "definition_en": "a choice that you make",
+            "example_en": "That was a tough decision.",
+            "example_es": "Esa fue una decisión difícil."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "decision-maker",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "quien toma las decisiones",
+            "definition_en": "a person with authority to decide",
+            "example_en": "Talk to the decision-maker, not the assistant.",
+            "example_es": "Habla con quien toma las decisiones, no con el asistente."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "decisive",
+        "meanings": [
+          {
+            "translation_es": "decidido, resuelto",
+            "definition_en": "able to make decisions quickly",
+            "example_en": "A good lead has to be decisive.",
+            "example_es": "Un buen líder tiene que ser decidido."
+          },
+          {
+            "translation_es": "decisivo, determinante",
+            "definition_en": "settling an issue; conclusive",
+            "example_en": "That test was decisive.",
+            "example_es": "Esa prueba fue decisiva."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "decisively",
+        "meanings": [
+          {
+            "translation_es": "de forma decidida",
+            "definition_en": "in a firm, quick way",
+            "example_en": "He acted decisively.",
+            "example_es": "Actuó de forma decidida."
+          }
+        ]
+      }
+    },
+    "notes_es": "decide → decision (la 'd' se vuelve 's'). Mismo patrón en conclude → conclusion, provide → provision."
+  },
+  {
+    "root": "happy",
+    "slots": {
+      "noun_thing": {
+        "form": "happiness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "felicidad",
+            "definition_en": "the state of being happy",
+            "example_en": "Money doesn't guarantee happiness.",
+            "example_es": "El dinero no garantiza la felicidad.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "happy",
+        "meanings": [
+          {
+            "translation_es": "feliz, contento",
+            "definition_en": "feeling pleasure or satisfaction",
+            "example_en": "I'm happy with the result.",
+            "example_es": "Estoy contento con el resultado."
+          },
+          {
+            "translation_es": "infeliz, descontento (unhappy)",
+            "definition_en": "unhappy: not happy",
+            "example_en": "The client was unhappy with the delay.",
+            "example_es": "El cliente estaba descontento con el retraso."
+          }
+        ],
+        "variants": [
+          "unhappy"
+        ]
+      },
+      "adverb": {
+        "form": "happily",
+        "meanings": [
+          {
+            "translation_es": "felizmente, con gusto",
+            "definition_en": "in a happy way; willingly",
+            "example_en": "I'd happily review the draft.",
+            "example_es": "Con gusto reviso el borrador."
+          }
+        ]
+      }
+    },
+    "notes_es": "Familia SIN verbo: 'to happy' no existe. Otro caso donde la matriz tiene huecos legítimos. Ojo con la ortografía: happy → happily (la y pasa a i)."
+  },
+  {
+    "root": "resilient",
+    "slots": {
+      "noun_thing": {
+        "form": "resilience",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "resiliencia, capacidad de recuperación",
+            "definition_en": "the ability to recover quickly from difficulty",
+            "example_en": "The team showed real resilience after the failure.",
+            "example_es": "El equipo mostró verdadera resiliencia tras la falla.",
+            "register": "incontable"
+          },
+          {
+            "translation_es": "elasticidad (de un material)",
+            "definition_en": "the ability of a material to return to its shape",
+            "example_en": "Rubber has high resilience.",
+            "example_es": "El caucho tiene alta elasticidad.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "resilient",
+        "meanings": [
+          {
+            "translation_es": "resiliente, resistente",
+            "definition_en": "able to recover quickly",
+            "example_en": "A resilient design tolerates bad input.",
+            "example_es": "Un diseño resistente tolera entradas malas."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "resiliently",
+        "meanings": [
+          {
+            "translation_es": "de forma resiliente",
+            "definition_en": "in a resilient way",
+            "example_en": "The structure responded resiliently to the load.",
+            "example_es": "La estructura respondió de forma resiliente a la carga."
+          }
+        ]
+      }
+    },
+    "notes_es": "Sin verbo. En ingeniería, resilience es además una propiedad del material (energía que absorbe y devuelve)."
+  },
+  {
+    "root": "establish",
+    "slots": {
+      "verb": {
+        "form": "establish",
+        "meanings": [
+          {
+            "translation_es": "establecer, fundar",
+            "definition_en": "to start something that will last",
+            "example_en": "They established the lab in 1998.",
+            "example_es": "Fundaron el laboratorio en 1998."
+          },
+          {
+            "translation_es": "determinar, comprobar",
+            "definition_en": "to find out a fact with certainty",
+            "example_en": "We need to establish the root cause.",
+            "example_es": "Necesitamos determinar la causa raíz."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "establishment",
+        "meanings": [
+          {
+            "translation_es": "establecimiento, fundación",
+            "definition_en": "the act of establishing, or the place itself",
+            "example_en": "The establishment of the standard took years.",
+            "example_es": "El establecimiento de la norma tomó años."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "established",
+        "meanings": [
+          {
+            "translation_es": "establecido, consolidado",
+            "definition_en": "-ed form used as adjective: accepted, long-existing",
+            "example_en": "That's an established procedure.",
+            "example_es": "Ese es un procedimiento establecido."
+          }
+        ]
+      }
+    },
+    "notes_es": "Aquí el participio 'established' funciona como adjetivo pleno (an established procedure), sin ser el par -ing/-ed de emoción."
+  },
+  {
+    "root": "undertake",
+    "slots": {
+      "verb": {
+        "form": "undertake",
+        "inflections": {
+          "third": "undertakes",
+          "ing": "undertaking",
+          "past": "undertook",
+          "participle": "undertaken"
+        },
+        "meanings": [
+          {
+            "translation_es": "emprender, acometer",
+            "definition_en": "to start and take responsibility for a task",
+            "example_en": "They undertook a full redesign.",
+            "example_es": "Emprendieron un rediseño completo.",
+            "register": "formal"
+          },
+          {
+            "translation_es": "comprometerse a",
+            "definition_en": "to promise formally to do something",
+            "example_en": "The supplier undertook to deliver by March.",
+            "example_es": "El proveedor se comprometió a entregar en marzo.",
+            "register": "formal / legal"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "undertaking",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "empresa, tarea grande",
+            "definition_en": "a large or difficult task that has been started",
+            "example_en": "Migrating the whole system is a huge undertaking.",
+            "example_es": "Migrar todo el sistema es una tarea enorme."
+          },
+          {
+            "translation_es": "compromiso formal",
+            "definition_en": "a formal promise",
+            "example_en": "They gave a written undertaking.",
+            "example_es": "Dieron un compromiso por escrito.",
+            "register": "legal"
+          }
+        ]
+      }
+    },
+    "notes_es": "Verbo irregular (undertake → undertook → undertaken). El -ing aquí es un SUSTANTIVO pleno (an undertaking = una empresa/tarea), no un adjetivo ni un tiempo continuo."
+  },
+  {
+    "root": "bear",
+    "slots": {
+      "verb": {
+        "form": "bear",
+        "inflections": {
+          "third": "bears",
+          "ing": "bearing",
+          "past": "bore",
+          "participle": "borne"
+        },
+        "meanings": [
+          {
+            "translation_es": "soportar, aguantar (carga)",
+            "definition_en": "to support a weight or load",
+            "example_en": "This column bears most of the load.",
+            "example_es": "Esta columna soporta la mayor parte de la carga."
+          },
+          {
+            "translation_es": "tolerar, soportar",
+            "definition_en": "to endure something unpleasant",
+            "example_en": "I can't bear that noise.",
+            "example_es": "No soporto ese ruido."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "bearing",
+        "inflections": {
+          "plural": "bearings"
+        },
+        "meanings": [
+          {
+            "translation_es": "rodamiento, cojinete",
+            "definition_en": "a machine part that supports a rotating shaft",
+            "example_en": "A ball bearing reduces friction.",
+            "example_es": "Un rodamiento de bolas reduce la fricción.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "relación, relevancia",
+            "definition_en": "relevance to something (to have bearing on)",
+            "example_en": "That has no bearing on the result.",
+            "example_es": "Eso no tiene relación con el resultado."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "bearable",
+        "meanings": [
+          {
+            "translation_es": "soportable, llevadero",
+            "definition_en": "possible to tolerate",
+            "example_en": "The heat was barely bearable.",
+            "example_es": "El calor era apenas soportable."
+          },
+          {
+            "translation_es": "insoportable (unbearable)",
+            "definition_en": "unbearable: impossible to tolerate",
+            "example_en": "The vibration was unbearable.",
+            "example_es": "La vibración era insoportable."
+          }
+        ]
+      }
+    },
+    "notes_es": "Buen ejemplo de -ing convertido en sustantivo TÉCNICO: bearing = rodamiento, ya no es 'soportando'. El sustantivo se independizó del verbo."
+  },
+  {
+    "root": "leverage",
+    "slots": {
+      "verb": {
+        "form": "leverage",
+        "meanings": [
+          {
+            "translation_es": "aprovechar, apalancar",
+            "definition_en": "to use something to maximum advantage",
+            "example_en": "We leveraged the existing test rig.",
+            "example_es": "Aprovechamos el banco de pruebas existente.",
+            "register": "negocios"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "leverage",
+        "meanings": [
+          {
+            "translation_es": "apalancamiento, ventaja mecánica",
+            "definition_en": "the mechanical advantage from using a lever",
+            "example_en": "A longer wrench gives you more leverage.",
+            "example_es": "Una llave más larga te da más apalancamiento.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "poder de negociación, influencia",
+            "definition_en": "power to influence a situation",
+            "example_en": "We have no leverage in this negotiation.",
+            "example_es": "No tenemos poder de negociación aquí."
+          }
+        ]
+      }
+    },
+    "notes_es": "Caso de CONVERSIÓN: la misma forma sirve de verbo y de sustantivo sin cambiar nada. Igual que water, email, run."
+  }
+]

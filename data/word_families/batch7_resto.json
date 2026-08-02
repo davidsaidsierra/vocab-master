@@ -1,0 +1,1751 @@
+[
+  {
+    "root": "acclaim",
+    "slots": {
+      "verb": {
+        "form": "acclaim",
+        "meanings": [
+          {
+            "translation_es": "aclamar, elogiar",
+            "example_en": "Critics acclaimed the design.",
+            "example_es": "La crítica elogió el diseño."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "acclaim",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "reconocimiento, elogio",
+            "example_en": "The book received wide acclaim.",
+            "example_es": "El libro recibió amplio reconocimiento."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "acclaimed",
+        "meanings": [
+          {
+            "translation_es": "aclamado, premiado",
+            "example_en": "She's an acclaimed researcher.",
+            "example_es": "Es una investigadora aclamada."
+          }
+        ],
+        "variants": [
+          "critically-acclaimed"
+        ]
+      }
+    },
+    "notes_es": "Casi siempre en pasiva o como adjetivo: 'critically acclaimed' = aclamado por la crítica."
+  },
+  {
+    "root": "accomplish",
+    "slots": {
+      "verb": {
+        "form": "accomplish",
+        "meanings": [
+          {
+            "translation_es": "lograr, llevar a cabo",
+            "example_en": "We accomplished the goal in six weeks.",
+            "example_es": "Logramos el objetivo en seis semanas."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "accomplishment",
+        "meanings": [
+          {
+            "translation_es": "logro",
+            "example_en": "That's quite an accomplishment.",
+            "example_es": "Eso es todo un logro."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "accomplished",
+        "meanings": [
+          {
+            "translation_es": "consumado, experto",
+            "example_en": "He's an accomplished machinist.",
+            "example_es": "Es un tornero consumado."
+          }
+        ]
+      }
+    },
+    "notes_es": "Ojo: 'accomplished' aplicado a personas significa muy competente, no 'cumplido'."
+  },
+  {
+    "root": "account",
+    "slots": {
+      "verb": {
+        "form": "account",
+        "meanings": [
+          {
+            "translation_es": "explicar, justificar (account for)",
+            "example_en": "Friction accounts for the loss.",
+            "example_es": "La fricción explica la pérdida."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "account",
+        "meanings": [
+          {
+            "translation_es": "cuenta; relato",
+            "example_en": "Open an account first.",
+            "example_es": "Abre una cuenta primero."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "accountant",
+        "meanings": [
+          {
+            "translation_es": "contador, contable",
+            "example_en": "The accountants flagged the invoice.",
+            "example_es": "Los contadores marcaron la factura."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "accountable",
+        "meanings": [
+          {
+            "translation_es": "responsable, que rinde cuentas",
+            "example_en": "Each lead is accountable for their area.",
+            "example_es": "Cada líder rinde cuentas por su área."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "account for",
+        "meaning_es": "explicar; representar (un porcentaje)",
+        "example_en": "Losses account for 8% of the total.",
+        "example_es": "Las pérdidas representan el 8% del total."
+      }
+    ],
+    "notes_es": "'account for' tiene dos sentidos muy usados: explicar la causa y representar una proporción."
+  },
+  {
+    "root": "ascertain",
+    "slots": {
+      "verb": {
+        "form": "ascertain",
+        "meanings": [
+          {
+            "translation_es": "determinar, averiguar con certeza",
+            "example_en": "We must ascertain the exact cause.",
+            "example_es": "Debemos determinar la causa exacta.",
+            "register": "formal"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "ascertainable",
+        "meanings": [
+          {
+            "translation_es": "determinable, comprobable",
+            "example_en": "The date isn't ascertainable from the log.",
+            "example_es": "La fecha no es determinable a partir del registro."
+          }
+        ]
+      }
+    },
+    "notes_es": "Es el 'find out' formal. Muy propio de informes técnicos y textos legales."
+  },
+  {
+    "root": "big",
+    "slots": {
+      "adjective": {
+        "form": "big",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "grande",
+            "example_en": "That's a big assumption.",
+            "example_es": "Ese es un supuesto grande."
+          }
+        ]
+      }
+    },
+    "contrast_es": "Comparativo con doble consonante: big → bigger → biggest. En registro formal se prefiere 'large' o 'significant' antes que 'big'. No tiene adverbio."
+  },
+  {
+    "root": "bland",
+    "slots": {
+      "noun_thing": {
+        "form": "blandness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "insipidez, sosería",
+            "example_en": "The blandness of the report put me to sleep.",
+            "example_es": "La sosería del informe me durmió."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "bland",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "soso, insípido; anodino",
+            "example_en": "The food was bland.",
+            "example_es": "La comida estaba sosa."
+          }
+        ]
+      }
+    },
+    "notes_es": "Se usa para comida sin sabor y para textos o diseños sin carácter."
+  },
+  {
+    "root": "break",
+    "slots": {
+      "verb": {
+        "form": "break",
+        "inflections": {
+          "third": "breaks",
+          "ing": "breaking",
+          "past": "broke",
+          "participle": "broken"
+        },
+        "meanings": [
+          {
+            "translation_es": "romper, quebrar",
+            "example_en": "The shaft broke under load.",
+            "example_es": "El eje se rompió bajo carga."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "breakthrough",
+        "meanings": [
+          {
+            "translation_es": "avance decisivo, hallazgo",
+            "example_en": "The alloy was a real breakthrough.",
+            "example_es": "La aleación fue un avance decisivo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "broken",
+        "meanings": [
+          {
+            "translation_es": "roto, averiado",
+            "example_en": "The gauge is broken.",
+            "example_es": "El manómetro está averiado."
+          },
+          {
+            "translation_es": "innovador, revolucionario (groundbreaking)",
+            "example_en": "It was groundbreaking research.",
+            "example_es": "Fue una investigación revolucionaria."
+          }
+        ],
+        "variants": [
+          "groundbreaking"
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "break down",
+        "meaning_es": "averiarse; desglosar",
+        "example_en": "The compressor broke down twice.",
+        "example_es": "El compresor se averió dos veces."
+      },
+      {
+        "phrase": "break through",
+        "meaning_es": "atravesar; lograr un avance",
+        "example_en": "They finally broke through the noise floor.",
+        "example_es": "Por fin superaron el piso de ruido."
+      }
+    ],
+    "notes_es": "Irregular: break → broke → broken. 'breakthrough' (sustantivo, junto) vs 'break through' (verbo, separado)."
+  },
+  {
+    "root": "budget",
+    "slots": {
+      "verb": {
+        "form": "budget",
+        "meanings": [
+          {
+            "translation_es": "presupuestar",
+            "example_en": "We budgeted 20 hours for testing.",
+            "example_es": "Presupuestamos 20 horas para pruebas."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "budget",
+        "meanings": [
+          {
+            "translation_es": "presupuesto",
+            "example_en": "The budget is tight this quarter.",
+            "example_es": "El presupuesto está ajustado este trimestre."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "budgetary",
+        "meanings": [
+          {
+            "translation_es": "presupuestario",
+            "example_en": "There are budgetary constraints.",
+            "example_es": "Hay restricciones presupuestarias."
+          }
+        ]
+      }
+    },
+    "notes_es": "'budget' delante de un sustantivo significa económico: a budget airline, a budget option."
+  },
+  {
+    "root": "coax",
+    "slots": {
+      "verb": {
+        "form": "coax",
+        "meanings": [
+          {
+            "translation_es": "persuadir con maña, engatusar",
+            "example_en": "He coaxed the old engine into starting.",
+            "example_es": "Logró con maña que el motor viejo arrancara."
+          }
+        ]
+      }
+    },
+    "notes_es": "Se usa mucho en sentido técnico coloquial: coax something into working = hacer que algo funcione con paciencia. No confundir con 'coax cable' (cable coaxial), que es otra palabra."
+  },
+  {
+    "root": "crisp",
+    "slots": {
+      "noun_thing": {
+        "form": "crispness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "nitidez; textura crujiente",
+            "example_en": "The crispness of the image improved.",
+            "example_es": "La nitidez de la imagen mejoró."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "crisp",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "crujiente; nítido; conciso",
+            "example_en": "Give me a crisp summary.",
+            "example_es": "Dame un resumen conciso."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "crisply",
+        "meanings": [
+          {
+            "translation_es": "con nitidez, secamente",
+            "example_en": "He answered crisply.",
+            "example_es": "Respondió secamente."
+          }
+        ]
+      }
+    },
+    "notes_es": "Tres usos: comida crujiente, imagen nítida y texto conciso. En escritura, 'crisp writing' es un elogio."
+  },
+  {
+    "root": "difficult",
+    "slots": {
+      "noun_thing": {
+        "form": "difficulty",
+        "inflections": {
+          "plural": "difficulties"
+        },
+        "meanings": [
+          {
+            "translation_es": "dificultad",
+            "example_en": "We had difficulty sourcing the part.",
+            "example_es": "Tuvimos dificultad para conseguir la pieza."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "difficult",
+        "meanings": [
+          {
+            "translation_es": "difícil",
+            "example_en": "It's a difficult trade-off.",
+            "example_es": "Es un compromiso difícil."
+          }
+        ]
+      }
+    },
+    "notes_es": "Sin adverbio: 'difficultly' no existe. Se dice 'with difficulty'. Y se usa 'have difficulty + -ing'."
+  },
+  {
+    "root": "dispatch",
+    "slots": {
+      "verb": {
+        "form": "dispatch",
+        "meanings": [
+          {
+            "translation_es": "despachar, enviar",
+            "example_en": "They dispatched a technician the same day.",
+            "example_es": "Despacharon un técnico el mismo día."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "dispatch",
+        "inflections": {
+          "plural": "dispatches"
+        },
+        "meanings": [
+          {
+            "translation_es": "envío, despacho",
+            "example_en": "The dispatch note is in the box.",
+            "example_es": "La nota de despacho está en la caja."
+          }
+        ]
+      }
+    },
+    "notes_es": "En logística, 'dispatch' es el envío. En emergencias, el 'dispatcher' es quien coordina las unidades."
+  },
+  {
+    "root": "drawback",
+    "slots": {
+      "noun_thing": {
+        "form": "drawback",
+        "meanings": [
+          {
+            "translation_es": "desventaja, inconveniente",
+            "example_en": "The main drawback is the weight.",
+            "example_es": "La principal desventaja es el peso."
+          }
+        ]
+      }
+    },
+    "notes_es": "Pareja imprescindible en escritura argumentativa: advantages and drawbacks. Sinónimo formal: downside."
+  },
+  {
+    "root": "encounter",
+    "slots": {
+      "verb": {
+        "form": "encounter",
+        "meanings": [
+          {
+            "translation_es": "encontrarse con, toparse con",
+            "example_en": "We encountered a fault at 80% load.",
+            "example_es": "Nos topamos con una falla al 80% de carga."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "encounter",
+        "meanings": [
+          {
+            "translation_es": "encuentro",
+            "example_en": "It was a brief encounter.",
+            "example_es": "Fue un encuentro breve."
+          }
+        ]
+      }
+    },
+    "notes_es": "'encounter a problem' es la forma formal de 'run into a problem'. No implica buscar: te lo encuentras."
+  },
+  {
+    "root": "exquisite",
+    "slots": {
+      "adjective": {
+        "form": "exquisite",
+        "meanings": [
+          {
+            "translation_es": "exquisito, primoroso",
+            "example_en": "The finish is exquisite.",
+            "example_es": "El acabado es exquisito."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "exquisitely",
+        "meanings": [
+          {
+            "translation_es": "exquisitamente, con primor",
+            "example_en": "The part is exquisitely machined.",
+            "example_es": "La pieza está mecanizada con primor."
+          }
+        ]
+      }
+    },
+    "notes_es": "En inglés se usa sobre todo para artesanía, detalle y belleza fina, menos para comida que en español."
+  },
+  {
+    "root": "fast",
+    "slots": {
+      "verb": {
+        "form": "fasten",
+        "meanings": [
+          {
+            "translation_es": "sujetar, abrochar",
+            "example_en": "Fasten the panel with four screws.",
+            "example_es": "Sujeta el panel con cuatro tornillos."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "fastener",
+        "meanings": [
+          {
+            "translation_es": "sujetador, elemento de fijación",
+            "example_en": "Use stainless fasteners.",
+            "example_es": "Usa elementos de fijación de acero inoxidable.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "fast",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "rápido; firme",
+            "example_en": "It's a fast process.",
+            "example_es": "Es un proceso rápido."
+          }
+        ]
+      }
+    },
+    "notes_es": "'fast' es a la vez adjetivo y adverbio: 'he runs fast' (no 'fastly'). El sentido original es 'firme', de ahí fasten y 'hold fast'."
+  },
+  {
+    "root": "folk",
+    "slots": {
+      "noun_person": {
+        "form": "folk",
+        "inflections": {
+          "plural": "folks"
+        },
+        "meanings": [
+          {
+            "translation_es": "gente; familia (folks)",
+            "example_en": "My folks live in Barranquilla.",
+            "example_es": "Mis papás viven en Barranquilla.",
+            "register": "informal"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "folk",
+        "meanings": [
+          {
+            "translation_es": "popular, tradicional",
+            "example_en": "It's a folk tradition.",
+            "example_es": "Es una tradición popular."
+          }
+        ]
+      }
+    },
+    "notes_es": "'folks' informalmente son la familia o la audiencia ('hey folks'). 'folk music' = música tradicional."
+  },
+  {
+    "root": "glimpse",
+    "slots": {
+      "verb": {
+        "form": "glimpse",
+        "meanings": [
+          {
+            "translation_es": "vislumbrar, alcanzar a ver",
+            "example_en": "I glimpsed the crack before it closed.",
+            "example_es": "Alcancé a ver la grieta antes de que cerrara."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "glimpse",
+        "meanings": [
+          {
+            "translation_es": "vistazo, atisbo",
+            "example_en": "The demo gave us a glimpse of the final design.",
+            "example_es": "La demo nos dio un atisbo del diseño final."
+          }
+        ]
+      }
+    },
+    "notes_es": "Fórmula frecuente: 'catch a glimpse of' = alcanzar a ver algo un instante."
+  },
+  {
+    "root": "good",
+    "slots": {
+      "noun_thing": {
+        "form": "goodness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "bondad",
+            "example_en": "There's goodness in that idea.",
+            "example_es": "Hay bondad en esa idea."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "good",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "bueno",
+            "example_en": "That's a good approximation.",
+            "example_es": "Esa es una buena aproximación."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "well",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "bien",
+            "example_en": "The model performs well at low speed.",
+            "example_es": "El modelo se desempeña bien a baja velocidad."
+          }
+        ]
+      }
+    },
+    "contrast_es": "El adverbio de 'good' es 'well', no 'goodly': 'it works well', no 'it works good'. Comparativo irregular: good → better → best (y well → better → best)."
+  },
+  {
+    "root": "grave",
+    "slots": {
+      "noun_thing": {
+        "form": "gravity",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "gravedad (física)",
+            "example_en": "Gravity does most of the work here.",
+            "example_es": "La gravedad hace casi todo el trabajo aquí.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "gravedad, seriedad",
+            "example_en": "He didn't grasp the gravity of the error.",
+            "example_es": "No captó la gravedad del error."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "grave",
+        "meanings": [
+          {
+            "translation_es": "grave, serio",
+            "example_en": "That's a grave concern.",
+            "example_es": "Esa es una preocupación grave."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "gravely",
+        "meanings": [
+          {
+            "translation_es": "gravemente",
+            "example_en": "The structure was gravely weakened.",
+            "example_es": "La estructura quedó gravemente debilitada."
+          }
+        ]
+      }
+    },
+    "notes_es": "'grave' también es tumba (sustantivo). Y 'gravity' cubre tanto la física como la seriedad de una situación."
+  },
+  {
+    "root": "grumble",
+    "slots": {
+      "verb": {
+        "form": "grumble",
+        "meanings": [
+          {
+            "translation_es": "refunfuñar, quejarse",
+            "example_en": "The crew grumbled about the overtime.",
+            "example_es": "La cuadrilla refunfuñó por las horas extra."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "grumble",
+        "meanings": [
+          {
+            "translation_es": "queja, refunfuño",
+            "example_en": "There were a few grumbles but no complaints.",
+            "example_es": "Hubo algunos refunfuños pero ninguna queja formal."
+          }
+        ]
+      }
+    },
+    "notes_es": "grumble ABOUT something. Es una queja de baja intensidad, entre dientes, no una queja formal (complaint)."
+  },
+  {
+    "root": "handle",
+    "slots": {
+      "verb": {
+        "form": "handle",
+        "meanings": [
+          {
+            "translation_es": "manejar, gestionar",
+            "example_en": "The system handles 400 requests per second.",
+            "example_es": "El sistema maneja 400 solicitudes por segundo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "handle",
+        "meanings": [
+          {
+            "translation_es": "manija, mango, asa",
+            "example_en": "The handle came off.",
+            "example_es": "La manija se salió."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "handling",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "manipulación, manejo",
+            "example_en": "Careful handling avoids scratches.",
+            "example_es": "La manipulación cuidadosa evita rayones."
+          }
+        ]
+      }
+    },
+    "notes_es": "'material handling' = manejo de materiales; 'handling' de un vehículo es su comportamiento en carretera."
+  },
+  {
+    "root": "hard",
+    "slots": {
+      "verb": {
+        "form": "harden",
+        "meanings": [
+          {
+            "translation_es": "endurecer, templar",
+            "example_en": "The steel is hardened after machining.",
+            "example_es": "El acero se endurece después del mecanizado.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "hardness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "dureza",
+            "example_en": "Measure the hardness with a Rockwell test.",
+            "example_es": "Mide la dureza con un ensayo Rockwell.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "hard",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "duro; difícil",
+            "example_en": "It's a hard material to weld.",
+            "example_es": "Es un material difícil de soldar."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "hardly",
+        "meanings": [
+          {
+            "translation_es": "apenas, casi no",
+            "example_en": "The needle hardly moved.",
+            "example_es": "La aguja apenas se movió."
+          }
+        ]
+      }
+    },
+    "contrast_es": "TRAMPA CLÁSICA: 'hard' ya es adverbio (work hard = trabajar duro). 'hardly' significa APENAS/CASI NO: 'I hardly work' = casi no trabajo. Son casi opuestos."
+  },
+  {
+    "root": "heat",
+    "slots": {
+      "verb": {
+        "form": "heat",
+        "meanings": [
+          {
+            "translation_es": "calentar",
+            "example_en": "Heat the sample to 200 °C.",
+            "example_es": "Calienta la muestra a 200 °C."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "heat",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "calor",
+            "example_en": "The heat exchanger fouled quickly.",
+            "example_es": "El intercambiador de calor se ensució rápido.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "hot",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "caliente",
+            "example_en": "The surface is still hot.",
+            "example_es": "La superficie sigue caliente."
+          }
+        ]
+      }
+    },
+    "notes_es": "hot → hotter → hottest (dobla la t). 'heat treatment' = tratamiento térmico. Ojo: 'I am hot' (tengo calor), no 'I have hot'."
+  },
+  {
+    "root": "heritage",
+    "slots": {
+      "verb": {
+        "form": "inherit",
+        "meanings": [
+          {
+            "translation_es": "heredar",
+            "example_en": "The new model inherits the old gearbox.",
+            "example_es": "El modelo nuevo hereda la caja del anterior."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "heritage",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "patrimonio, herencia cultural",
+            "example_en": "The site is on the World Heritage list.",
+            "example_es": "El sitio está en la lista de Patrimonio Mundial."
+          }
+        ],
+        "variants": [
+          "inheritance"
+        ]
+      },
+      "adjective": {
+        "form": "inherited",
+        "meanings": [
+          {
+            "translation_es": "heredado",
+            "example_en": "It's an inherited design flaw.",
+            "example_es": "Es un defecto de diseño heredado."
+          }
+        ]
+      }
+    },
+    "notes_es": "heritage = patrimonio cultural de un pueblo. inheritance = lo que hereda una persona (bienes). No son intercambiables."
+  },
+  {
+    "root": "incline",
+    "slots": {
+      "verb": {
+        "form": "incline",
+        "meanings": [
+          {
+            "translation_es": "inclinar(se)",
+            "example_en": "The ramp inclines 8 degrees.",
+            "example_es": "La rampa se inclina 8 grados."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "inclination",
+        "meanings": [
+          {
+            "translation_es": "inclinación; tendencia",
+            "example_en": "I have no inclination to redo it.",
+            "example_es": "No tengo ninguna inclinación a rehacerlo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "inclined",
+        "meanings": [
+          {
+            "translation_es": "inclinado (con tendencia a)",
+            "example_en": "I'm inclined to agree.",
+            "example_es": "Me inclino a estar de acuerdo."
+          }
+        ]
+      }
+    },
+    "notes_es": "'I'm inclined to think/agree' es una forma elegante y prudente de dar tu opinión por escrito."
+  },
+  {
+    "root": "income",
+    "slots": {
+      "noun_thing": {
+        "form": "income",
+        "meanings": [
+          {
+            "translation_es": "ingreso, ingresos",
+            "example_en": "A steady income matters more than a big one.",
+            "example_es": "Un ingreso estable importa más que uno grande."
+          }
+        ]
+      }
+    },
+    "contrast_es": "income = lo que entra (ingresos). revenue = facturación de una empresa. earnings = ganancias. profit = utilidad tras costos."
+  },
+  {
+    "root": "interface",
+    "slots": {
+      "verb": {
+        "form": "interface",
+        "meanings": [
+          {
+            "translation_es": "conectar(se), comunicarse con",
+            "example_en": "The controller interfaces with the PLC.",
+            "example_es": "El controlador se comunica con el PLC."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "interface",
+        "meanings": [
+          {
+            "translation_es": "interfaz",
+            "example_en": "The user interface is too cluttered.",
+            "example_es": "La interfaz de usuario está muy recargada."
+          },
+          {
+            "translation_es": "interfase (superficie de contacto)",
+            "example_en": "Stress concentrates at the interface.",
+            "example_es": "El esfuerzo se concentra en la interfase.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "notes_es": "En español distinguimos interfaz (software) e interfase (física); en inglés es la misma palabra."
+  },
+  {
+    "root": "lift",
+    "slots": {
+      "verb": {
+        "form": "lift",
+        "meanings": [
+          {
+            "translation_es": "levantar, elevar",
+            "example_en": "The crane lifts up to 3 tons.",
+            "example_es": "La grúa levanta hasta 3 toneladas."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "lift",
+        "meanings": [
+          {
+            "translation_es": "sustentación (aerodinámica)",
+            "example_en": "The wing generates lift at 60 km/h.",
+            "example_es": "El ala genera sustentación a 60 km/h.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "ascensor (UK)",
+            "example_en": "Take the lift to the fourth floor.",
+            "example_es": "Toma el ascensor al cuarto piso.",
+            "register": "británico"
+          }
+        ]
+      }
+    },
+    "notes_es": "Clave para ti: en aerodinámica lift = sustentación, y su opuesto es drag = resistencia al avance. En EE. UU. el ascensor es elevator."
+  },
+  {
+    "root": "lounge",
+    "slots": {
+      "verb": {
+        "form": "lounge",
+        "meanings": [
+          {
+            "translation_es": "holgazanear, descansar tumbado",
+            "example_en": "They were lounging by the pool.",
+            "example_es": "Estaban descansando junto a la piscina."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "lounge",
+        "meanings": [
+          {
+            "translation_es": "sala de espera, salón",
+            "example_en": "We waited in the airport lounge.",
+            "example_es": "Esperamos en la sala del aeropuerto."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "mainstream",
+    "slots": {
+      "noun_thing": {
+        "form": "mainstream",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "corriente principal",
+            "example_en": "Electric drives entered the mainstream.",
+            "example_es": "Los accionamientos eléctricos entraron a la corriente principal."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "mainstream",
+        "meanings": [
+          {
+            "translation_es": "convencional, mayoritario",
+            "example_en": "It's now a mainstream technology.",
+            "example_es": "Ahora es una tecnología convencional."
+          }
+        ]
+      }
+    },
+    "notes_es": "Opuestos útiles: niche (de nicho), fringe (marginal), cutting-edge (de vanguardia)."
+  },
+  {
+    "root": "mind",
+    "slots": {
+      "verb": {
+        "form": "mind",
+        "meanings": [
+          {
+            "translation_es": "importar, molestar",
+            "example_en": "I don't mind working late.",
+            "example_es": "No me molesta trabajar hasta tarde."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "mind",
+        "meanings": [
+          {
+            "translation_es": "mente",
+            "example_en": "Keep an open mind about the result.",
+            "example_es": "Mantén la mente abierta sobre el resultado."
+          },
+          {
+            "translation_es": "mentalidad (mindset)",
+            "example_en": "A safety mindset prevents accidents.",
+            "example_es": "Una mentalidad de seguridad previene accidentes."
+          }
+        ],
+        "variants": [
+          "mindset"
+        ]
+      },
+      "adjective": {
+        "form": "mindful",
+        "meanings": [
+          {
+            "translation_es": "consciente, atento",
+            "example_en": "Be mindful of the tolerances.",
+            "example_es": "Sé consciente de las tolerancias."
+          },
+          {
+            "translation_es": "descuidado, sin pensar (mindless)",
+            "example_en": "It's mindless repetitive work.",
+            "example_es": "Es un trabajo repetitivo y mecánico."
+          }
+        ],
+        "variants": [
+          "mindless"
+        ]
+      }
+    },
+    "notes_es": "'Do you mind...?' se responde al revés de lo que parece: 'No, not at all' significa que SÍ puedes hacerlo."
+  },
+  {
+    "root": "neurology",
+    "slots": {
+      "noun_thing": {
+        "form": "neurology",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "neurología",
+            "example_en": "She switched from surgery to neurology.",
+            "example_es": "Cambió de cirugía a neurología."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "neurologist",
+        "meanings": [
+          {
+            "translation_es": "neurólogo",
+            "example_en": "The neurologist ordered a scan.",
+            "example_es": "El neurólogo ordenó un escaneo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "neurological",
+        "meanings": [
+          {
+            "translation_es": "neurológico",
+            "example_en": "There were no neurological effects.",
+            "example_es": "No hubo efectos neurológicos."
+          }
+        ]
+      }
+    },
+    "notes_es": "Patrón productivo: -logy (ciencia), -logist (especialista), -logical (adjetivo). Igual en biology/biologist/biological."
+  },
+  {
+    "root": "old",
+    "slots": {
+      "adjective": {
+        "form": "old",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "viejo, antiguo",
+            "example_en": "The old rig still works.",
+            "example_es": "El banco viejo todavía funciona."
+          },
+          {
+            "translation_es": "obsoleto, desactualizado (outdated)",
+            "example_en": "The manual is outdated.",
+            "example_es": "El manual está desactualizado."
+          }
+        ],
+        "variants": [
+          "outdated"
+        ]
+      }
+    },
+    "notes_es": "old → older → oldest (para personas de la misma familia, el británico usa elder/eldest). Sin adverbio."
+  },
+  {
+    "root": "outstrip",
+    "slots": {
+      "verb": {
+        "form": "outstrip",
+        "inflections": {
+          "third": "outstrips",
+          "ing": "outstripping",
+          "past": "outstripped",
+          "participle": "outstripped"
+        },
+        "meanings": [
+          {
+            "translation_es": "superar, sobrepasar",
+            "example_en": "Demand outstripped supply.",
+            "example_es": "La demanda sobrepasó a la oferta."
+          }
+        ]
+      }
+    },
+    "notes_es": "El prefijo out- crea verbos de 'superar a otro': outperform, outnumber, outlast, outstrip."
+  },
+  {
+    "root": "joy",
+    "slots": {
+      "noun_thing": {
+        "form": "joy",
+        "meanings": [
+          {
+            "translation_es": "alegría, gozo",
+            "example_en": "It was a joy to watch it run.",
+            "example_es": "Fue una alegría verlo funcionar."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "joyful",
+        "meanings": [
+          {
+            "translation_es": "alegre, gozoso",
+            "example_en": "It was a joyful moment.",
+            "example_es": "Fue un momento de alegría."
+          },
+          {
+            "translation_es": "encantado, feliz (overjoyed)",
+            "example_en": "I was overjoyed with the result.",
+            "example_es": "Quedé feliz con el resultado."
+          }
+        ],
+        "variants": [
+          "overjoyed"
+        ]
+      },
+      "adverb": {
+        "form": "joyfully",
+        "meanings": [
+          {
+            "translation_es": "alegremente",
+            "example_en": "They joyfully announced the launch.",
+            "example_es": "Anunciaron el lanzamiento con alegría."
+          }
+        ]
+      }
+    },
+    "notes_es": "El prefijo over- intensifica: overjoyed (más que feliz), overwhelmed, overworked."
+  },
+  {
+    "root": "perspective",
+    "slots": {
+      "noun_thing": {
+        "form": "perspective",
+        "meanings": [
+          {
+            "translation_es": "perspectiva, punto de vista",
+            "example_en": "From an engineering perspective, it's fine.",
+            "example_es": "Desde una perspectiva de ingeniería, está bien."
+          }
+        ]
+      }
+    },
+    "notes_es": "'put things in perspective' = poner las cosas en su justa medida. Ojo: 'perspective' (punto de vista) ≠ 'prospective' (potencial, futuro)."
+  },
+  {
+    "root": "plenty",
+    "slots": {
+      "noun_thing": {
+        "form": "plenty",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "abundancia, de sobra",
+            "example_en": "There's plenty of clearance.",
+            "example_es": "Hay espacio libre de sobra."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "plentiful",
+        "meanings": [
+          {
+            "translation_es": "abundante",
+            "example_en": "Water is plentiful here.",
+            "example_es": "El agua es abundante aquí."
+          }
+        ]
+      }
+    },
+    "notes_es": "'plenty of' sirve para contables e incontables. No se dice 'plenty of time?' en preguntas: ahí se usa 'enough'."
+  },
+  {
+    "root": "plough",
+    "slots": {
+      "verb": {
+        "form": "plough",
+        "meanings": [
+          {
+            "translation_es": "arar; avanzar con esfuerzo",
+            "example_en": "I ploughed through the whole report.",
+            "example_es": "Me leí todo el informe a duras penas."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "plough",
+        "meanings": [
+          {
+            "translation_es": "arado",
+            "example_en": "The plough broke on a rock.",
+            "example_es": "El arado se rompió con una piedra."
+          }
+        ]
+      }
+    },
+    "notes_es": "Grafía británica: plough. En EE. UU. se escribe 'plow'. 'plough through' = avanzar con esfuerzo por algo largo."
+  },
+  {
+    "root": "poignant",
+    "slots": {
+      "noun_thing": {
+        "form": "poignancy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "patetismo, carga emotiva",
+            "example_en": "The poignancy of the letter stayed with me.",
+            "example_es": "La carga emotiva de la carta se me quedó."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "poignant",
+        "meanings": [
+          {
+            "translation_es": "conmovedor, punzante",
+            "example_en": "It's a poignant documentary.",
+            "example_es": "Es un documental conmovedor."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "poignantly",
+        "meanings": [
+          {
+            "translation_es": "de forma conmovedora",
+            "example_en": "He poignantly described the loss.",
+            "example_es": "Describió la pérdida de forma conmovedora."
+          }
+        ]
+      }
+    },
+    "notes_es": "La G no se pronuncia: /ˈpɔɪnjənt/. Es una tristeza bella, no dolorosa sin más."
+  },
+  {
+    "root": "ravenous",
+    "slots": {
+      "adjective": {
+        "form": "ravenous",
+        "meanings": [
+          {
+            "translation_es": "hambriento, voraz",
+            "example_en": "I was ravenous after the shift.",
+            "example_es": "Estaba hambriento después del turno."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "ravenously",
+        "meanings": [
+          {
+            "translation_es": "vorazmente",
+            "example_en": "He ate ravenously.",
+            "example_es": "Comió vorazmente."
+          }
+        ]
+      }
+    },
+    "notes_es": "Es un adjetivo extremo: no lleva 'very'. Escala: hungry < starving/ravenous."
+  },
+  {
+    "root": "tell",
+    "slots": {
+      "verb": {
+        "form": "tell",
+        "inflections": {
+          "third": "tells",
+          "ing": "telling",
+          "past": "told",
+          "participle": "told"
+        },
+        "meanings": [
+          {
+            "translation_es": "decir, contar (a alguien)",
+            "example_en": "Tell me what the log says.",
+            "example_es": "Dime qué dice el registro."
+          },
+          {
+            "translation_es": "distinguir (tell apart)",
+            "example_en": "I can't tell the two apart.",
+            "example_es": "No puedo distinguir una de la otra."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "telling",
+        "meanings": [
+          {
+            "translation_es": "revelador, significativo",
+            "example_en": "That's a telling detail.",
+            "example_es": "Ese es un detalle revelador."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "tell apart",
+        "meaning_es": "distinguir entre dos",
+        "example_en": "Can you tell the two alloys apart?",
+        "example_es": "¿Puedes distinguir las dos aleaciones?"
+      },
+      {
+        "phrase": "retell",
+        "meaning_es": "volver a contar",
+        "example_en": "He retold the story with more detail.",
+        "example_es": "Volvió a contar la historia con más detalle."
+      }
+    ],
+    "notes_es": "Irregular: tell → told → told. 'tell' SIEMPRE lleva a quién: tell ME. 'say' no: say something (to someone)."
+  },
+  {
+    "root": "showcase",
+    "slots": {
+      "verb": {
+        "form": "showcase",
+        "meanings": [
+          {
+            "translation_es": "exhibir, poner en valor",
+            "example_en": "The fair showcases new tooling.",
+            "example_es": "La feria exhibe herramental nuevo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "showcase",
+        "meanings": [
+          {
+            "translation_es": "escaparate, muestra",
+            "example_en": "The prototype is a showcase of the method.",
+            "example_es": "El prototipo es una muestra del método."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "sleek",
+    "slots": {
+      "adjective": {
+        "form": "sleek",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "elegante y aerodinámico, pulido",
+            "example_en": "It's a sleek, minimal housing.",
+            "example_es": "Es una carcasa pulida y minimalista."
+          }
+        ]
+      }
+    },
+    "notes_es": "Describe superficies lisas y formas limpias: sleek design, sleek finish. Sin verbo ni sustantivo comunes."
+  },
+  {
+    "root": "small",
+    "slots": {
+      "adjective": {
+        "form": "small",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "pequeño",
+            "example_en": "There's a small gap at the flange.",
+            "example_es": "Hay una pequeña holgura en la brida."
+          }
+        ]
+      }
+    },
+    "contrast_es": "small → smaller → smallest. small es objetivo (tamaño); 'little' añade matiz afectivo o de cantidad. En técnico usa small o minor."
+  },
+  {
+    "root": "spur",
+    "slots": {
+      "verb": {
+        "form": "spur",
+        "inflections": {
+          "third": "spurs",
+          "ing": "spurring",
+          "past": "spurred",
+          "participle": "spurred"
+        },
+        "meanings": [
+          {
+            "translation_es": "impulsar, estimular",
+            "example_en": "The failure spurred a redesign.",
+            "example_es": "La falla impulsó un rediseño."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "spur",
+        "meanings": [
+          {
+            "translation_es": "estímulo, acicate",
+            "example_en": "The grant was a spur to finish.",
+            "example_es": "La beca fue un acicate para terminar."
+          }
+        ]
+      }
+    },
+    "notes_es": "'on the spur of the moment' = sin planearlo, de repente. En engranajes, 'spur gear' es el engranaje recto."
+  },
+  {
+    "root": "stationary",
+    "slots": {
+      "adjective": {
+        "form": "stationary",
+        "meanings": [
+          {
+            "translation_es": "estacionario, inmóvil",
+            "example_en": "The shaft must be stationary before you open it.",
+            "example_es": "El eje debe estar inmóvil antes de abrirlo."
+          }
+        ]
+      }
+    },
+    "contrast_es": "OJO con el par: stationARY = quieto, inmóvil. stationERY = artículos de papelería. Se pronuncian igual y se escriben casi igual."
+  },
+  {
+    "root": "straightforward",
+    "slots": {
+      "adjective": {
+        "form": "straightforward",
+        "meanings": [
+          {
+            "translation_es": "sencillo, directo",
+            "example_en": "The install is straightforward.",
+            "example_es": "La instalación es sencilla."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "straightforwardly",
+        "meanings": [
+          {
+            "translation_es": "de forma directa",
+            "example_en": "He answered straightforwardly.",
+            "example_es": "Respondió de forma directa."
+          }
+        ]
+      }
+    },
+    "notes_es": "Sirve tanto para 'fácil de hacer' como para 'persona directa y sin rodeos'."
+  },
+  {
+    "root": "tacky",
+    "slots": {
+      "adjective": {
+        "form": "tacky",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "de mal gusto, chabacano",
+            "example_en": "The logo looks tacky.",
+            "example_es": "El logo se ve de mal gusto."
+          },
+          {
+            "translation_es": "pegajoso (aún sin secar)",
+            "example_en": "The paint is still tacky.",
+            "example_es": "La pintura todavía está pegajosa.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "notes_es": "Doble vida: en decoración es 'corriente, de mal gusto'; en pinturas y adhesivos es el punto pegajoso antes del curado."
+  },
+  {
+    "root": "tangy",
+    "slots": {
+      "noun_thing": {
+        "form": "tang",
+        "meanings": [
+          {
+            "translation_es": "sabor ácido y fuerte",
+            "example_en": "There's a tang of lime in it.",
+            "example_es": "Tiene un toque ácido de limón."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "tangy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "ácido y sabroso",
+            "example_en": "It's a tangy sauce.",
+            "example_es": "Es una salsa ácida y sabrosa."
+          }
+        ]
+      }
+    },
+    "notes_es": "A diferencia de 'sour' (agrio, casi siempre negativo), 'tangy' es un ácido agradable y buscado."
+  },
+  {
+    "root": "uncanny",
+    "slots": {
+      "adjective": {
+        "form": "uncanny",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "asombroso, inquietante (por lo exacto)",
+            "example_en": "The model has an uncanny accuracy.",
+            "example_es": "El modelo tiene una precisión asombrosa."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "uncannily",
+        "meanings": [
+          {
+            "translation_es": "asombrosamente",
+            "example_en": "The two curves are uncannily similar.",
+            "example_es": "Las dos curvas son asombrosamente parecidas."
+          }
+        ]
+      }
+    },
+    "notes_es": "Mezcla asombro con una pizca de inquietud: 'uncanny resemblance' = un parecido que da escalofrío."
+  },
+  {
+    "root": "foresee",
+    "slots": {
+      "verb": {
+        "form": "foresee",
+        "inflections": {
+          "third": "foresees",
+          "ing": "foreseeing",
+          "past": "foresaw",
+          "participle": "foreseen"
+        },
+        "meanings": [
+          {
+            "translation_es": "prever, anticipar",
+            "example_en": "Nobody foresaw the resonance.",
+            "example_es": "Nadie previó la resonancia."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "foresight",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "previsión, visión de futuro",
+            "example_en": "It took foresight to oversize the frame.",
+            "example_es": "Hizo falta previsión para sobredimensionar el bastidor."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "foreseeable",
+        "meanings": [
+          {
+            "translation_es": "previsible",
+            "example_en": "No change in the foreseeable future.",
+            "example_es": "Ningún cambio en el futuro previsible."
+          },
+          {
+            "translation_es": "imprevisto (unforeseen)",
+            "example_en": "Unforeseen delays pushed the launch.",
+            "example_es": "Retrasos imprevistos corrieron el lanzamiento."
+          }
+        ],
+        "variants": [
+          "unforeseen"
+        ]
+      }
+    },
+    "notes_es": "Irregular como 'see': foresee → foresaw → foreseen. El prefijo fore- = antes: forecast, foresee, foreword."
+  },
+  {
+    "root": "spread",
+    "slots": {
+      "verb": {
+        "form": "spread",
+        "inflections": {
+          "third": "spreads",
+          "ing": "spreading",
+          "past": "spread",
+          "participle": "spread"
+        },
+        "meanings": [
+          {
+            "translation_es": "extender(se), propagar(se)",
+            "example_en": "The crack spread along the weld.",
+            "example_es": "La grieta se propagó a lo largo de la soldadura."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "spread",
+        "meanings": [
+          {
+            "translation_es": "propagación; dispersión",
+            "example_en": "The spread of the data is too wide.",
+            "example_es": "La dispersión de los datos es muy amplia."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "widespread",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "generalizado, extendido",
+            "example_en": "Corrosion was widespread.",
+            "example_es": "La corrosión estaba generalizada."
+          }
+        ]
+      }
+    },
+    "notes_es": "Invariable: spread → spread → spread. En estadística, 'spread' es la dispersión de los datos."
+  },
+  {
+    "root": "repair",
+    "slots": {
+      "verb": {
+        "form": "repair",
+        "meanings": [
+          {
+            "translation_es": "reparar",
+            "example_en": "We repaired the housing in place.",
+            "example_es": "Reparamos la carcasa en sitio."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "repair",
+        "meanings": [
+          {
+            "translation_es": "reparación",
+            "example_en": "The repair took four hours.",
+            "example_es": "La reparación tomó cuatro horas."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "reparable",
+        "meanings": [
+          {
+            "translation_es": "reparable",
+            "example_en": "The damage is reparable.",
+            "example_es": "El daño es reparable."
+          },
+          {
+            "translation_es": "irreparable (irreparable)",
+            "example_en": "The blade suffered irreparable damage.",
+            "example_es": "El álabe sufrió daños irreparables."
+          }
+        ],
+        "variants": [
+          "irreparable",
+          "repairable"
+        ]
+      }
+    },
+    "notes_es": "Ojo con las dos formas: 'repairable' (que se puede reparar, físico) y 'reparable' (más formal, incluye daños abstractos). El negativo común es 'irreparable'."
+  },
+  {
+    "root": "well-being",
+    "slots": {
+      "noun_thing": {
+        "form": "well-being",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "bienestar",
+            "example_en": "Shift work affects worker well-being.",
+            "example_es": "El trabajo por turnos afecta el bienestar del trabajador.",
+            "register": "incontable"
+          }
+        ]
+      }
+    },
+    "notes_es": "Se escribe con guion (well-being) o junto (wellbeing, más británico). No lleva plural."
+  }
+]

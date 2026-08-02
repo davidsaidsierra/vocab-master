@@ -50,6 +50,47 @@ class LookupOut(BaseModel):
     source: str = "gemini"
 
 
+# ── Familia de palabras (matriz slot × significados) ───────
+# El backend valida con services.word_family.normalize(), que es la fuente de
+# verdad de la forma; aquí solo se declara lo mínimo para documentar la API.
+class FamilyMeaning(BaseModel):
+    translation_es: str
+    definition_en: str | None = None
+    example_en: str | None = None
+    example_es: str | None = None
+    register: str | None = None
+
+class FamilyCell(BaseModel):
+    form: str
+    # None = calcúlalas tú (regla determinista); {} = esta celda no tiene
+    # flexiones (knowledge, happiness). La distinción se pierde si el default
+    # es {}, por eso es None.
+    inflections: dict[str, str] | None = None
+    variants: list[str] = []      # negativos y compuestos de la misma celda (helpless, unreliable)
+    meanings: list[FamilyMeaning] = []
+
+class FamilyPhrase(BaseModel):
+    phrase: str
+    meaning_es: str
+    example_en: str | None = None
+    example_es: str | None = None
+
+class FamilyMatrix(BaseModel):
+    root: str
+    slots: dict[str, FamilyCell | None] = {}
+    phrasals: list[FamilyPhrase] = []
+    expressions: list[FamilyPhrase] = []
+    contrast_es: str | None = None
+    notes_es: str | None = None
+
+class FamilyLinkOut(BaseModel):
+    """Resultado de vincular palabras sueltas a las familias existentes."""
+    linked: int = 0        # palabras absorbidas como miembros en esta pasada
+    families: int = 0      # familias con matriz en el repositorio
+    members: int = 0       # total de palabras absorbidas (family_head = 0)
+    details: list[str] = []  # "helpful → help (adjective)"
+
+
 # ── Words ───────────────────────────────────────────────────
 class WordCreate(BaseModel):
     word: str
@@ -99,6 +140,11 @@ class WordOut(BaseModel):
     part_of_speech: str | None = None
     phonetic: str | None = None
     source_document_id: int | None = None
+    family_root: str | None = None
+    family: FamilyMatrix | None = None   # solo en la cabeza de la familia
+    family_head: bool = True             # False = miembro absorbido (no repasa ni cuenta)
+    family_slot: str | None = None       # celda que ocupa esta palabra dentro de su familia
+    slot_stats: dict[str, dict[str, int]] = {}   # aciertos/fallos por casilla
     mastery_level: float
     next_review: datetime
     ease_factor: float
@@ -144,6 +190,9 @@ class LevelBackfillOut(BaseModel):
 class ReviewCreate(BaseModel):
     word_id: int
     quality: int  # 0-5
+    # Casilla de la familia que se practicó (verb, adjective…). Alimenta
+    # `Word.slot_stats` para saber cuál insistir; no altera el SM-2.
+    slot: str | None = None
 
 class ReviewOut(BaseModel):
     id: int

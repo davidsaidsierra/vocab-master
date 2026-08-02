@@ -1,7 +1,11 @@
 __pycache__/
 *.pyc
 *.pyo
-data/
+data/*
+# Excepción: las matrices de familia SÍ van al repo. Son datos fuente curados a
+# mano (no generados) y scripts/apply_word_families.py las necesita para poder
+# reconstruir las familias en cualquier base.
+!data/word_families/
 *.db
 .env
 .claude/

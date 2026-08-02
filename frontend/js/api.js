@@ -67,6 +67,12 @@ export const words = {
     enrichPending: () => request('/words/enrich-pending', { method: 'POST' }),
     backfillSynonyms: () => request('/words/backfill-synonyms', { method: 'POST' }),
     backfillLevels: () => request('/words/backfill-levels', { method: 'POST' }),
+    // ── Familias (matriz slot × significados; sin IA) ──
+    families:     () => request('/words/families'),
+    familySlots:  () => request('/words/family-slots'),
+    linkFamilies: () => request('/words/link-families', { method: 'POST' }),
+    setFamily:    (id, matrix) => request(`/words/${id}/family`, { method: 'PUT', body: JSON.stringify(matrix) }),
+    clearFamily:  (id) => request(`/words/${id}/family`, { method: 'DELETE' }),
 };
 
 // ── Dictionary (offline bidireccional: autocompletado + traducción rápida) ──

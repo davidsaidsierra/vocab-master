@@ -10,11 +10,12 @@ from api.quota import require_ai_access, consume_ai_quota
 from api.schemas import (
     WordCreate, WordUpdate, WordOut,
     QuickWordCreate, QuickWordOut, EnrichResult, EnrichOut,
-    SynonymBackfillOut, LevelBackfillOut,
+    SynonymBackfillOut, LevelBackfillOut, FamilyMatrix, FamilyLinkOut,
 )
 from services import groq
 from services import cefr
 from services import ai_schemas
+from services import word_family
 
 router = APIRouter(prefix="/api/words", tags=["words"])
 
@@ -41,6 +42,11 @@ def _word_to_out(w: Word) -> WordOut:
         common_phrases=json.loads(w.common_phrases) if w.common_phrases else [],
         part_of_speech=w.part_of_speech, phonetic=w.phonetic,
         source_document_id=w.source_document_id,
+        family_root=w.family_root,
+        family=word_family.loads(w.family),
+        family_head=bool(w.family_head if w.family_head is not None else 1),
+        family_slot=w.family_slot,
+        slot_stats=json.loads(w.slot_stats) if w.slot_stats else {},
         mastery_level=w.mastery_level,
         next_review=w.next_review, ease_factor=w.ease_factor,
         interval=w.interval, repetitions=w.repetitions,
@@ -81,6 +87,30 @@ def _apply_lookup_payload(w: Word, meanings, common_phrases, *, override_transla
         w.common_phrases = json.dumps(common_phrases, ensure_ascii=False) if common_phrases else None
 
 
+def _attach_to_family(db: Session, w: Word, user: User) -> str | None:
+    """
+    Si la palabra recién creada ya pertenece a una familia del usuario, la
+    absorbe como miembro (no la duplica en el repositorio). Determinista y sin
+    IA: compara la forma contra las matrices guardadas. Devuelve la raíz si
+    quedó absorbida.
+    """
+    form = (w.word or "").strip().lower()
+    if not form:
+        return None
+    heads = scope_to_owner(db.query(Word).filter(Word.family.isnot(None)), Word, user).all()
+    for head in heads:
+        if head.id == w.id:
+            continue
+        matrix = word_family.loads(head.family)
+        if not matrix or form not in word_family.absorbable_forms(matrix):
+            continue
+        w.family_root = matrix["root"]
+        w.family_head = 0
+        w.family_slot = word_family.slot_of_form(matrix, form)
+        return matrix["root"]
+    return None
+
+
 @router.get("/", response_model=list[WordOut])
 def list_words(
     category_id: int | None = Query(None),
@@ -89,10 +119,15 @@ def list_words(
     part_of_speech: str | None = Query(None, description="Filtrar por categoría gramatical"),
     days: int | None = Query(None, description="Solo palabras añadidas en los últimos N días (0 = hoy)"),
     mastery_max: int | None = Query(None, ge=0, le=100, description="Solo palabras con mastery ≤ este valor"),
+    include_members: bool = Query(False, description="Incluir las palabras absorbidas por una familia"),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
     q = scope_to_owner(db.query(Word), Word, current_user)
+    if not include_members:
+        # Los miembros de una familia (helpful dentro de help) no se listan
+        # aparte: la familia es UNA palabra. Se ven abriendo su matriz.
+        q = q.filter(Word.family_head != 0)
     if category_id:
         q = q.filter(Word.category_id == category_id)
     if cefr_level:
@@ -148,6 +183,8 @@ def quick_add(
         needs_enrichment=1,
     )
     db.add(w)
+    db.flush()
+    _attach_to_family(db, w, current_user)  # si ya vive en una familia, se absorbe
     db.commit()
     db.refresh(w)
     return QuickWordOut(word=_word_to_out(w), pending_count=_pending_count(db, current_user))
@@ -311,6 +348,95 @@ def backfill_levels(
     return LevelBackfillOut(updated=updated, unresolved=unresolved)
 
 
+# ── Familias de palabras ────────────────────────────────────
+def _family_heads(db: Session, user: User) -> list[Word]:
+    """Palabras del usuario que llevan matriz de familia (las cabezas)."""
+    return scope_to_owner(
+        db.query(Word).filter(Word.family.isnot(None)), Word, user
+    ).all()
+
+
+def _absorb_into_family(db: Session, head: Word, matrix: dict, user: User) -> list[str]:
+    """
+    Marca como MIEMBRO toda palabra suelta del usuario cuya forma pertenezca a
+    esta familia (helpful → help). Nada se borra: la fila sigue ahí, solo deja
+    de ser cabeza, así que no repasa ni cuenta aparte. Devuelve las líneas de
+    detalle para el reporte.
+    """
+    forms = word_family.absorbable_forms(matrix)
+    details: list[str] = []
+    candidates = scope_to_owner(
+        db.query(Word).filter(Word.id != head.id), Word, user
+    ).all()
+    for w in candidates:
+        form = (w.word or "").strip().lower()
+        if form not in forms:
+            continue
+        # Ya absorbida por esta misma familia: nada que hacer.
+        if w.family_root == matrix["root"] and not w.family_head:
+            continue
+        # Nunca robar una palabra que ya es cabeza de OTRA familia con matriz.
+        # ('bore' es el pasado de 'bear', pero también raíz de bore/boring/bored.)
+        own = word_family.loads(w.family) or {}
+        if own and own.get("root") != matrix["root"]:
+            continue
+        w.family_root = matrix["root"]
+        w.family_head = 0
+        w.family_slot = word_family.slot_of_form(matrix, form)
+        details.append(f"{w.word} → {matrix['root']} ({w.family_slot or 'miembro'})")
+    return details
+
+
+@router.get("/family-slots")
+def family_slots():
+    """Slots de la matriz y sus etiquetas en español (los usa el frontend)."""
+    return {
+        "slots": list(word_family.SLOTS),
+        "labels_es": word_family.SLOT_LABELS_ES,
+    }
+
+
+@router.post("/link-families", response_model=FamilyLinkOut)
+def link_families(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Repasa todas las familias del usuario y absorbe las palabras sueltas que ya
+    pertenecen a alguna (por forma base o flexión). 100% determinista, SIN IA y
+    sin cuota: solo compara cadenas contra las matrices ya guardadas.
+    """
+    heads = _family_heads(db, current_user)
+    details: list[str] = []
+    for head in heads:
+        matrix = word_family.loads(head.family)
+        if not matrix:
+            continue
+        details += _absorb_into_family(db, head, matrix, current_user)
+    db.commit()
+
+    members = scope_to_owner(
+        db.query(Word).filter(Word.family_head == 0), Word, current_user
+    ).count()
+    return FamilyLinkOut(
+        linked=len(details), families=len(heads), members=members, details=details,
+    )
+
+
+@router.get("/families", response_model=list[WordOut])
+def list_families(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Las palabras que tienen matriz de familia, más recientes primero."""
+    rows = (
+        scope_to_owner(db.query(Word).filter(Word.family.isnot(None)), Word, current_user)
+        .order_by(Word.created_at.desc())
+        .all()
+    )
+    return [_word_to_out(w) for w in rows]
+
+
 def _get_owned_word(db: Session, word_id: int, user: User) -> Word:
     """Carga una palabra del usuario actual o lanza 404 (no revela ajenas)."""
     w = scope_to_owner(db.query(Word).filter(Word.id == word_id), Word, user).one_or_none()
@@ -341,6 +467,8 @@ def create_word(
     _apply_lookup_payload(w, meanings, common_phrases, override_translation=True)
     w.cefr_level = cefr.level_for_word(w.word)
     db.add(w)
+    db.flush()
+    _attach_to_family(db, w, current_user)  # si ya vive en una familia, se absorbe
     db.commit()
     db.refresh(w)
     return _word_to_out(w)
@@ -373,6 +501,84 @@ def update_word(
     # Si cambió el texto de la palabra, el nivel CEFR puede haber cambiado.
     if "word" in fields:
         w.cefr_level = cefr.level_for_word(w.word)
+    db.commit()
+    db.refresh(w)
+    return _word_to_out(w)
+
+
+@router.put("/{word_id}/family", response_model=WordOut)
+def set_family(
+    word_id: int,
+    matrix_in: FamilyMatrix,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Guarda (o reemplaza) la matriz de familia de esta palabra y absorbe las
+    palabras sueltas que ya pertenecen a la familia. Sin IA: la matriz llega
+    hecha (JSON curado o edición manual) y aquí solo se valida, se completan
+    las flexiones y se vincula.
+    """
+    w = _get_owned_word(db, word_id, current_user)
+    try:
+        matrix = word_family.normalize(matrix_in.model_dump())
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+    # Otra palabra del usuario ya es cabeza de esta raíz → no duplicar familias.
+    clash = scope_to_owner(
+        db.query(Word).filter(
+            Word.family.isnot(None),
+            Word.family_root == matrix["root"],
+            Word.id != w.id,
+        ), Word, current_user,
+    ).first()
+    if clash:
+        raise HTTPException(
+            409, f"La familia '{matrix['root']}' ya la lleva la palabra '{clash.word}' (id {clash.id})."
+        )
+
+    w.family = word_family.dumps(matrix)
+    w.family_root = matrix["root"]
+    w.family_head = 1
+    w.family_slot = word_family.slot_of_form(matrix, w.word) or None
+    # La traducción de la palabra es la de SU casilla, no el resumen de toda la
+    # familia: si no, el repaso daría por buena la traducción de cualquier otra
+    # celda. El resumen completo se ve abriendo la matriz.
+    own = word_family.cell_translation(matrix, w.family_slot)
+    if own:
+        w.translation = own
+    _absorb_into_family(db, w, matrix, current_user)
+    db.commit()
+    db.refresh(w)
+    return _word_to_out(w)
+
+
+@router.delete("/{word_id}/family", response_model=WordOut)
+def clear_family(
+    word_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Quita la matriz y libera a sus miembros (vuelven a ser palabras sueltas con
+    su propio progreso). No borra ninguna fila.
+    """
+    w = _get_owned_word(db, word_id, current_user)
+    root = w.family_root
+    w.family = None
+    w.family_root = None
+    w.family_slot = None
+    w.family_head = 1
+    if root:
+        members = scope_to_owner(
+            db.query(Word).filter(Word.family_root == root, Word.family_head == 0),
+            Word, current_user,
+        ).all()
+        for m in members:
+            m.family_root = None
+            m.family_slot = None
+            m.family_head = 1
     db.commit()
     db.refresh(w)
     return _word_to_out(w)

@@ -11,26 +11,35 @@ router = APIRouter(prefix="/api/stats", tags=["stats"])
 _CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"]
 
 
+def _heads(q):
+    """
+    Solo las palabras que cuentan como UNA unidad: las sueltas y las cabezas de
+    familia. Los miembros absorbidos (helpful dentro de help) no se suman aparte
+    — inflarían el conteo y el promedio de dominio con progreso que no llevan.
+    """
+    return q.filter(Word.family_head != 0)
+
+
 @router.get("/overview")
 def overview(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    total_words = scope_to_owner(db.query(func.count(Word.id)), Word, current_user).scalar()
-    avg_mastery = scope_to_owner(db.query(func.avg(Word.mastery_level)), Word, current_user).scalar() or 0
+    total_words = _heads(scope_to_owner(db.query(func.count(Word.id)), Word, current_user)).scalar()
+    avg_mastery = _heads(scope_to_owner(db.query(func.avg(Word.mastery_level)), Word, current_user)).scalar() or 0
     due_now = (
-        scope_to_owner(db.query(func.count(Word.id)), Word, current_user)
+        _heads(scope_to_owner(db.query(func.count(Word.id)), Word, current_user))
         .filter(Word.next_review <= datetime.now(timezone.utc))
         .scalar()
     )
     total_reviews = scope_to_owner(db.query(func.count(Review.id)), Review, current_user).scalar()
     never_practiced = (
-        scope_to_owner(db.query(func.count(Word.id)), Word, current_user)
+        _heads(scope_to_owner(db.query(func.count(Word.id)), Word, current_user))
         .filter(Word.repetitions == 0)
         .scalar()
     )
     mastered = (
-        scope_to_owner(db.query(func.count(Word.id)), Word, current_user)
+        _heads(scope_to_owner(db.query(func.count(Word.id)), Word, current_user))
         .filter(Word.mastery_level >= 80)
         .scalar()
     )
@@ -67,7 +76,7 @@ def by_level(
 ):
     """Conteo de palabras por nivel CEFR (A1..C2) + 'none' (frases o fuera de la base de cefrpy)."""
     rows = (
-        scope_to_owner(db.query(Word.cefr_level, func.count(Word.id)), Word, current_user)
+        _heads(scope_to_owner(db.query(Word.cefr_level, func.count(Word.id)), Word, current_user))
         .group_by(Word.cefr_level)
         .all()
     )
@@ -88,9 +97,9 @@ def level_progress(
     Por nivel CEFR: cuántas palabras están dominadas (mastery >= 80), en
     progreso (con repasos pero < 80) y sin practicar (repetitions == 0).
     """
-    rows = scope_to_owner(
+    rows = _heads(scope_to_owner(
         db.query(Word.cefr_level, Word.mastery_level, Word.repetitions), Word, current_user
-    ).all()
+    )).all()
     result = {lvl: {"mastered": 0, "in_progress": 0, "untouched": 0} for lvl in _CEFR_LEVELS}
     for level, mastery, repetitions in rows:
         if level not in result:
@@ -113,17 +122,18 @@ def by_category(
     cats = scope_to_owner(db.query(Category), Category, current_user).all()
     result = []
     for c in cats:
-        word_count = len(c.words)
-        avg = sum(w.mastery_level for w in c.words) / word_count if word_count else 0
+        words = [w for w in c.words if w.family_head != 0]
+        word_count = len(words)
+        avg = sum(w.mastery_level for w in words) / word_count if word_count else 0
         result.append({
             "id": c.id, "name": c.name, "color": c.color,
             "icon": c.icon, "word_count": word_count,
             "avg_mastery": round(avg, 1),
         })
     # Include uncategorized words
-    uncategorized = scope_to_owner(
+    uncategorized = _heads(scope_to_owner(
         db.query(Word).filter(Word.category_id.is_(None)), Word, current_user
-    ).all()
+    )).all()
     if uncategorized:
         avg = sum(w.mastery_level for w in uncategorized) / len(uncategorized)
         result.append({
@@ -163,7 +173,7 @@ def mastery_distribution(
     current_user: User = Depends(get_current_user),
 ):
     """Group words by mastery ranges: 0-20, 20-40, 40-60, 60-80, 80-100."""
-    words = scope_to_owner(db.query(Word.mastery_level), Word, current_user).all()
+    words = _heads(scope_to_owner(db.query(Word.mastery_level), Word, current_user)).all()
     buckets = {"0-20": 0, "20-40": 0, "40-60": 0, "60-80": 0, "80-100": 0}
     for (m,) in words:
         if m < 20: buckets["0-20"] += 1

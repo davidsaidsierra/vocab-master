@@ -1,0 +1,1360 @@
+[
+  {
+    "root": "aware",
+    "slots": {
+      "noun_thing": {
+        "form": "awareness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "conciencia, conocimiento",
+            "definition_en": "knowledge that something exists",
+            "example_en": "There's growing awareness of the risk.",
+            "example_es": "Hay una conciencia creciente del riesgo.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "aware",
+        "meanings": [
+          {
+            "translation_es": "consciente, enterado",
+            "definition_en": "knowing that something exists",
+            "example_en": "I'm aware of the deadline.",
+            "example_es": "Estoy consciente del plazo."
+          },
+          {
+            "translation_es": "inconsciente, sin saberlo (unaware)",
+            "definition_en": "unaware: not knowing",
+            "example_en": "He was unaware of the change.",
+            "example_es": "No estaba enterado del cambio."
+          }
+        ],
+        "variants": [
+          "unaware"
+        ]
+      }
+    },
+    "notes_es": "Casi siempre va con 'of' o con 'that': aware OF the risk / aware THAT it failed. Sin verbo propio."
+  },
+  {
+    "root": "concern",
+    "slots": {
+      "verb": {
+        "form": "concern",
+        "meanings": [
+          {
+            "translation_es": "preocupar",
+            "definition_en": "to worry someone",
+            "example_en": "The noise concerns me.",
+            "example_es": "El ruido me preocupa."
+          },
+          {
+            "translation_es": "tratar de, referirse a",
+            "definition_en": "to be about a topic",
+            "example_en": "The report concerns safety.",
+            "example_es": "El informe trata sobre seguridad."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "concern",
+        "meanings": [
+          {
+            "translation_es": "preocupación, inquietud",
+            "definition_en": "a feeling of worry",
+            "example_en": "My main concern is the cost.",
+            "example_es": "Mi mayor preocupación es el costo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "concerned",
+        "meanings": [
+          {
+            "translation_es": "preocupado (el que SIENTE)",
+            "definition_en": "-ed form: worried",
+            "example_en": "I'm concerned about the delay.",
+            "example_es": "Estoy preocupado por el retraso."
+          },
+          {
+            "translation_es": "preocupante (lo que CAUSA) — concerning",
+            "definition_en": "-ing form: causing worry",
+            "example_en": "The trend is concerning.",
+            "example_es": "La tendencia es preocupante."
+          }
+        ],
+        "variants": [
+          "concerning"
+        ]
+      }
+    },
+    "contrast_es": "concerned = tú te preocupas. concerning = la cosa preocupa. 'I am concerning' está mal."
+  },
+  {
+    "root": "confident",
+    "slots": {
+      "noun_thing": {
+        "form": "confidence",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "confianza, seguridad",
+            "definition_en": "belief in your own ability",
+            "example_en": "She spoke with confidence.",
+            "example_es": "Habló con seguridad.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "confident",
+        "meanings": [
+          {
+            "translation_es": "seguro (de sí), confiado",
+            "definition_en": "sure you can do something",
+            "example_en": "I'm confident we'll finish on time.",
+            "example_es": "Estoy seguro de que terminaremos a tiempo."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "confidently",
+        "meanings": [
+          {
+            "translation_es": "con seguridad",
+            "definition_en": "in a confident way",
+            "example_en": "He answered confidently.",
+            "example_es": "Respondió con seguridad."
+          }
+        ]
+      }
+    },
+    "notes_es": "Ojo con el falso amigo: 'confident' es seguro de sí mismo, no 'confidente'. Y confidence ≠ confidencia."
+  },
+  {
+    "root": "consistent",
+    "slots": {
+      "noun_thing": {
+        "form": "consistency",
+        "inflections": {
+          "plural": "consistencies"
+        },
+        "meanings": [
+          {
+            "translation_es": "coherencia, constancia",
+            "definition_en": "always behaving the same way",
+            "example_en": "The data lacks consistency.",
+            "example_es": "A los datos les falta coherencia."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "consistent",
+        "meanings": [
+          {
+            "translation_es": "constante, coherente",
+            "definition_en": "always the same; not contradictory",
+            "example_en": "The results are consistent with the model.",
+            "example_es": "Los resultados son coherentes con el modelo."
+          },
+          {
+            "translation_es": "inconsistente, contradictorio (inconsistent)",
+            "definition_en": "inconsistent: not the same each time",
+            "example_en": "His measurements were inconsistent.",
+            "example_es": "Sus mediciones eran inconsistentes."
+          }
+        ],
+        "variants": [
+          "inconsistent"
+        ]
+      },
+      "adverb": {
+        "form": "consistently",
+        "meanings": [
+          {
+            "translation_es": "de forma constante",
+            "definition_en": "in the same way every time",
+            "example_en": "The valve consistently leaks at 5 bar.",
+            "example_es": "La válvula gotea siempre a 5 bar."
+          }
+        ]
+      }
+    },
+    "notes_es": "consistent WITH = coherente con. No confundir con 'consistir en' (to consist of)."
+  },
+  {
+    "root": "convenient",
+    "slots": {
+      "noun_thing": {
+        "form": "convenience",
+        "meanings": [
+          {
+            "translation_es": "comodidad, conveniencia",
+            "definition_en": "the quality of being easy to use",
+            "example_en": "For convenience, we kept the same layout.",
+            "example_es": "Por comodidad, mantuvimos el mismo diseño."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "convenient",
+        "meanings": [
+          {
+            "translation_es": "cómodo, práctico, oportuno",
+            "definition_en": "easy or useful for you",
+            "example_en": "Is Friday convenient for you?",
+            "example_es": "¿Te viene bien el viernes?"
+          },
+          {
+            "translation_es": "inoportuno, incómodo (inconvenient)",
+            "definition_en": "inconvenient: causing trouble",
+            "example_en": "It's an inconvenient time.",
+            "example_es": "Es un momento inoportuno."
+          }
+        ],
+        "variants": [
+          "inconvenient"
+        ]
+      },
+      "adverb": {
+        "form": "conveniently",
+        "meanings": [
+          {
+            "translation_es": "cómodamente, oportunamente",
+            "definition_en": "in a convenient way",
+            "example_en": "The switch is conveniently placed.",
+            "example_es": "El interruptor está bien ubicado."
+          }
+        ]
+      }
+    },
+    "notes_es": "No significa 'conveniente' en el sentido de recomendable; para eso se usa advisable."
+  },
+  {
+    "root": "effective",
+    "slots": {
+      "verb": {
+        "form": "effect",
+        "meanings": [
+          {
+            "translation_es": "efectuar, llevar a cabo",
+            "definition_en": "to make something happen",
+            "example_en": "They effected a full redesign.",
+            "example_es": "Efectuaron un rediseño completo.",
+            "register": "formal, poco común"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "effect",
+        "meanings": [
+          {
+            "translation_es": "efecto",
+            "definition_en": "a change caused by something",
+            "example_en": "The change had no effect on output.",
+            "example_es": "El cambio no tuvo efecto en la producción."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "effective",
+        "meanings": [
+          {
+            "translation_es": "eficaz (que logra el objetivo)",
+            "definition_en": "producing the intended result",
+            "example_en": "The filter is effective against dust.",
+            "example_es": "El filtro es eficaz contra el polvo."
+          },
+          {
+            "translation_es": "vigente, en vigor",
+            "definition_en": "officially in operation",
+            "example_en": "Effective immediately, access is restricted.",
+            "example_es": "Con efecto inmediato, el acceso queda restringido."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "effectively",
+        "meanings": [
+          {
+            "translation_es": "eficazmente; en la práctica",
+            "definition_en": "in an effective way; in reality",
+            "example_en": "Effectively, the plant is shut down.",
+            "example_es": "En la práctica, la planta está parada."
+          }
+        ]
+      }
+    },
+    "contrast_es": "effective = eficaz, logra el resultado. efficient = eficiente, lo logra gastando poco. Un proceso puede ser effective pero no efficient. Y ojo: affect (verbo, afectar) vs effect (sustantivo, efecto)."
+  },
+  {
+    "root": "efficient",
+    "slots": {
+      "noun_thing": {
+        "form": "efficiency",
+        "inflections": {
+          "plural": "efficiencies"
+        },
+        "meanings": [
+          {
+            "translation_es": "eficiencia, rendimiento",
+            "definition_en": "working well without wasting resources",
+            "example_en": "Thermal efficiency dropped to 32%.",
+            "example_es": "La eficiencia térmica bajó a 32%."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "efficient",
+        "meanings": [
+          {
+            "translation_es": "eficiente",
+            "definition_en": "working well with little waste",
+            "example_en": "It's a more efficient pump.",
+            "example_es": "Es una bomba más eficiente."
+          },
+          {
+            "translation_es": "ineficiente (inefficient)",
+            "definition_en": "inefficient: wasting time or energy",
+            "example_en": "The old process was inefficient.",
+            "example_es": "El proceso viejo era ineficiente."
+          }
+        ],
+        "variants": [
+          "inefficient"
+        ]
+      },
+      "adverb": {
+        "form": "efficiently",
+        "meanings": [
+          {
+            "translation_es": "eficientemente",
+            "definition_en": "in an efficient way",
+            "example_en": "The system runs efficiently at low load.",
+            "example_es": "El sistema opera eficientemente a baja carga."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "emerge",
+    "slots": {
+      "verb": {
+        "form": "emerge",
+        "meanings": [
+          {
+            "translation_es": "surgir, aparecer",
+            "definition_en": "to appear or become known",
+            "example_en": "A pattern emerged after 200 cycles.",
+            "example_es": "Surgió un patrón después de 200 ciclos."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "emergence",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "surgimiento, aparición",
+            "definition_en": "the process of appearing",
+            "example_en": "The emergence of cheap sensors changed the field.",
+            "example_es": "La aparición de sensores baratos cambió el área."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "emerging",
+        "meanings": [
+          {
+            "translation_es": "emergente, en auge",
+            "definition_en": "-ing form: newly appearing",
+            "example_en": "It's an emerging technology.",
+            "example_es": "Es una tecnología emergente."
+          }
+        ]
+      }
+    },
+    "notes_es": "No confundir emergence (surgimiento) con emergency (emergencia); son palabras distintas."
+  },
+  {
+    "root": "encourage",
+    "slots": {
+      "verb": {
+        "form": "encourage",
+        "meanings": [
+          {
+            "translation_es": "animar, alentar",
+            "definition_en": "to give someone confidence to do something",
+            "example_en": "My tutor encouraged me to publish it.",
+            "example_es": "Mi tutor me animó a publicarlo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "encouragement",
+        "meanings": [
+          {
+            "translation_es": "aliento, ánimo",
+            "definition_en": "words that give confidence",
+            "example_en": "A bit of encouragement goes a long way.",
+            "example_es": "Un poco de ánimo rinde mucho."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "encouraging",
+        "meanings": [
+          {
+            "translation_es": "alentador (lo que CAUSA)",
+            "definition_en": "-ing form: giving hope",
+            "example_en": "The first results are encouraging.",
+            "example_es": "Los primeros resultados son alentadores."
+          },
+          {
+            "translation_es": "animado, alentado (encouraged, el que SIENTE)",
+            "definition_en": "-ed form: feeling more confident",
+            "example_en": "I felt encouraged after the review.",
+            "example_es": "Me sentí alentado tras la revisión."
+          }
+        ],
+        "variants": [
+          "encouraged"
+        ]
+      }
+    },
+    "contrast_es": "encouraging = la noticia que anima. encouraged = la persona animada."
+  },
+  {
+    "root": "enhance",
+    "slots": {
+      "verb": {
+        "form": "enhance",
+        "meanings": [
+          {
+            "translation_es": "mejorar, realzar",
+            "definition_en": "to improve the quality or value of something",
+            "example_en": "Coating enhances corrosion resistance.",
+            "example_es": "El recubrimiento mejora la resistencia a la corrosión."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "enhancement",
+        "meanings": [
+          {
+            "translation_es": "mejora",
+            "definition_en": "an improvement",
+            "example_en": "The update includes several enhancements.",
+            "example_es": "La actualización incluye varias mejoras."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "enhanced",
+        "meanings": [
+          {
+            "translation_es": "mejorado, reforzado",
+            "definition_en": "-ed form: improved",
+            "example_en": "It has enhanced safety features.",
+            "example_es": "Tiene funciones de seguridad mejoradas."
+          }
+        ]
+      }
+    },
+    "notes_es": "enhance mejora algo que YA era bueno. Para arreglar algo malo se usa improve o fix."
+  },
+  {
+    "root": "exhaust",
+    "slots": {
+      "verb": {
+        "form": "exhaust",
+        "meanings": [
+          {
+            "translation_es": "agotar",
+            "definition_en": "to use up completely; to tire out",
+            "example_en": "We exhausted every option.",
+            "example_es": "Agotamos todas las opciones."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "exhaust",
+        "meanings": [
+          {
+            "translation_es": "escape, gases de escape",
+            "definition_en": "the waste gas from an engine",
+            "example_en": "Check the exhaust manifold.",
+            "example_es": "Revisa el múltiple de escape.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "agotamiento (exhaustion)",
+            "definition_en": "exhaustion: extreme tiredness",
+            "example_en": "He collapsed from exhaustion.",
+            "example_es": "Colapsó por agotamiento."
+          }
+        ],
+        "variants": [
+          "exhaustion"
+        ]
+      },
+      "adjective": {
+        "form": "exhausting",
+        "meanings": [
+          {
+            "translation_es": "agotador (lo que CAUSA)",
+            "definition_en": "-ing form: making you very tired",
+            "example_en": "It was an exhausting week.",
+            "example_es": "Fue una semana agotadora."
+          },
+          {
+            "translation_es": "agotado (exhausted, el que SIENTE)",
+            "definition_en": "-ed form: very tired",
+            "example_en": "I'm exhausted after the trip.",
+            "example_es": "Estoy agotado tras el viaje."
+          },
+          {
+            "translation_es": "exhaustivo (exhaustive)",
+            "definition_en": "exhaustive: complete and thorough",
+            "example_en": "They ran an exhaustive test campaign.",
+            "example_es": "Hicieron una campaña de pruebas exhaustiva."
+          }
+        ],
+        "variants": [
+          "exhausted",
+          "exhaustive"
+        ]
+      }
+    },
+    "contrast_es": "Tres adjetivos distintos: exhausting (agotador), exhausted (agotado) y exhaustive (exhaustivo, completo). El tercero no tiene nada que ver con el cansancio."
+  },
+  {
+    "root": "flexible",
+    "slots": {
+      "noun_thing": {
+        "form": "flexibility",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "flexibilidad",
+            "definition_en": "the ability to bend or adapt",
+            "example_en": "The design gives us flexibility.",
+            "example_es": "El diseño nos da flexibilidad.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "flexible",
+        "meanings": [
+          {
+            "translation_es": "flexible, adaptable",
+            "definition_en": "able to bend or change easily",
+            "example_en": "My schedule is flexible.",
+            "example_es": "Mi horario es flexible."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "flexibly",
+        "meanings": [
+          {
+            "translation_es": "de forma flexible",
+            "definition_en": "in a flexible way",
+            "example_en": "The rule is applied flexibly.",
+            "example_es": "La regla se aplica de forma flexible."
+          }
+        ]
+      }
+    },
+    "notes_es": "Adjetivos en -ble hacen el adverbio en -bly (flexible → flexibly, probable → probably), no en -blely."
+  },
+  {
+    "root": "frustrate",
+    "slots": {
+      "verb": {
+        "form": "frustrate",
+        "meanings": [
+          {
+            "translation_es": "frustrar",
+            "definition_en": "to make someone annoyed because they can't do something",
+            "example_en": "The delays frustrated the whole team.",
+            "example_es": "Los retrasos frustraron a todo el equipo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "frustration",
+        "meanings": [
+          {
+            "translation_es": "frustración",
+            "definition_en": "the feeling of being frustrated",
+            "example_en": "You could hear the frustration in his voice.",
+            "example_es": "Se le oía la frustración en la voz."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "frustrating",
+        "meanings": [
+          {
+            "translation_es": "frustrante (lo que CAUSA)",
+            "definition_en": "-ing form: causing frustration",
+            "example_en": "It's frustrating to repeat the test.",
+            "example_es": "Es frustrante repetir la prueba."
+          },
+          {
+            "translation_es": "frustrado (frustrated, el que SIENTE)",
+            "definition_en": "-ed form: feeling frustration",
+            "example_en": "I got frustrated with the software.",
+            "example_es": "Me frustré con el software."
+          }
+        ],
+        "variants": [
+          "frustrated"
+        ]
+      }
+    },
+    "contrast_es": "frustrating = la situación. frustrated = tú."
+  },
+  {
+    "root": "hesitate",
+    "slots": {
+      "verb": {
+        "form": "hesitate",
+        "meanings": [
+          {
+            "translation_es": "dudar, titubear",
+            "definition_en": "to pause before doing something because you're unsure",
+            "example_en": "Don't hesitate to ask.",
+            "example_es": "No dudes en preguntar."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "hesitation",
+        "meanings": [
+          {
+            "translation_es": "duda, vacilación",
+            "definition_en": "a pause caused by uncertainty",
+            "example_en": "He agreed without hesitation.",
+            "example_es": "Aceptó sin vacilar."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "hesitant",
+        "meanings": [
+          {
+            "translation_es": "indeciso, titubeante",
+            "definition_en": "unsure and slow to act",
+            "example_en": "She was hesitant about signing.",
+            "example_es": "Estaba indecisa respecto a firmar."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "hesitantly",
+        "meanings": [
+          {
+            "translation_es": "con vacilación",
+            "definition_en": "in a hesitant way",
+            "example_en": "He hesitantly raised his hand.",
+            "example_es": "Levantó la mano con vacilación."
+          }
+        ]
+      }
+    },
+    "notes_es": "hesitate TO do something (no 'hesitate doing'). 'Don't hesitate to contact me' es fórmula estándar de correo."
+  },
+  {
+    "root": "maintain",
+    "slots": {
+      "verb": {
+        "form": "maintain",
+        "meanings": [
+          {
+            "translation_es": "mantener, conservar",
+            "definition_en": "to keep something in good condition",
+            "example_en": "We maintain the pumps every 500 hours.",
+            "example_es": "Mantenemos las bombas cada 500 horas."
+          },
+          {
+            "translation_es": "sostener, afirmar",
+            "definition_en": "to keep saying something is true",
+            "example_en": "He maintains that the reading was correct.",
+            "example_es": "Sostiene que la lectura era correcta."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "maintenance",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "mantenimiento",
+            "definition_en": "the work of keeping something in good condition",
+            "example_en": "Preventive maintenance saves money.",
+            "example_es": "El mantenimiento preventivo ahorra dinero.",
+            "register": "incontable"
+          }
+        ]
+      }
+    },
+    "notes_es": "Derivación irregular: maintain → maintenance (se pierde la 'i'). Es un error de escritura clásico: 'maintainance' no existe."
+  },
+  {
+    "root": "observe",
+    "slots": {
+      "verb": {
+        "form": "observe",
+        "meanings": [
+          {
+            "translation_es": "observar",
+            "definition_en": "to watch carefully",
+            "example_en": "We observed a drop in pressure.",
+            "example_es": "Observamos una caída de presión."
+          },
+          {
+            "translation_es": "cumplir, respetar (una norma)",
+            "definition_en": "to obey a rule",
+            "example_en": "All teams must observe the safety protocol.",
+            "example_es": "Todos los equipos deben cumplir el protocolo.",
+            "register": "formal"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "observation",
+        "meanings": [
+          {
+            "translation_es": "observación",
+            "definition_en": "something you noticed; the act of watching",
+            "example_en": "That's a fair observation.",
+            "example_es": "Esa es una observación justa."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "observer",
+        "meanings": [
+          {
+            "translation_es": "observador",
+            "definition_en": "a person who watches",
+            "example_en": "An external observer joined the test.",
+            "example_es": "Un observador externo asistió a la prueba."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "observant",
+        "meanings": [
+          {
+            "translation_es": "observador, atento",
+            "definition_en": "good at noticing things",
+            "example_en": "You're very observant.",
+            "example_es": "Eres muy observador."
+          }
+        ]
+      }
+    },
+    "notes_es": "Ojo: 'observador' en español es a la vez persona (observer) y adjetivo (observant); en inglés son dos palabras distintas."
+  },
+  {
+    "root": "overwhelm",
+    "slots": {
+      "verb": {
+        "form": "overwhelm",
+        "meanings": [
+          {
+            "translation_es": "abrumar, desbordar",
+            "definition_en": "to affect someone so strongly they can't cope",
+            "example_en": "The number of alarms overwhelmed the operator.",
+            "example_es": "La cantidad de alarmas abrumó al operador."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "overwhelming",
+        "meanings": [
+          {
+            "translation_es": "abrumador, aplastante (lo que CAUSA)",
+            "definition_en": "-ing form: very great in amount or effect",
+            "example_en": "The evidence is overwhelming.",
+            "example_es": "La evidencia es aplastante."
+          },
+          {
+            "translation_es": "abrumado (overwhelmed, el que SIENTE)",
+            "definition_en": "-ed form: unable to cope",
+            "example_en": "I felt overwhelmed by the workload.",
+            "example_es": "Me sentí abrumado por la carga de trabajo."
+          }
+        ],
+        "variants": [
+          "overwhelmed"
+        ]
+      },
+      "adverb": {
+        "form": "overwhelmingly",
+        "meanings": [
+          {
+            "translation_es": "abrumadoramente",
+            "definition_en": "by a very large amount",
+            "example_en": "The vote was overwhelmingly in favor.",
+            "example_es": "La votación fue abrumadoramente a favor."
+          }
+        ]
+      }
+    },
+    "contrast_es": "overwhelming = la carga. overwhelmed = tú bajo esa carga."
+  },
+  {
+    "root": "rely",
+    "slots": {
+      "verb": {
+        "form": "rely",
+        "meanings": [
+          {
+            "translation_es": "depender de, confiar en",
+            "definition_en": "to need or trust something (rely on)",
+            "example_en": "We rely on the backup sensor.",
+            "example_es": "Dependemos del sensor de respaldo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "reliability",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "fiabilidad, confiabilidad",
+            "definition_en": "the quality of working consistently",
+            "example_en": "Reliability matters more than peak power.",
+            "example_es": "La fiabilidad importa más que la potencia pico.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "reliable",
+        "meanings": [
+          {
+            "translation_es": "fiable, confiable",
+            "definition_en": "that you can trust to work",
+            "example_en": "It's a reliable supplier.",
+            "example_es": "Es un proveedor confiable."
+          },
+          {
+            "translation_es": "poco fiable (unreliable)",
+            "definition_en": "unreliable: cannot be trusted",
+            "example_en": "The old gauge is unreliable.",
+            "example_es": "El manómetro viejo es poco fiable."
+          }
+        ],
+        "variants": [
+          "unreliable"
+        ]
+      },
+      "adverb": {
+        "form": "reliably",
+        "meanings": [
+          {
+            "translation_es": "de forma fiable",
+            "definition_en": "in a way you can depend on",
+            "example_en": "The valve closes reliably below 3 bar.",
+            "example_es": "La válvula cierra de forma fiable bajo 3 bar."
+          }
+        ]
+      }
+    },
+    "notes_es": "El verbo es rely ON (nunca 'rely of'). El adjetivo cambia de raíz visible: rely → reliable."
+  },
+  {
+    "root": "reluctant",
+    "slots": {
+      "noun_thing": {
+        "form": "reluctance",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "renuencia, resistencia",
+            "definition_en": "unwillingness to do something",
+            "example_en": "There's some reluctance to change the supplier.",
+            "example_es": "Hay cierta renuencia a cambiar de proveedor."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "reluctant",
+        "meanings": [
+          {
+            "translation_es": "reacio, renuente",
+            "definition_en": "not wanting to do something",
+            "example_en": "They were reluctant to approve it.",
+            "example_es": "Se mostraron reacios a aprobarlo."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "reluctantly",
+        "meanings": [
+          {
+            "translation_es": "a regañadientes",
+            "definition_en": "in an unwilling way",
+            "example_en": "He reluctantly signed off.",
+            "example_es": "Firmó a regañadientes."
+          }
+        ]
+      }
+    },
+    "notes_es": "reluctant TO do something. Sin verbo propio."
+  },
+  {
+    "root": "responsible",
+    "slots": {
+      "noun_thing": {
+        "form": "responsibility",
+        "inflections": {
+          "plural": "responsibilities"
+        },
+        "meanings": [
+          {
+            "translation_es": "responsabilidad",
+            "definition_en": "a duty you are expected to do",
+            "example_en": "Quality control is my responsibility.",
+            "example_es": "El control de calidad es mi responsabilidad."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "responsible",
+        "meanings": [
+          {
+            "translation_es": "responsable (a cargo o culpable)",
+            "definition_en": "in charge of, or the cause of",
+            "example_en": "Who's responsible for the calibration?",
+            "example_es": "¿Quién es responsable de la calibración?"
+          },
+          {
+            "translation_es": "irresponsable (irresponsible)",
+            "definition_en": "irresponsible: not showing care",
+            "example_en": "Skipping the check was irresponsible.",
+            "example_es": "Saltarse la revisión fue irresponsable."
+          }
+        ],
+        "variants": [
+          "irresponsible"
+        ]
+      },
+      "adverb": {
+        "form": "responsibly",
+        "meanings": [
+          {
+            "translation_es": "de forma responsable",
+            "definition_en": "in a responsible way",
+            "example_en": "Dispose of the oil responsibly.",
+            "example_es": "Desecha el aceite de forma responsable."
+          }
+        ]
+      }
+    },
+    "notes_es": "responsible FOR something. Ojo con el adverbio: responsibly, no 'responsiblely'."
+  },
+  {
+    "root": "settle",
+    "slots": {
+      "verb": {
+        "form": "settle",
+        "meanings": [
+          {
+            "translation_es": "resolver, zanjar",
+            "definition_en": "to end a dispute or decide finally",
+            "example_en": "That settles the argument.",
+            "example_es": "Eso zanja la discusión."
+          },
+          {
+            "translation_es": "asentarse, depositarse",
+            "definition_en": "to sink and come to rest",
+            "example_en": "The sediment settles at the bottom.",
+            "example_es": "El sedimento se asienta en el fondo.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "instalarse, establecerse",
+            "definition_en": "to start living somewhere permanently",
+            "example_en": "They settled in Medellín.",
+            "example_es": "Se establecieron en Medellín."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "settlement",
+        "meanings": [
+          {
+            "translation_es": "acuerdo",
+            "definition_en": "an official agreement ending a dispute",
+            "example_en": "They reached a settlement.",
+            "example_es": "Llegaron a un acuerdo."
+          },
+          {
+            "translation_es": "asentamiento",
+            "definition_en": "a place where people have settled",
+            "example_en": "An informal settlement grew near the river.",
+            "example_es": "Un asentamiento informal creció cerca del río."
+          },
+          {
+            "translation_es": "asentamiento (de terreno)",
+            "definition_en": "the sinking of ground or a structure",
+            "example_en": "Differential settlement cracked the slab.",
+            "example_es": "El asentamiento diferencial agrietó la losa.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "settle down",
+        "meaning_es": "calmarse; sentar cabeza",
+        "example_en": "Things settled down after the audit.",
+        "example_es": "Las cosas se calmaron tras la auditoría."
+      },
+      {
+        "phrase": "settle for",
+        "meaning_es": "conformarse con",
+        "example_en": "Don't settle for the cheapest bearing.",
+        "example_es": "No te conformes con el rodamiento más barato."
+      }
+    ]
+  },
+  {
+    "root": "shift",
+    "slots": {
+      "verb": {
+        "form": "shift",
+        "meanings": [
+          {
+            "translation_es": "cambiar, desplazar(se)",
+            "definition_en": "to move or change position",
+            "example_en": "The load shifted during transport.",
+            "example_es": "La carga se desplazó durante el transporte."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "shift",
+        "meanings": [
+          {
+            "translation_es": "cambio, giro",
+            "definition_en": "a change in position or approach",
+            "example_en": "There's been a shift in priorities.",
+            "example_es": "Ha habido un cambio de prioridades."
+          },
+          {
+            "translation_es": "turno (de trabajo)",
+            "definition_en": "a work period",
+            "example_en": "I'm on the night shift.",
+            "example_es": "Estoy en el turno de noche."
+          }
+        ]
+      }
+    },
+    "notes_es": "Conversión pura: misma forma para verbo y sustantivo."
+  },
+  {
+    "root": "significant",
+    "slots": {
+      "verb": {
+        "form": "signify",
+        "inflections": {
+          "third": "signifies",
+          "ing": "signifying",
+          "past": "signified",
+          "participle": "signified"
+        },
+        "meanings": [
+          {
+            "translation_es": "significar, indicar",
+            "definition_en": "to be a sign of something",
+            "example_en": "A red light signifies a fault.",
+            "example_es": "Una luz roja indica una falla.",
+            "register": "formal"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "significance",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "importancia, significado",
+            "definition_en": "the importance of something",
+            "example_en": "The finding has real significance.",
+            "example_es": "El hallazgo tiene verdadera importancia.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "significant",
+        "meanings": [
+          {
+            "translation_es": "importante, considerable",
+            "definition_en": "large enough to matter",
+            "example_en": "There was a significant drop in efficiency.",
+            "example_es": "Hubo una caída considerable de eficiencia."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "significantly",
+        "meanings": [
+          {
+            "translation_es": "considerablemente, notablemente",
+            "definition_en": "by a large amount",
+            "example_en": "Costs rose significantly.",
+            "example_es": "Los costos subieron considerablemente."
+          }
+        ]
+      }
+    },
+    "notes_es": "En textos técnicos 'significant' casi siempre es 'considerable/importante', no 'significativo' en sentido estadístico salvo que hables de estadística."
+  },
+  {
+    "root": "struggle",
+    "slots": {
+      "verb": {
+        "form": "struggle",
+        "meanings": [
+          {
+            "translation_es": "batallar, costar trabajo",
+            "definition_en": "to try hard to do something difficult",
+            "example_en": "I struggle with formal grammar.",
+            "example_es": "Batallo con la gramática formal."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "struggle",
+        "meanings": [
+          {
+            "translation_es": "lucha, dificultad",
+            "definition_en": "a hard effort or fight",
+            "example_en": "Writing was a real struggle at first.",
+            "example_es": "Escribir fue una verdadera lucha al principio."
+          }
+        ]
+      }
+    },
+    "notes_es": "struggle WITH something o struggle TO do something. Conversión: verbo y sustantivo con la misma forma."
+  },
+  {
+    "root": "sustain",
+    "slots": {
+      "verb": {
+        "form": "sustain",
+        "meanings": [
+          {
+            "translation_es": "sostener, mantener",
+            "definition_en": "to keep something going over time",
+            "example_en": "The engine can't sustain that load.",
+            "example_es": "El motor no puede sostener esa carga."
+          },
+          {
+            "translation_es": "sufrir (daños, lesiones)",
+            "definition_en": "to suffer damage or injury",
+            "example_en": "The frame sustained minor damage.",
+            "example_es": "El bastidor sufrió daños menores.",
+            "register": "formal"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "sustainability",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "sostenibilidad",
+            "definition_en": "the ability to continue without harming resources",
+            "example_en": "Sustainability is part of the spec now.",
+            "example_es": "La sostenibilidad ya es parte de la especificación.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "sustainable",
+        "meanings": [
+          {
+            "translation_es": "sostenible",
+            "definition_en": "able to continue over time without damage",
+            "example_en": "It's not a sustainable pace.",
+            "example_es": "No es un ritmo sostenible."
+          },
+          {
+            "translation_es": "sostenido, prolongado (sustained)",
+            "definition_en": "sustained: continuing at the same level",
+            "example_en": "Sustained vibration cracked the mount.",
+            "example_es": "La vibración sostenida agrietó el soporte."
+          }
+        ],
+        "variants": [
+          "sustained"
+        ]
+      },
+      "adverb": {
+        "form": "sustainably",
+        "meanings": [
+          {
+            "translation_es": "de forma sostenible",
+            "definition_en": "in a sustainable way",
+            "example_en": "The timber is sustainably sourced.",
+            "example_es": "La madera se obtiene de forma sostenible."
+          }
+        ]
+      }
+    },
+    "notes_es": "'sustain damage' es una trampa: significa RECIBIR el daño, no resistirlo."
+  },
+  {
+    "root": "tempt",
+    "slots": {
+      "verb": {
+        "form": "tempt",
+        "meanings": [
+          {
+            "translation_es": "tentar",
+            "definition_en": "to make someone want something",
+            "example_en": "The discount tempted me.",
+            "example_es": "El descuento me tentó."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "temptation",
+        "meanings": [
+          {
+            "translation_es": "tentación",
+            "definition_en": "a strong wish to do something you shouldn't",
+            "example_en": "Resist the temptation to over-engineer it.",
+            "example_es": "Resiste la tentación de sobre-diseñarlo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "tempting",
+        "meanings": [
+          {
+            "translation_es": "tentador (lo que CAUSA)",
+            "definition_en": "-ing form: attractive",
+            "example_en": "That offer is tempting.",
+            "example_es": "Esa oferta es tentadora."
+          },
+          {
+            "translation_es": "tentado (tempted, el que SIENTE)",
+            "definition_en": "-ed form: wanting to do it",
+            "example_en": "I'm tempted to redo the whole model.",
+            "example_es": "Estoy tentado de rehacer todo el modelo."
+          }
+        ],
+        "variants": [
+          "tempted"
+        ]
+      }
+    },
+    "contrast_es": "tempting = la oferta. tempted = tú."
+  },
+  {
+    "root": "threaten",
+    "slots": {
+      "verb": {
+        "form": "threaten",
+        "meanings": [
+          {
+            "translation_es": "amenazar, poner en peligro",
+            "definition_en": "to be likely to harm something",
+            "example_en": "Corrosion threatens the whole structure.",
+            "example_es": "La corrosión amenaza toda la estructura."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "threat",
+        "meanings": [
+          {
+            "translation_es": "amenaza",
+            "definition_en": "something that could cause harm",
+            "example_en": "Overheating is the main threat.",
+            "example_es": "El sobrecalentamiento es la amenaza principal."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "threatening",
+        "meanings": [
+          {
+            "translation_es": "amenazante (lo que CAUSA)",
+            "definition_en": "-ing form: suggesting danger",
+            "example_en": "The sky looked threatening.",
+            "example_es": "El cielo lucía amenazante."
+          },
+          {
+            "translation_es": "amenazado (threatened, el que lo RECIBE)",
+            "definition_en": "-ed form: at risk",
+            "example_en": "The species is threatened.",
+            "example_es": "La especie está amenazada."
+          }
+        ],
+        "variants": [
+          "threatened"
+        ]
+      }
+    },
+    "notes_es": "El sustantivo pierde la -en: threaten → threat. Cuidado al escribirlo."
+  },
+  {
+    "root": "reward",
+    "slots": {
+      "verb": {
+        "form": "reward",
+        "meanings": [
+          {
+            "translation_es": "recompensar, premiar",
+            "definition_en": "to give something in return for good work",
+            "example_en": "They rewarded the team with a bonus.",
+            "example_es": "Recompensaron al equipo con un bono."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "reward",
+        "meanings": [
+          {
+            "translation_es": "recompensa, premio",
+            "definition_en": "something given in return for effort",
+            "example_en": "The reward doesn't justify the risk.",
+            "example_es": "La recompensa no justifica el riesgo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "rewarding",
+        "meanings": [
+          {
+            "translation_es": "gratificante (lo que CAUSA)",
+            "definition_en": "-ing form: giving satisfaction",
+            "example_en": "Teaching is rewarding work.",
+            "example_es": "Enseñar es un trabajo gratificante."
+          }
+        ],
+        "variants": [
+          "rewarded"
+        ]
+      }
+    },
+    "contrast_es": "rewarding = gratificante (la actividad). rewarded = premiado (la persona). 'I am rewarding' diría que TÚ eres gratificante para otros."
+  }
+]

@@ -1,6 +1,7 @@
 import * as api from '../api.js';
 import { masteryColor, formatDate, truncate, toast, cefrBadgeHTML } from '../utils/helpers.js';
 import { openLookupModal } from './lookupModal.js';
+import { openFamilyModal } from './familyMatrix.js';
 import { POS_OPTIONS, CEFR_OPTIONS, DAYS_OPTIONS, MASTERY_OPTIONS, optionsHTML } from '../utils/wordFilters.js';
 
 let categoriesCache = [];
@@ -12,6 +13,7 @@ export async function render(container) {
                 <h2 class="text-2xl font-bold">My Words</h2>
                 <div class="flex gap-3 items-center flex-wrap">
                     <button id="backfill-levels-btn" class="btn-secondary" title="Asigna el nivel CEFR (A1–C2) a las palabras que aún no lo tienen. Sin IA, no toca nada más." style="padding:0.6rem 1rem;font-size:0.85rem;white-space:nowrap">↻ Actualizar niveles</button>
+                    <button id="link-families-btn" class="btn-secondary" title="Absorbe las palabras sueltas que ya pertenecen a una familia (helpful dentro de help). Sin IA." style="padding:0.6rem 1rem;font-size:0.85rem;white-space:nowrap">🧬 Vincular familias</button>
                     <input type="text" id="search-input" class="form-input w-56" placeholder="Search words…">
                 </div>
             </div>
@@ -62,6 +64,26 @@ export async function render(container) {
     const filterMastery = container.querySelector('#filter-mastery');
     const filterPos = container.querySelector('#filter-pos');
     const backfillBtn = container.querySelector('#backfill-levels-btn');
+    const linkFamiliesBtn = container.querySelector('#link-families-btn');
+
+    // ── Vincular palabras sueltas a las familias existentes (sin IA) ──
+    linkFamiliesBtn.addEventListener('click', async () => {
+        linkFamiliesBtn.disabled = true;
+        const prev = linkFamiliesBtn.textContent;
+        linkFamiliesBtn.textContent = 'Vinculando…';
+        try {
+            const r = await api.words.linkFamilies();
+            toast(r.linked > 0
+                ? `${r.linked} palabra${r.linked !== 1 ? 's' : ''} absorbida${r.linked !== 1 ? 's' : ''} por su familia`
+                : `Todo al día — ${r.families} familia${r.families !== 1 ? 's' : ''}, ${r.members} palabra${r.members !== 1 ? 's' : ''} dentro`);
+            await loadWords();
+        } catch (err) {
+            toast(err.message, 'error');
+        } finally {
+            linkFamiliesBtn.disabled = false;
+            linkFamiliesBtn.textContent = prev;
+        }
+    });
 
     // ── Actualizar niveles CEFR de palabras viejas (sin IA) ──────
     backfillBtn.addEventListener('click', async () => {
@@ -119,6 +141,13 @@ export async function render(container) {
 
         grid.innerHTML = allWords.map(w => {
             const color = masteryColor(w.mastery_level);
+            // Badge de familia: cuántas casillas de la matriz están llenas.
+            const famSlots = w.family
+                ? Object.values(w.family.slots || {}).filter(Boolean).length
+                : 0;
+            const famBadge = w.family
+                ? `<span class="badge" style="background:rgba(34,197,94,0.15);color:#4ade80" title="Familia de palabras: ${famSlots} formas + ${(w.family.phrasals || []).length} phrasals">🧬 ${famSlots} formas</span>`
+                : '';
             const catBadge = w.category_name
                 ? `<span class="badge" style="background:${w.category_color}22;color:${w.category_color}">${w.category_icon} ${w.category_name}</span>`
                 : '';
@@ -131,10 +160,12 @@ export async function render(container) {
                                 ${cefrBadgeHTML(w.cefr_level)}
                                 ${w.part_of_speech ? `<span class="badge" style="background:rgba(139,92,246,0.15);color:#a78bfa">${w.part_of_speech}</span>` : ''}
                                 ${(w.meanings && w.meanings.length > 1) ? `<span class="badge" style="background:rgba(148,163,184,0.15);color:#94a3b8" title="Significados guardados">${w.meanings.length} sig.</span>` : ''}
+                                ${famBadge}
                             </div>
                             <p class="text-sm text-slate-400">${w.translation}</p>
                         </div>
                         <div class="flex gap-1">
+                            ${w.family ? `<button class="btn-edit text-xs family-word" data-id="${w.id}" title="Ver la familia completa">🧬</button>` : ''}
                             <button class="btn-edit text-xs lookup-word" data-id="${w.id}" title="Ver significados">🔍</button>
                             <button class="btn-edit text-xs edit-word" data-id="${w.id}" title="Edit">✏️</button>
                             <button class="btn-danger text-xs delete-word" data-id="${w.id}" title="Delete">✕</button>
@@ -154,6 +185,15 @@ export async function render(container) {
                 </div>
             `;
         }).join('');
+
+        // ── Familia (matriz slot × significados) ────────────
+        grid.querySelectorAll('.family-word').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const word = allWords.find(w => w.id === parseInt(btn.dataset.id));
+                if (word) openFamilyModal(word);
+            });
+        });
 
         // ── Lookup handlers ─────────────────────────────────
         grid.querySelectorAll('.lookup-word').forEach(btn => {

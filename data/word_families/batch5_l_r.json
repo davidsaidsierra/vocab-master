@@ -1,0 +1,1127 @@
+[
+  {
+    "root": "lead",
+    "slots": {
+      "verb": {
+        "form": "lead",
+        "inflections": {
+          "third": "leads",
+          "ing": "leading",
+          "past": "led",
+          "participle": "led"
+        },
+        "meanings": [
+          {
+            "translation_es": "liderar, dirigir",
+            "example_en": "She leads the design team.",
+            "example_es": "Ella lidera el equipo de diseño."
+          },
+          {
+            "translation_es": "llevar a, conducir a",
+            "example_en": "That decision led to the failure.",
+            "example_es": "Esa decisión llevó a la falla."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "leader",
+        "meanings": [
+          {
+            "translation_es": "líder",
+            "example_en": "He's the technical leader.",
+            "example_es": "Es el líder técnico."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "leadership",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "liderazgo",
+            "example_en": "The project needs stronger leadership.",
+            "example_es": "El proyecto necesita un liderazgo más fuerte."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "leading",
+        "meanings": [
+          {
+            "translation_es": "principal, líder",
+            "example_en": "It's the leading cause of downtime.",
+            "example_es": "Es la causa principal de paradas."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "lead to",
+        "meaning_es": "provocar, dar lugar a",
+        "example_en": "Poor lubrication leads to wear.",
+        "example_es": "La mala lubricación provoca desgaste."
+      }
+    ],
+    "notes_es": "Irregular: lead → led → led (¡el pasado 'led' se escribe distinto y suena distinto de 'lead' el metal, plomo, que sí suena /led/!)."
+  },
+  {
+    "root": "leisure",
+    "slots": {
+      "noun_thing": {
+        "form": "leisure",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "ocio, tiempo libre",
+            "example_en": "Leisure time dropped during the project.",
+            "example_es": "El tiempo de ocio bajó durante el proyecto.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "leisurely",
+        "meanings": [
+          {
+            "translation_es": "pausado, sin prisa",
+            "example_en": "We took a leisurely walk.",
+            "example_es": "Dimos un paseo sin prisa."
+          }
+        ]
+      }
+    },
+    "notes_es": "Trampa: 'leisurely' termina en -ly pero es ADJETIVO, no adverbio."
+  },
+  {
+    "root": "link",
+    "slots": {
+      "verb": {
+        "form": "link",
+        "meanings": [
+          {
+            "translation_es": "enlazar, vincular",
+            "example_en": "The study links vibration to fatigue.",
+            "example_es": "El estudio vincula la vibración con la fatiga."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "link",
+        "meanings": [
+          {
+            "translation_es": "enlace, vínculo",
+            "example_en": "There's a clear link between the two.",
+            "example_es": "Hay un vínculo claro entre ambos."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "linking",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "enlace, conexión (acción)",
+            "example_en": "Linking words guide the reader.",
+            "example_es": "Las palabras de enlace guían al lector.",
+            "register": "gramática"
+          }
+        ]
+      }
+    },
+    "notes_es": "'linking words' son justo los conectores (however, therefore, moreover) que ya tienes en tu repositorio."
+  },
+  {
+    "root": "man",
+    "slots": {
+      "verb": {
+        "form": "man",
+        "inflections": {
+          "third": "mans",
+          "ing": "manning",
+          "past": "manned",
+          "participle": "manned"
+        },
+        "meanings": [
+          {
+            "translation_es": "tripular, operar (con personal)",
+            "example_en": "Two operators man the control room.",
+            "example_es": "Dos operadores atienden la sala de control."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "man",
+        "inflections": {
+          "plural": "men"
+        },
+        "meanings": [
+          {
+            "translation_es": "hombre",
+            "example_en": "The man on the night shift reported it.",
+            "example_es": "El hombre del turno de noche lo reportó."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "manned",
+        "meanings": [
+          {
+            "translation_es": "tripulado",
+            "example_en": "It was the first manned mission.",
+            "example_es": "Fue la primera misión tripulada."
+          },
+          {
+            "translation_es": "no tripulado (unmanned)",
+            "example_en": "Unmanned drones survey the site.",
+            "example_es": "Drones no tripulados inspeccionan el sitio."
+          }
+        ],
+        "variants": [
+          "unmanned"
+        ]
+      }
+    },
+    "notes_es": "Plural irregular: man → men. En contextos actuales se prefiere 'crewed / uncrewed' por neutralidad."
+  },
+  {
+    "root": "mess",
+    "slots": {
+      "verb": {
+        "form": "mess",
+        "meanings": [
+          {
+            "translation_es": "desordenar, arruinar (mess up)",
+            "example_en": "Don't mess up the calibration.",
+            "example_es": "No arruines la calibración."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "mess",
+        "inflections": {
+          "plural": "messes"
+        },
+        "meanings": [
+          {
+            "translation_es": "desorden, lío",
+            "example_en": "The wiring is a mess.",
+            "example_es": "El cableado es un desastre."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "messy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "desordenado, sucio",
+            "example_en": "It's a messy but workable solution.",
+            "example_es": "Es una solución poco elegante pero funcional."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "mess up",
+        "meaning_es": "echar a perder, meter la pata",
+        "example_en": "I messed up the units.",
+        "example_es": "Metí la pata con las unidades."
+      },
+      {
+        "phrase": "mess with",
+        "meaning_es": "meterse con, manipular",
+        "example_en": "Don't mess with the settings.",
+        "example_es": "No te metas con la configuración."
+      }
+    ]
+  },
+  {
+    "root": "meticulous",
+    "slots": {
+      "adjective": {
+        "form": "meticulous",
+        "meanings": [
+          {
+            "translation_es": "meticuloso, minucioso",
+            "example_en": "He keeps meticulous records.",
+            "example_es": "Lleva registros meticulosos."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "meticulously",
+        "meanings": [
+          {
+            "translation_es": "meticulosamente",
+            "example_en": "The joint was meticulously prepared.",
+            "example_es": "La junta se preparó meticulosamente."
+          }
+        ]
+      }
+    },
+    "notes_es": "Sin verbo ni sustantivo comunes. Sinónimos que ya tienes: thorough, exhaustive, painstaking."
+  },
+  {
+    "root": "moist",
+    "slots": {
+      "verb": {
+        "form": "moisten",
+        "meanings": [
+          {
+            "translation_es": "humedecer",
+            "example_en": "Moisten the cloth before wiping.",
+            "example_es": "Humedece el paño antes de limpiar."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "moisture",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "humedad",
+            "example_en": "Moisture caused the corrosion.",
+            "example_es": "La humedad causó la corrosión.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "moist",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "húmedo (ligeramente)",
+            "example_en": "Keep the surface moist, not wet.",
+            "example_es": "Mantén la superficie húmeda, no mojada."
+          }
+        ]
+      }
+    },
+    "contrast_es": "moist (levemente húmedo) < damp (húmedo desagradable) < wet (mojado). Y 'humidity' es la humedad DEL AIRE; 'moisture' es la de un material."
+  },
+  {
+    "root": "nervous",
+    "slots": {
+      "noun_thing": {
+        "form": "nerve",
+        "meanings": [
+          {
+            "translation_es": "nervio; agallas",
+            "example_en": "He didn't have the nerve to ask.",
+            "example_es": "No tuvo las agallas para preguntar."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "nervous",
+        "meanings": [
+          {
+            "translation_es": "nervioso",
+            "example_en": "I get nervous before presentations.",
+            "example_es": "Me pongo nervioso antes de las presentaciones."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "nervously",
+        "meanings": [
+          {
+            "translation_es": "nerviosamente",
+            "example_en": "She nervously checked the gauge.",
+            "example_es": "Revisó el manómetro nerviosamente."
+          }
+        ]
+      }
+    },
+    "notes_es": "'the nervous system' = el sistema nervioso. 'to get on someone's nerves' = sacar de quicio."
+  },
+  {
+    "root": "new",
+    "slots": {
+      "verb": {
+        "form": "renew",
+        "meanings": [
+          {
+            "translation_es": "renovar",
+            "example_en": "We renewed the license for a year.",
+            "example_es": "Renovamos la licencia por un año."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "renewal",
+        "meanings": [
+          {
+            "translation_es": "renovación",
+            "example_en": "The renewal is automatic.",
+            "example_es": "La renovación es automática."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "new",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "nuevo",
+            "example_en": "The newer model runs quieter.",
+            "example_es": "El modelo más nuevo funciona más silencioso."
+          },
+          {
+            "translation_es": "renovable (renewable)",
+            "example_en": "Renewable energy covers 30% of demand.",
+            "example_es": "La energía renovable cubre el 30% de la demanda."
+          }
+        ],
+        "variants": [
+          "newer",
+          "renewable"
+        ]
+      },
+      "adverb": {
+        "form": "newly",
+        "meanings": [
+          {
+            "translation_es": "recién, recientemente",
+            "example_en": "A newly installed valve failed.",
+            "example_es": "Una válvula recién instalada falló."
+          }
+        ]
+      }
+    },
+    "notes_es": "Comparativo regular: new → newer → newest. 'newly' se usa con participios: newly built, newly hired."
+  },
+  {
+    "root": "normal",
+    "slots": {
+      "verb": {
+        "form": "normalize",
+        "meanings": [
+          {
+            "translation_es": "normalizar",
+            "example_en": "We normalize the data before plotting.",
+            "example_es": "Normalizamos los datos antes de graficar."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "normal",
+        "meanings": [
+          {
+            "translation_es": "normal, habitual",
+            "example_en": "Pressure is back to normal levels.",
+            "example_es": "La presión volvió a niveles normales."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "normally",
+        "meanings": [
+          {
+            "translation_es": "normalmente, por lo general",
+            "example_en": "Normally we test at 20 °C.",
+            "example_es": "Normalmente probamos a 20 °C."
+          }
+        ]
+      }
+    },
+    "notes_es": "En mecánica, 'normal' también significa perpendicular (normal force = fuerza normal)."
+  },
+  {
+    "root": "origin",
+    "slots": {
+      "verb": {
+        "form": "originate",
+        "meanings": [
+          {
+            "translation_es": "originarse, provenir",
+            "example_en": "The vibration originates at the coupling.",
+            "example_es": "La vibración se origina en el acople."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "origin",
+        "meanings": [
+          {
+            "translation_es": "origen",
+            "example_en": "The origin of the fault is still unclear.",
+            "example_es": "El origen de la falla aún no está claro."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "original",
+        "meanings": [
+          {
+            "translation_es": "original, inicial",
+            "example_en": "The original design was heavier.",
+            "example_es": "El diseño original era más pesado."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "originally",
+        "meanings": [
+          {
+            "translation_es": "originalmente, en un principio",
+            "example_en": "Originally, we planned two prototypes.",
+            "example_es": "En un principio planeamos dos prototipos."
+          }
+        ]
+      }
+    },
+    "notes_es": "originate FROM / IN a place. Muy útil para describir causas raíz."
+  },
+  {
+    "root": "perfect",
+    "slots": {
+      "verb": {
+        "form": "perfect",
+        "meanings": [
+          {
+            "translation_es": "perfeccionar",
+            "example_en": "It took years to perfect the process.",
+            "example_es": "Tomó años perfeccionar el proceso."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "perfection",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "perfección",
+            "example_en": "Perfection isn't the goal here.",
+            "example_es": "La perfección no es el objetivo aquí."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "perfectionist",
+        "meanings": [
+          {
+            "translation_es": "perfeccionista",
+            "example_en": "He's a perfectionist about tolerances.",
+            "example_es": "Es perfeccionista con las tolerancias."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "perfect",
+        "meanings": [
+          {
+            "translation_es": "perfecto",
+            "example_en": "It's a perfect fit.",
+            "example_es": "Es un ajuste perfecto."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "perfectly",
+        "meanings": [
+          {
+            "translation_es": "perfectamente",
+            "example_en": "The seal works perfectly now.",
+            "example_es": "El sello funciona perfectamente ahora."
+          }
+        ]
+      }
+    },
+    "notes_es": "Verbo y adjetivo se escriben igual pero se acentúan distinto: PERfect (adj.) vs perFECT (verbo)."
+  },
+  {
+    "root": "perpetual",
+    "slots": {
+      "verb": {
+        "form": "perpetuate",
+        "meanings": [
+          {
+            "translation_es": "perpetuar, mantener",
+            "example_en": "The manual perpetuates an outdated method.",
+            "example_es": "El manual perpetúa un método obsoleto."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "perpetual",
+        "meanings": [
+          {
+            "translation_es": "perpetuo, continuo",
+            "example_en": "It's a perpetual source of trouble.",
+            "example_es": "Es una fuente continua de problemas."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "perpetually",
+        "meanings": [
+          {
+            "translation_es": "perpetuamente, constantemente",
+            "example_en": "The line is perpetually behind schedule.",
+            "example_es": "La línea está constantemente atrasada."
+          }
+        ]
+      }
+    },
+    "notes_es": "'perpetuate' suele tener carga negativa: se perpetúan errores, mitos o desigualdades."
+  },
+  {
+    "root": "play",
+    "slots": {
+      "verb": {
+        "form": "play",
+        "meanings": [
+          {
+            "translation_es": "jugar; tocar (un instrumento)",
+            "example_en": "She plays the guitar.",
+            "example_es": "Ella toca la guitarra."
+          },
+          {
+            "translation_es": "desempeñar (un papel)",
+            "example_en": "Friction plays a key role here.",
+            "example_es": "La fricción desempeña un papel clave aquí."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "play",
+        "meanings": [
+          {
+            "translation_es": "juego; holgura (mecánica)",
+            "example_en": "There's too much play in the linkage.",
+            "example_es": "Hay demasiada holgura en el varillaje.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "player",
+        "meanings": [
+          {
+            "translation_es": "jugador; actor (empresa)",
+            "example_en": "They're a major player in the market.",
+            "example_es": "Son un actor importante en el mercado."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "playful",
+        "meanings": [
+          {
+            "translation_es": "juguetón, desenfadado",
+            "example_en": "The interface has a playful tone.",
+            "example_es": "La interfaz tiene un tono desenfadado."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "playfully",
+        "meanings": [
+          {
+            "translation_es": "juguetonamente, en broma",
+            "example_en": "He playfully called it 'the beast'.",
+            "example_es": "En broma lo llamó 'la bestia'."
+          }
+        ]
+      }
+    },
+    "notes_es": "Ojo con el uso técnico: 'play' = holgura o juego mecánico entre piezas."
+  },
+  {
+    "root": "please",
+    "slots": {
+      "verb": {
+        "form": "please",
+        "meanings": [
+          {
+            "translation_es": "complacer, agradar",
+            "example_en": "The result pleased the client.",
+            "example_es": "El resultado complació al cliente."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "pleasure",
+        "meanings": [
+          {
+            "translation_es": "placer, gusto",
+            "example_en": "It's a pleasure to work with them.",
+            "example_es": "Es un placer trabajar con ellos."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "pleasant",
+        "meanings": [
+          {
+            "translation_es": "agradable (la cosa)",
+            "example_en": "It was a pleasant surprise.",
+            "example_es": "Fue una sorpresa agradable."
+          },
+          {
+            "translation_es": "complacido, contento (pleased, la persona)",
+            "example_en": "I'm pleased with the outcome.",
+            "example_es": "Estoy complacido con el resultado."
+          }
+        ],
+        "variants": [
+          "pleased",
+          "pleasing"
+        ]
+      },
+      "adverb": {
+        "form": "pleasantly",
+        "meanings": [
+          {
+            "translation_es": "agradablemente",
+            "example_en": "I was pleasantly surprised.",
+            "example_es": "Me sorprendí gratamente."
+          }
+        ]
+      }
+    },
+    "contrast_es": "pleasing/pleasant = lo que agrada. pleased = la persona contenta. 'I am pleasing' diría que TÚ resultas agradable a otros."
+  },
+  {
+    "root": "portray",
+    "slots": {
+      "verb": {
+        "form": "portray",
+        "meanings": [
+          {
+            "translation_es": "retratar, representar",
+            "example_en": "The report portrays the plant as unsafe.",
+            "example_es": "El informe retrata la planta como insegura."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "portrait",
+        "meanings": [
+          {
+            "translation_es": "retrato",
+            "example_en": "The gallery has 40 portraits.",
+            "example_es": "La galería tiene 40 retratos."
+          }
+        ]
+      }
+    },
+    "notes_es": "'portrait' también es la orientación vertical de una página (vs. landscape, horizontal)."
+  },
+  {
+    "root": "pragmatic",
+    "slots": {
+      "noun_thing": {
+        "form": "pragmatism",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "pragmatismo",
+            "example_en": "Engineering rewards pragmatism.",
+            "example_es": "La ingeniería premia el pragmatismo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "pragmatic",
+        "meanings": [
+          {
+            "translation_es": "pragmático, práctico",
+            "example_en": "Let's take a pragmatic approach.",
+            "example_es": "Tomemos un enfoque pragmático."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "pragmatically",
+        "meanings": [
+          {
+            "translation_es": "de forma pragmática",
+            "example_en": "Pragmatically, we can't test everything.",
+            "example_es": "Siendo pragmáticos, no podemos probarlo todo."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "pretend",
+    "slots": {
+      "verb": {
+        "form": "pretend",
+        "meanings": [
+          {
+            "translation_es": "fingir, aparentar",
+            "example_en": "Don't pretend the data is clean.",
+            "example_es": "No finjas que los datos están limpios."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "pretense",
+        "meanings": [
+          {
+            "translation_es": "pretexto, fingimiento",
+            "example_en": "He dropped the pretense of neutrality.",
+            "example_es": "Abandonó el fingimiento de neutralidad."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "pretentious",
+        "meanings": [
+          {
+            "translation_es": "pretencioso",
+            "example_en": "The writing is pretentious and unclear.",
+            "example_es": "El texto es pretencioso y poco claro."
+          }
+        ]
+      }
+    },
+    "contrast_es": "FALSO AMIGO: 'pretend' NO es pretender. Pretend = fingir. Para 'pretender' usa 'intend' o 'aim to'."
+  },
+  {
+    "root": "proofread",
+    "slots": {
+      "verb": {
+        "form": "proofread",
+        "inflections": {
+          "third": "proofreads",
+          "ing": "proofreading",
+          "past": "proofread",
+          "participle": "proofread"
+        },
+        "meanings": [
+          {
+            "translation_es": "corregir, revisar (un texto)",
+            "example_en": "Always proofread before submitting.",
+            "example_es": "Siempre revisa antes de enviar."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "proofreader",
+        "meanings": [
+          {
+            "translation_es": "corrector de textos",
+            "example_en": "A proofreader caught the error.",
+            "example_es": "Un corrector detectó el error."
+          }
+        ]
+      }
+    },
+    "notes_es": "Pasado y participio se escriben igual pero se pronuncian /red/. Para ti es clave en Writing: proofread = revisar ortografía y forma, no el contenido."
+  },
+  {
+    "root": "raise",
+    "slots": {
+      "verb": {
+        "form": "raise",
+        "meanings": [
+          {
+            "translation_es": "levantar, subir (algo)",
+            "example_en": "Raise the platform 20 cm.",
+            "example_es": "Sube la plataforma 20 cm."
+          },
+          {
+            "translation_es": "plantear (un tema)",
+            "example_en": "She raised a good point.",
+            "example_es": "Planteó un buen punto."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "raise",
+        "meanings": [
+          {
+            "translation_es": "aumento de sueldo",
+            "example_en": "He asked for a raise.",
+            "example_es": "Pidió un aumento."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "raised",
+        "meanings": [
+          {
+            "translation_es": "elevado, en relieve",
+            "example_en": "The logo is on a raised surface.",
+            "example_es": "El logo está en una superficie en relieve."
+          }
+        ]
+      }
+    },
+    "contrast_es": "raise es transitivo (levantas ALGO): 'raise the lever'. rise es intransitivo (algo sube solo): 'the temperature rises'. Este par es de los que más se falla."
+  },
+  {
+    "root": "rise",
+    "slots": {
+      "verb": {
+        "form": "rise",
+        "inflections": {
+          "third": "rises",
+          "ing": "rising",
+          "past": "rose",
+          "participle": "risen"
+        },
+        "meanings": [
+          {
+            "translation_es": "subir, aumentar (por sí solo)",
+            "example_en": "Costs rose by 12%.",
+            "example_es": "Los costos subieron un 12%."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "rise",
+        "meanings": [
+          {
+            "translation_es": "subida, aumento",
+            "example_en": "There was a sharp rise in temperature.",
+            "example_es": "Hubo una subida brusca de temperatura."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "rising",
+        "meanings": [
+          {
+            "translation_es": "creciente, en aumento",
+            "example_en": "Rising demand strained the line.",
+            "example_es": "La demanda creciente saturó la línea."
+          }
+        ]
+      }
+    },
+    "contrast_es": "rise → rose → risen, y NUNCA lleva objeto directo. Si hay objeto, el verbo es raise: 'prices rise' pero 'they raise prices'."
+  },
+  {
+    "root": "ready",
+    "slots": {
+      "noun_thing": {
+        "form": "readiness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "preparación, disposición",
+            "example_en": "We checked launch readiness twice.",
+            "example_es": "Verificamos la preparación para el lanzamiento dos veces."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "ready",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "listo, preparado",
+            "example_en": "The rig is ready for testing.",
+            "example_es": "El banco está listo para pruebas."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "readily",
+        "meanings": [
+          {
+            "translation_es": "fácilmente, de buena gana",
+            "example_en": "The data is readily available.",
+            "example_es": "Los datos están fácilmente disponibles."
+          }
+        ]
+      }
+    },
+    "notes_es": "Ojo: 'readily' NO significa 'listamente'; significa fácilmente o sin reparos."
+  },
+  {
+    "root": "refuge",
+    "slots": {
+      "noun_thing": {
+        "form": "refuge",
+        "meanings": [
+          {
+            "translation_es": "refugio",
+            "example_en": "The shelter served as a refuge.",
+            "example_es": "El albergue sirvió de refugio."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "refugee",
+        "meanings": [
+          {
+            "translation_es": "refugiado",
+            "example_en": "The camp houses 2,000 refugees.",
+            "example_es": "El campamento alberga a 2.000 refugiados."
+          }
+        ]
+      }
+    },
+    "notes_es": "El acento cambia: REFuge (refugio) vs refuGEE (persona). El sufijo -ee marca a quien recibe la acción (employee, attendee, trainee)."
+  },
+  {
+    "root": "remain",
+    "slots": {
+      "verb": {
+        "form": "remain",
+        "meanings": [
+          {
+            "translation_es": "permanecer, seguir siendo",
+            "example_en": "The cause remains unknown.",
+            "example_es": "La causa sigue siendo desconocida."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "remainder",
+        "meanings": [
+          {
+            "translation_es": "resto, remanente",
+            "example_en": "The remainder of the budget goes to testing.",
+            "example_es": "El resto del presupuesto va a pruebas."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "remaining",
+        "meanings": [
+          {
+            "translation_es": "restante",
+            "example_en": "Check the remaining samples.",
+            "example_es": "Revisa las muestras restantes."
+          }
+        ]
+      }
+    },
+    "notes_es": "'remains' en plural = restos (los restos de algo). Como verbo, 'remain' es más formal que 'stay'."
+  },
+  {
+    "root": "remark",
+    "slots": {
+      "verb": {
+        "form": "remark",
+        "meanings": [
+          {
+            "translation_es": "comentar, observar",
+            "example_en": "He remarked on the noise level.",
+            "example_es": "Comentó sobre el nivel de ruido."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "remark",
+        "meanings": [
+          {
+            "translation_es": "comentario, observación",
+            "example_en": "Her remark changed the discussion.",
+            "example_es": "Su comentario cambió la discusión."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "remarkable",
+        "meanings": [
+          {
+            "translation_es": "notable, extraordinario",
+            "example_en": "That's a remarkable improvement.",
+            "example_es": "Esa es una mejora notable."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "remarkably",
+        "meanings": [
+          {
+            "translation_es": "notablemente, sorprendentemente",
+            "example_en": "The result was remarkably consistent.",
+            "example_es": "El resultado fue notablemente consistente."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "renown",
+    "slots": {
+      "noun_thing": {
+        "form": "renown",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "renombre, fama",
+            "example_en": "A scientist of international renown.",
+            "example_es": "Un científico de renombre internacional."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "renowned",
+        "meanings": [
+          {
+            "translation_es": "reconocido, célebre",
+            "example_en": "She's renowned for her work on fatigue.",
+            "example_es": "Es reconocida por su trabajo sobre fatiga."
+          }
+        ]
+      }
+    },
+    "notes_es": "renowned FOR something. Es más formal que 'famous'."
+  },
+  {
+    "root": "respective",
+    "slots": {
+      "adjective": {
+        "form": "respective",
+        "meanings": [
+          {
+            "translation_es": "respectivo, correspondiente",
+            "example_en": "Each team returned to its respective lab.",
+            "example_es": "Cada equipo volvió a su laboratorio respectivo."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "respectively",
+        "meanings": [
+          {
+            "translation_es": "respectivamente",
+            "example_en": "A and B weigh 2 kg and 5 kg respectively.",
+            "example_es": "A y B pesan 2 kg y 5 kg respectivamente."
+          }
+        ]
+      }
+    },
+    "contrast_es": "No confundas la terna: respective (respectivo), respectful (respetuoso), respectable (decente). Se parecen y significan cosas muy distintas."
+  },
+  {
+    "root": "rework",
+    "slots": {
+      "verb": {
+        "form": "rework",
+        "meanings": [
+          {
+            "translation_es": "rehacer, reprocesar",
+            "example_en": "We had to rework twelve parts.",
+            "example_es": "Tuvimos que reprocesar doce piezas."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "reworking",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "reprocesado, retrabajo",
+            "example_en": "Reworking costs more than doing it right.",
+            "example_es": "El retrabajo cuesta más que hacerlo bien."
+          }
+        ]
+      }
+    },
+    "notes_es": "En manufactura, 'rework' (sustantivo, incontable) es el retrabajo de piezas defectuosas: 'the rework rate is 4%'."
+  }
+]

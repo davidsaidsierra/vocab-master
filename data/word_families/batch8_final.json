@@ -1,0 +1,852 @@
+[
+  {
+    "root": "intend",
+    "slots": {
+      "verb": {
+        "form": "intend",
+        "meanings": [
+          {
+            "translation_es": "pretender, tener la intención de",
+            "example_en": "We intend to publish in June.",
+            "example_es": "Pretendemos publicar en junio."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "intention",
+        "meanings": [
+          {
+            "translation_es": "intención",
+            "example_en": "That wasn't the intention of the rule.",
+            "example_es": "Esa no era la intención de la regla."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "intended",
+        "variants": [
+          "unintended",
+          "intentional"
+        ],
+        "meanings": [
+          {
+            "translation_es": "previsto, deseado",
+            "example_en": "The intended use is indoors only.",
+            "example_es": "El uso previsto es solo en interiores."
+          },
+          {
+            "translation_es": "no deseado, involuntario (unintended)",
+            "example_en": "There were unintended consequences.",
+            "example_es": "Hubo consecuencias no deseadas."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "intentionally",
+        "meanings": [
+          {
+            "translation_es": "intencionalmente, a propósito",
+            "example_en": "The gap was left intentionally.",
+            "example_es": "La holgura se dejó a propósito."
+          }
+        ]
+      }
+    },
+    "notes_es": "'intend' es el verdadero 'pretender' del español. 'pretend' es fingir — no los confundas."
+  },
+  {
+    "root": "head",
+    "slots": {
+      "verb": {
+        "form": "head",
+        "meanings": [
+          {
+            "translation_es": "encabezar, dirigirse a",
+            "example_en": "She heads the QA department.",
+            "example_es": "Ella encabeza el departamento de calidad."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "head",
+        "meanings": [
+          {
+            "translation_es": "cabeza; cabezal",
+            "example_en": "Replace the cylinder head.",
+            "example_es": "Reemplaza la culata del cilindro.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "headed",
+        "variants": [
+          "heading"
+        ],
+        "meanings": [
+          {
+            "translation_es": "encabezado, rumbo a",
+            "example_en": "We're headed for a redesign.",
+            "example_es": "Vamos rumbo a un rediseño."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "head up",
+        "meaning_es": "liderar, estar al frente de",
+        "example_en": "He heads up the test team.",
+        "example_es": "Él está al frente del equipo de pruebas."
+      }
+    ],
+    "notes_es": "'heading' es también el título de una sección de un documento, y en navegación el rumbo."
+  },
+  {
+    "root": "stand",
+    "slots": {
+      "verb": {
+        "form": "stand",
+        "inflections": {
+          "third": "stands",
+          "ing": "standing",
+          "past": "stood",
+          "participle": "stood"
+        },
+        "meanings": [
+          {
+            "translation_es": "estar de pie; soportar",
+            "example_en": "The frame stands 2 m tall.",
+            "example_es": "El bastidor mide 2 m de alto."
+          },
+          {
+            "translation_es": "aguantar, tolerar",
+            "example_en": "I can't stand the noise.",
+            "example_es": "No aguanto el ruido."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "stand",
+        "meanings": [
+          {
+            "translation_es": "soporte, base; postura",
+            "example_en": "Put it on the stand.",
+            "example_es": "Ponlo en el soporte."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "outstanding",
+        "meanings": [
+          {
+            "translation_es": "sobresaliente, excepcional",
+            "example_en": "The results were outstanding.",
+            "example_es": "Los resultados fueron sobresalientes."
+          },
+          {
+            "translation_es": "pendiente (sin pagar/resolver)",
+            "example_en": "There's an outstanding invoice.",
+            "example_es": "Hay una factura pendiente."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "stand out",
+        "meaning_es": "destacar, sobresalir",
+        "example_en": "That result stands out.",
+        "example_es": "Ese resultado destaca."
+      },
+      {
+        "phrase": "stand up",
+        "meaning_es": "ponerse de pie; resistir",
+        "example_en": "The theory stands up to scrutiny.",
+        "example_es": "La teoría resiste el escrutinio."
+      }
+    ],
+    "contrast_es": "OJO con 'outstanding': tiene dos sentidos casi opuestos. 'outstanding work' = trabajo excelente, pero 'outstanding payment' = pago pendiente. El contexto decide."
+  },
+  {
+    "root": "bungle",
+    "slots": {
+      "verb": {
+        "form": "bungle",
+        "meanings": [
+          {
+            "translation_es": "chapucear, hacer mal",
+            "example_en": "They bungled the installation.",
+            "example_es": "Chapucearon la instalación."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "bungled",
+        "meanings": [
+          {
+            "translation_es": "chapucero, mal hecho",
+            "example_en": "It was a bungled repair.",
+            "example_es": "Fue una reparación chapucera."
+          }
+        ]
+      }
+    },
+    "notes_es": "Registro informal-periodístico. Sinónimos: botch, mess up."
+  },
+  {
+    "root": "opulent",
+    "slots": {
+      "noun_thing": {
+        "form": "opulence",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "opulencia, lujo",
+            "example_en": "The lobby's opulence was intimidating.",
+            "example_es": "La opulencia del vestíbulo intimidaba."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "opulent",
+        "meanings": [
+          {
+            "translation_es": "opulento, lujoso",
+            "example_en": "It's an opulent interior.",
+            "example_es": "Es un interior opulento."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "iconoclast",
+    "slots": {
+      "noun_person": {
+        "form": "iconoclast",
+        "meanings": [
+          {
+            "translation_es": "iconoclasta (persona)",
+            "example_en": "He was an iconoclast in his field.",
+            "example_es": "Fue un iconoclasta en su campo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "iconoclasm",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "iconoclasia, ruptura con lo establecido",
+            "example_en": "The movement is known for its iconoclasm.",
+            "example_es": "El movimiento es conocido por su iconoclasia."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "iconoclastic",
+        "meanings": [
+          {
+            "translation_es": "iconoclasta, rupturista",
+            "example_en": "It's an iconoclastic design.",
+            "example_es": "Es un diseño rupturista."
+          }
+        ]
+      }
+    },
+    "notes_es": "Describe a quien ataca creencias o tradiciones aceptadas. Patrón -clast / -clasm / -clastic."
+  },
+  {
+    "root": "anachronism",
+    "slots": {
+      "noun_thing": {
+        "form": "anachronism",
+        "meanings": [
+          {
+            "translation_es": "anacronismo",
+            "example_en": "The fax machine is an anachronism.",
+            "example_es": "El fax es un anacronismo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "anachronistic",
+        "meanings": [
+          {
+            "translation_es": "anacrónico, fuera de época",
+            "example_en": "The procedure is anachronistic.",
+            "example_es": "El procedimiento es anacrónico."
+          }
+        ]
+      }
+    },
+    "notes_es": "Griego: ana- (contra) + chronos (tiempo). Algo que no corresponde a su época."
+  },
+  {
+    "root": "serendipity",
+    "slots": {
+      "noun_thing": {
+        "form": "serendipity",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "serendipia, hallazgo afortunado",
+            "example_en": "The discovery was pure serendipity.",
+            "example_es": "El descubrimiento fue pura serendipia.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "serendipitous",
+        "meanings": [
+          {
+            "translation_es": "fortuito y afortunado",
+            "example_en": "It was a serendipitous meeting.",
+            "example_es": "Fue un encuentro fortuito y afortunado."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "serendipitously",
+        "meanings": [
+          {
+            "translation_es": "por casualidad afortunada",
+            "example_en": "We serendipitously found the leak.",
+            "example_es": "Encontramos la fuga por casualidad afortunada."
+          }
+        ]
+      }
+    },
+    "notes_es": "No es cualquier casualidad: es una casualidad que resulta BUENA. Por eso no se traduce bien como 'coincidencia'."
+  },
+  {
+    "root": "circumlocution",
+    "slots": {
+      "noun_thing": {
+        "form": "circumlocution",
+        "meanings": [
+          {
+            "translation_es": "circunloquio, rodeo al hablar",
+            "example_en": "Cut the circumlocution and say it plainly.",
+            "example_es": "Deja el rodeo y dilo claro."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "circumlocutory",
+        "meanings": [
+          {
+            "translation_es": "con rodeos, indirecto",
+            "example_en": "The answer was circumlocutory.",
+            "example_es": "La respuesta fue puro rodeo."
+          }
+        ]
+      }
+    },
+    "notes_es": "Latín: circum (alrededor) + loqui (hablar). En clase de idiomas es una ESTRATEGIA útil: describir una palabra que no recuerdas."
+  },
+  {
+    "root": "clunky",
+    "slots": {
+      "adjective": {
+        "form": "clunky",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "torpe, tosco, poco pulido",
+            "example_en": "The interface feels clunky.",
+            "example_es": "La interfaz se siente tosca."
+          }
+        ]
+      }
+    },
+    "notes_es": "Muy usado en software y diseño: algo que funciona pero se siente pesado e incómodo. Opuesto: sleek, smooth."
+  },
+  {
+    "root": "scruffy",
+    "slots": {
+      "adjective": {
+        "form": "scruffy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "desaliñado, descuidado",
+            "example_en": "He showed up looking scruffy.",
+            "example_es": "Llegó con aspecto desaliñado."
+          }
+        ]
+      }
+    },
+    "notes_es": "Se aplica a apariencia personal y a lugares descuidados. Distinto de 'messy' (desordenado)."
+  },
+  {
+    "root": "fur",
+    "slots": {
+      "noun_thing": {
+        "form": "fur",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "pelaje, piel (de animal)",
+            "example_en": "The cat's fur was matted.",
+            "example_es": "El pelaje del gato estaba enredado."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "furry",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "peludo",
+            "example_en": "It's a small furry animal.",
+            "example_es": "Es un animal pequeño y peludo."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "landscape",
+    "slots": {
+      "noun_thing": {
+        "form": "landscape",
+        "meanings": [
+          {
+            "translation_es": "paisaje",
+            "example_en": "The landscape changes after the ridge.",
+            "example_es": "El paisaje cambia después de la cresta."
+          },
+          {
+            "translation_es": "panorama (de un sector)",
+            "example_en": "The competitive landscape shifted.",
+            "example_es": "El panorama competitivo cambió."
+          }
+        ]
+      }
+    },
+    "notes_es": "También es la orientación horizontal de una página (opuesta a portrait). Y 'the tech landscape' = el panorama tecnológico."
+  },
+  {
+    "root": "lawn",
+    "slots": {
+      "noun_thing": {
+        "form": "lawn",
+        "meanings": [
+          {
+            "translation_es": "césped, jardín (de pasto)",
+            "example_en": "He mows the lawn on Saturdays.",
+            "example_es": "Corta el césped los sábados."
+          }
+        ]
+      }
+    },
+    "notes_es": "'lawn mower' = cortadora de césped. Distinto de 'grass' (el pasto en sí) y 'garden' (jardín con plantas)."
+  },
+  {
+    "root": "ladder",
+    "slots": {
+      "noun_thing": {
+        "form": "ladder",
+        "meanings": [
+          {
+            "translation_es": "escalera (de mano)",
+            "example_en": "Secure the ladder before climbing.",
+            "example_es": "Asegura la escalera antes de subir."
+          },
+          {
+            "translation_es": "escalafón (career ladder)",
+            "example_en": "She climbed the career ladder fast.",
+            "example_es": "Subió rápido en el escalafón profesional."
+          }
+        ]
+      }
+    },
+    "contrast_es": "ladder = escalera de mano (portátil). stairs / staircase = escalera fija de un edificio. En español es la misma palabra."
+  },
+  {
+    "root": "batch",
+    "slots": {
+      "noun_thing": {
+        "form": "batch",
+        "inflections": {
+          "plural": "batches"
+        },
+        "meanings": [
+          {
+            "translation_es": "lote, tanda",
+            "example_en": "The whole batch failed inspection.",
+            "example_es": "Todo el lote falló la inspección.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "batch",
+        "meanings": [
+          {
+            "translation_es": "por lotes",
+            "example_en": "It runs as a batch process.",
+            "example_es": "Se ejecuta como proceso por lotes."
+          }
+        ]
+      }
+    },
+    "notes_es": "'batch processing' = procesamiento por lotes, lo opuesto a continuo o en tiempo real."
+  },
+  {
+    "root": "workflow",
+    "slots": {
+      "noun_thing": {
+        "form": "workflow",
+        "meanings": [
+          {
+            "translation_es": "flujo de trabajo",
+            "example_en": "The new workflow cut two steps.",
+            "example_es": "El nuevo flujo de trabajo eliminó dos pasos."
+          }
+        ]
+      }
+    },
+    "notes_es": "Compuesto de work + flow. Familia de compuestos parecidos: workload (carga de trabajo), workforce (personal), workaround (solución provisional)."
+  },
+  {
+    "root": "satellite",
+    "slots": {
+      "noun_thing": {
+        "form": "satellite",
+        "meanings": [
+          {
+            "translation_es": "satélite",
+            "example_en": "Three satellites cover the region.",
+            "example_es": "Tres satélites cubren la región."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "satellite",
+        "meanings": [
+          {
+            "translation_es": "satelital; secundario",
+            "example_en": "They opened a satellite office.",
+            "example_es": "Abrieron una oficina secundaria."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "tide",
+    "slots": {
+      "noun_thing": {
+        "form": "tide",
+        "meanings": [
+          {
+            "translation_es": "marea",
+            "example_en": "The tide turns every six hours.",
+            "example_es": "La marea cambia cada seis horas."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "tidal",
+        "meanings": [
+          {
+            "translation_es": "de marea, mareal",
+            "example_en": "Tidal energy is predictable.",
+            "example_es": "La energía mareomotriz es predecible.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "notes_es": "'tidal wave' es coloquial para tsunami. Y 'the tide is turning' = las cosas están cambiando."
+  },
+  {
+    "root": "tissue",
+    "slots": {
+      "noun_thing": {
+        "form": "tissue",
+        "meanings": [
+          {
+            "translation_es": "tejido (biológico)",
+            "example_en": "The implant integrates with bone tissue.",
+            "example_es": "El implante se integra con el tejido óseo.",
+            "register": "técnico"
+          },
+          {
+            "translation_es": "pañuelo de papel",
+            "example_en": "Pass me a tissue.",
+            "example_es": "Pásame un pañuelo."
+          }
+        ]
+      }
+    },
+    "notes_es": "Dos mundos: tejido biológico y pañuelo desechable. Para tela se usa 'fabric' o 'cloth'."
+  },
+  {
+    "root": "artwork",
+    "slots": {
+      "noun_thing": {
+        "form": "artwork",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "obra de arte; arte gráfico",
+            "example_en": "The artwork for the manual is ready.",
+            "example_es": "El arte gráfico del manual está listo.",
+            "register": "normalmente incontable"
+          }
+        ]
+      }
+    },
+    "notes_es": "En diseño e imprenta, 'artwork' es el material gráfico listo para producción, no solo cuadros."
+  },
+  {
+    "root": "carpenter",
+    "slots": {
+      "noun_person": {
+        "form": "carpenter",
+        "meanings": [
+          {
+            "translation_es": "carpintero",
+            "example_en": "The carpenter built the test bench.",
+            "example_es": "El carpintero construyó el banco de pruebas."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "carpentry",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "carpintería (el oficio)",
+            "example_en": "He learned carpentry from his father.",
+            "example_es": "Aprendió carpintería de su padre.",
+            "register": "incontable"
+          }
+        ]
+      }
+    },
+    "notes_es": "Patrón de oficios: -er para la persona, -ry para el oficio (carpenter/carpentry, jeweler/jewelry)."
+  },
+  {
+    "root": "petroleum",
+    "slots": {
+      "noun_thing": {
+        "form": "petroleum",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "petróleo (crudo)",
+            "example_en": "Petroleum products dominate the market.",
+            "example_es": "Los derivados del petróleo dominan el mercado.",
+            "register": "incontable / técnico"
+          }
+        ]
+      }
+    },
+    "contrast_es": "FALSO AMIGO peligroso: en EE. UU. 'petrol' o 'gas' es la GASOLINA, no el petróleo. El petróleo crudo es 'petroleum' o 'crude oil'."
+  },
+  {
+    "root": "nozzle",
+    "slots": {
+      "noun_thing": {
+        "form": "nozzle",
+        "meanings": [
+          {
+            "translation_es": "boquilla, tobera",
+            "example_en": "The nozzle clogged after 40 hours.",
+            "example_es": "La boquilla se obstruyó tras 40 horas.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "notes_es": "En cohetes y turbinas es 'tobera'; en mangueras y pistolas, 'boquilla'. Misma palabra en inglés."
+  },
+  {
+    "root": "payload",
+    "slots": {
+      "noun_thing": {
+        "form": "payload",
+        "meanings": [
+          {
+            "translation_es": "carga útil",
+            "example_en": "The rocket's payload is 400 kg.",
+            "example_es": "La carga útil del cohete es de 400 kg.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "notes_es": "Compuesto pay + load: la carga que 'paga', o sea la útil, sin contar la estructura ni el combustible. En software, los datos que transporta un mensaje."
+  },
+  {
+    "root": "gadget",
+    "slots": {
+      "noun_thing": {
+        "form": "gadget",
+        "meanings": [
+          {
+            "translation_es": "aparato, artilugio",
+            "example_en": "The lab is full of clever gadgets.",
+            "example_es": "El laboratorio está lleno de artilugios ingeniosos."
+          }
+        ]
+      }
+    },
+    "notes_es": "Implica algo pequeño, ingenioso y a veces innecesario. Sinónimos: gizmo (más informal), device (neutro)."
+  },
+  {
+    "root": "lump",
+    "slots": {
+      "verb": {
+        "form": "lump",
+        "meanings": [
+          {
+            "translation_es": "agrupar sin distinguir (lump together)",
+            "example_en": "Don't lump all the failures together.",
+            "example_es": "No agrupes todas las fallas como si fueran una."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "lump",
+        "meanings": [
+          {
+            "translation_es": "bulto, grumo",
+            "example_en": "There's a lump in the resin.",
+            "example_es": "Hay un grumo en la resina."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "lumpy",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "grumoso, con bultos",
+            "example_en": "The mixture went lumpy.",
+            "example_es": "La mezcla se puso grumosa."
+          }
+        ]
+      }
+    },
+    "notes_es": "'lump sum' = suma global, pago único. 'lumped model' en ingeniería = modelo de parámetros concentrados."
+  },
+  {
+    "root": "draught",
+    "slots": {
+      "noun_thing": {
+        "form": "draught",
+        "meanings": [
+          {
+            "translation_es": "corriente de aire",
+            "example_en": "There's a draught from the window.",
+            "example_es": "Hay una corriente de aire desde la ventana.",
+            "register": "británico"
+          },
+          {
+            "translation_es": "calado (de un barco)",
+            "example_en": "The ship has a 4 m draught.",
+            "example_es": "El barco tiene 4 m de calado.",
+            "register": "técnico"
+          }
+        ]
+      }
+    },
+    "notes_es": "Grafía británica; en EE. UU. se escribe 'draft'. Y 'draft' además es borrador de un texto — que es el sentido que más usarás en Writing."
+  },
+  {
+    "root": "dough",
+    "slots": {
+      "noun_thing": {
+        "form": "dough",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "masa (de pan)",
+            "example_en": "Let the dough rest for an hour.",
+            "example_es": "Deja reposar la masa una hora.",
+            "register": "incontable"
+          }
+        ]
+      }
+    },
+    "notes_es": "Pronunciación traicionera: /doʊ/, la 'gh' es muda. Misma trampa que though /ðoʊ/ y through /θruː/."
+  },
+  {
+    "root": "hat",
+    "slots": {
+      "noun_thing": {
+        "form": "hat",
+        "meanings": [
+          {
+            "translation_es": "sombrero, gorra",
+            "example_en": "Wear a hard hat in the shop.",
+            "example_es": "Usa casco en el taller."
+          }
+        ]
+      }
+    },
+    "notes_es": "'hard hat' = casco de seguridad. 'wear many hats' = desempeñar muchos roles a la vez."
+  },
+  {
+    "root": "scarf",
+    "slots": {
+      "noun_thing": {
+        "form": "scarf",
+        "inflections": {
+          "plural": "scarves"
+        },
+        "meanings": [
+          {
+            "translation_es": "bufanda, pañuelo",
+            "example_en": "She wore a wool scarf.",
+            "example_es": "Llevaba una bufanda de lana."
+          }
+        ]
+      }
+    },
+    "notes_es": "Plural irregular: scarf → scarves (como leaf/leaves, knife/knives). En carpintería, 'scarf joint' es un empalme a media madera."
+  },
+  {
+    "root": "second",
+    "slots": {
+      "noun_thing": {
+        "form": "second",
+        "meanings": [
+          {
+            "translation_es": "segundo (tiempo)",
+            "example_en": "The cycle takes 40 seconds.",
+            "example_es": "El ciclo toma 40 segundos."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "second",
+        "meanings": [
+          {
+            "translation_es": "segundo (orden)",
+            "example_en": "The second test confirmed it.",
+            "example_es": "La segunda prueba lo confirmó."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "secondly",
+        "meanings": [
+          {
+            "translation_es": "en segundo lugar",
+            "example_en": "Secondly, the cost is prohibitive.",
+            "example_es": "En segundo lugar, el costo es prohibitivo."
+          }
+        ]
+      }
+    },
+    "notes_es": "Como conector de enumeración: first(ly), secondly, thirdly, finally. Mismo patrón que ya usas con 'first'."
+  }
+]

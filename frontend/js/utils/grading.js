@@ -52,7 +52,12 @@ export function checkAnswer(input, expectedRaw) {
     const inN = normalizeAnswer(input);
     if (!inN) return { correct: false, exact: false, matched: null };
 
+    // Las traducciones de la matriz traen aclaraciones entre paréntesis
+    // ("agotado (el que SIENTE)", "desconocido (unknown)"). Son para leer, no
+    // para teclear: se quitan antes de comparar o escribir solo "agotado"
+    // contaría como error.
     const variants = String(expectedRaw || '')
+        .replace(/\([^)]*\)/g, ' ')
         .split(/[,;/]/)
         .map(normalizeAnswer)
         .filter(Boolean);
@@ -64,6 +69,35 @@ export function checkAnswer(input, expectedRaw) {
         if (levenshtein(inN, v) <= tolerance(v.length)) {
             return { correct: true, exact: false, matched: v };
         }
+    }
+    return { correct: false, exact: false, matched: null };
+}
+
+// Calificación de los ejercicios de familia. Igual que checkAgainstList, pero
+// con las formas RIVALES a la vista: en "exhausting vs exhaustive" la distancia
+// de edición es mínima y la tolerancia a typos daría por bueno justo el error
+// que el ejercicio quiere detectar. Solo se perdona un typo si la respuesta se
+// parece MÁS a la correcta que a cualquier rival.
+export function checkFamilyAnswer(input, accepted, rivals = []) {
+    const inN = normalizeAnswer(input);
+    if (!inN) return { correct: false, exact: false, matched: null };
+
+    const acc = (accepted || []).map(normalizeAnswer).filter(Boolean);
+    const riv = (rivals || []).map(normalizeAnswer).filter(Boolean).filter(r => !acc.includes(r));
+
+    for (const v of acc) {
+        if (inN === v) return { correct: true, exact: true, matched: v };
+    }
+    let best = null, bestD = Infinity;
+    for (const v of acc) {
+        const d = levenshtein(inN, v);
+        if (d < bestD) { bestD = d; best = v; }
+    }
+    let rivalD = Infinity;
+    for (const r of riv) rivalD = Math.min(rivalD, levenshtein(inN, r));
+
+    if (best && bestD <= tolerance(best.length) && bestD < rivalD) {
+        return { correct: true, exact: false, matched: best };
     }
     return { correct: false, exact: false, matched: null };
 }

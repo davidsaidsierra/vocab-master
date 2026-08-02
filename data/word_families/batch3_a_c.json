@@ -1,0 +1,1244 @@
+[
+  {
+    "root": "acknowledge",
+    "slots": {
+      "verb": {
+        "form": "acknowledge",
+        "meanings": [
+          {
+            "translation_es": "reconocer, admitir",
+            "example_en": "He acknowledged the mistake publicly.",
+            "example_es": "Reconoció el error públicamente."
+          },
+          {
+            "translation_es": "acusar recibo de",
+            "example_en": "Please acknowledge receipt of this email.",
+            "example_es": "Por favor acuse recibo de este correo.",
+            "register": "formal"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "acknowledgment",
+        "meanings": [
+          {
+            "translation_es": "reconocimiento, acuse de recibo",
+            "example_en": "We sent an acknowledgment of the order.",
+            "example_es": "Enviamos un acuse de recibo del pedido."
+          }
+        ]
+      }
+    },
+    "notes_es": "Dos grafías válidas: acknowledgment (US) y acknowledgement (UK)."
+  },
+  {
+    "root": "advance",
+    "slots": {
+      "verb": {
+        "form": "advance",
+        "meanings": [
+          {
+            "translation_es": "avanzar, adelantar",
+            "example_en": "The project advanced faster than expected.",
+            "example_es": "El proyecto avanzó más rápido de lo esperado."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "advancement",
+        "meanings": [
+          {
+            "translation_es": "avance, progreso",
+            "example_en": "Recent advancements in materials changed the design.",
+            "example_es": "Los avances recientes en materiales cambiaron el diseño."
+          },
+          {
+            "translation_es": "ascenso (laboral)",
+            "example_en": "There's little room for advancement here.",
+            "example_es": "Aquí hay poco margen de ascenso."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "advanced",
+        "meanings": [
+          {
+            "translation_es": "avanzado",
+            "example_en": "It's an advanced simulation course.",
+            "example_es": "Es un curso avanzado de simulación."
+          }
+        ]
+      }
+    },
+    "notes_es": "'in advance' = por adelantado. 'advance' como sustantivo también existe (un avance), advancement enfatiza el proceso."
+  },
+  {
+    "root": "ambiguous",
+    "slots": {
+      "noun_thing": {
+        "form": "ambiguity",
+        "inflections": {
+          "plural": "ambiguities"
+        },
+        "meanings": [
+          {
+            "translation_es": "ambigüedad",
+            "example_en": "The spec left too much ambiguity.",
+            "example_es": "La especificación dejó demasiada ambigüedad."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "ambiguous",
+        "meanings": [
+          {
+            "translation_es": "ambiguo, poco claro",
+            "example_en": "His answer was deliberately ambiguous.",
+            "example_es": "Su respuesta fue deliberadamente ambigua."
+          },
+          {
+            "translation_es": "inequívoco, claro (unambiguous)",
+            "example_en": "We need an unambiguous instruction.",
+            "example_es": "Necesitamos una instrucción inequívoca."
+          }
+        ],
+        "variants": [
+          "unambiguous"
+        ]
+      },
+      "adverb": {
+        "form": "ambiguously",
+        "meanings": [
+          {
+            "translation_es": "de forma ambigua",
+            "example_en": "The clause is ambiguously worded.",
+            "example_es": "La cláusula está redactada de forma ambigua."
+          }
+        ]
+      }
+    },
+    "notes_es": "Sin verbo. Ojo: ambiguous ≠ ambivalent (ambivalente, con sentimientos encontrados)."
+  },
+  {
+    "root": "ambitious",
+    "slots": {
+      "noun_thing": {
+        "form": "ambition",
+        "meanings": [
+          {
+            "translation_es": "ambición, meta",
+            "example_en": "Her ambition is to lead the design team.",
+            "example_es": "Su ambición es liderar el equipo de diseño."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "ambitious",
+        "meanings": [
+          {
+            "translation_es": "ambicioso",
+            "example_en": "That's an ambitious deadline.",
+            "example_es": "Ese es un plazo ambicioso."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "ambitiously",
+        "meanings": [
+          {
+            "translation_es": "de forma ambiciosa",
+            "example_en": "The scope was ambitiously defined.",
+            "example_es": "El alcance se definió de forma ambiciosa."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "analogy",
+    "slots": {
+      "noun_thing": {
+        "form": "analogy",
+        "inflections": {
+          "plural": "analogies"
+        },
+        "meanings": [
+          {
+            "translation_es": "analogía, comparación",
+            "example_en": "He explained torque by analogy with a wrench.",
+            "example_es": "Explicó el torque por analogía con una llave."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "analogous",
+        "meanings": [
+          {
+            "translation_es": "análogo, similar",
+            "example_en": "The circuit is analogous to a hydraulic loop.",
+            "example_es": "El circuito es análogo a un circuito hidráulico."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "analogously",
+        "meanings": [
+          {
+            "translation_es": "análogamente",
+            "example_en": "Analogously, heat flows from hot to cold.",
+            "example_es": "Análogamente, el calor fluye de caliente a frío."
+          }
+        ]
+      }
+    },
+    "notes_es": "Se dice 'analogous TO' o 'analogy WITH/BETWEEN'."
+  },
+  {
+    "root": "assess",
+    "slots": {
+      "verb": {
+        "form": "assess",
+        "meanings": [
+          {
+            "translation_es": "evaluar, valorar",
+            "example_en": "We assess the risk before every test.",
+            "example_es": "Evaluamos el riesgo antes de cada prueba."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "assessment",
+        "meanings": [
+          {
+            "translation_es": "evaluación, valoración",
+            "example_en": "The safety assessment took two weeks.",
+            "example_es": "La evaluación de seguridad tomó dos semanas."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "assessor",
+        "meanings": [
+          {
+            "translation_es": "evaluador, tasador",
+            "example_en": "An external assessor reviewed the report.",
+            "example_es": "Un evaluador externo revisó el informe."
+          }
+        ]
+      }
+    },
+    "notes_es": "assess (evaluar con criterio) es más formal que 'check'. Nada que ver con 'asesorar', que es 'to advise' — falso amigo clásico."
+  },
+  {
+    "root": "assume",
+    "slots": {
+      "verb": {
+        "form": "assume",
+        "meanings": [
+          {
+            "translation_es": "suponer, asumir (dar por hecho)",
+            "example_en": "I assumed the valve was closed.",
+            "example_es": "Supuse que la válvula estaba cerrada."
+          },
+          {
+            "translation_es": "asumir (un cargo, una responsabilidad)",
+            "example_en": "She assumed the role in March.",
+            "example_es": "Asumió el cargo en marzo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "assumption",
+        "meanings": [
+          {
+            "translation_es": "suposición, supuesto",
+            "example_en": "The model rests on three assumptions.",
+            "example_es": "El modelo se apoya en tres supuestos."
+          }
+        ]
+      }
+    },
+    "notes_es": "En inglés técnico 'assumptions' son los supuestos de un modelo. No confundir con 'presume' (presumir, con más certeza)."
+  },
+  {
+    "root": "attend",
+    "slots": {
+      "verb": {
+        "form": "attend",
+        "meanings": [
+          {
+            "translation_es": "asistir (a un evento)",
+            "example_en": "I attended the conference last year.",
+            "example_es": "Asistí a la conferencia el año pasado."
+          },
+          {
+            "translation_es": "atender, ocuparse de (attend to)",
+            "example_en": "Someone must attend to the alarm.",
+            "example_es": "Alguien debe ocuparse de la alarma."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "attendance",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "asistencia (presencia)",
+            "example_en": "Attendance was mandatory.",
+            "example_es": "La asistencia era obligatoria."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "attendee",
+        "meanings": [
+          {
+            "translation_es": "asistente, participante",
+            "example_en": "Every attendee got a badge.",
+            "example_es": "Cada asistente recibió una credencial."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "attend to",
+        "meaning_es": "atender, encargarse de",
+        "example_en": "I'll attend to it right away.",
+        "example_es": "Me encargo de eso enseguida."
+      }
+    ],
+    "notes_es": "attend NO lleva 'to' cuando es asistir a un evento: attend the meeting (no 'attend to the meeting'). Con 'to' cambia el significado a atender."
+  },
+  {
+    "root": "authentic",
+    "slots": {
+      "verb": {
+        "form": "authenticate",
+        "meanings": [
+          {
+            "translation_es": "autenticar, verificar",
+            "example_en": "The system authenticates the user first.",
+            "example_es": "El sistema autentica al usuario primero."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "authenticity",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "autenticidad",
+            "example_en": "They questioned the authenticity of the data.",
+            "example_es": "Cuestionaron la autenticidad de los datos."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "authentic",
+        "meanings": [
+          {
+            "translation_es": "auténtico, genuino",
+            "example_en": "It's an authentic Italian recipe.",
+            "example_es": "Es una receta italiana auténtica."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "authentically",
+        "meanings": [
+          {
+            "translation_es": "auténticamente",
+            "example_en": "The set was authentically restored.",
+            "example_es": "El escenario fue restaurado auténticamente."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "bad",
+    "slots": {
+      "adjective": {
+        "form": "bad",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "malo",
+            "example_en": "That was a bad decision.",
+            "example_es": "Esa fue una mala decisión."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "badly",
+        "meanings": [
+          {
+            "translation_es": "mal; gravemente",
+            "example_en": "The part was badly damaged.",
+            "example_es": "La pieza quedó gravemente dañada."
+          }
+        ]
+      }
+    },
+    "contrast_es": "Comparativo irregular: bad → worse → worst (nunca 'badder'). Y el adverbio es badly: 'I did badly', no 'I did bad'. Excepción fija: 'I feel bad' (adjetivo, porque feel es copulativo)."
+  },
+  {
+    "root": "beautiful",
+    "slots": {
+      "noun_thing": {
+        "form": "beauty",
+        "inflections": {
+          "plural": "beauties"
+        },
+        "meanings": [
+          {
+            "translation_es": "belleza",
+            "example_en": "The beauty of the solution is its simplicity.",
+            "example_es": "La belleza de la solución es su simplicidad."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "beautiful",
+        "meanings": [
+          {
+            "translation_es": "hermoso, bello",
+            "example_en": "It was a beautiful piece of engineering.",
+            "example_es": "Fue una hermosa pieza de ingeniería."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "beautifully",
+        "meanings": [
+          {
+            "translation_es": "bellamente, de maravilla",
+            "example_en": "The mechanism works beautifully.",
+            "example_es": "El mecanismo funciona de maravilla."
+          }
+        ]
+      }
+    },
+    "notes_es": "beautifully también significa 'perfectamente, sin problemas' cuando hablas de algo que funciona."
+  },
+  {
+    "root": "bold",
+    "slots": {
+      "noun_thing": {
+        "form": "boldness",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "audacia, atrevimiento",
+            "example_en": "It took boldness to propose that.",
+            "example_es": "Hizo falta audacia para proponer eso."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "bold",
+        "meanings": [
+          {
+            "translation_es": "audaz, atrevido",
+            "example_en": "That's a bold claim.",
+            "example_es": "Esa es una afirmación atrevida."
+          },
+          {
+            "translation_es": "en negrita",
+            "example_en": "Put the headings in bold.",
+            "example_es": "Pon los títulos en negrita.",
+            "register": "tipografía"
+          }
+        ]
+      },
+      "adverb": {
+        "form": "boldly",
+        "meanings": [
+          {
+            "translation_es": "audazmente, con decisión",
+            "example_en": "He boldly challenged the assumption.",
+            "example_es": "Cuestionó el supuesto con decisión."
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "borrow",
+    "slots": {
+      "verb": {
+        "form": "borrow",
+        "meanings": [
+          {
+            "translation_es": "pedir prestado, tomar prestado",
+            "example_en": "Can I borrow your caliper?",
+            "example_es": "¿Me prestas tu calibrador?"
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "borrower",
+        "meanings": [
+          {
+            "translation_es": "prestatario, quien pide prestado",
+            "example_en": "The borrower pays the interest.",
+            "example_es": "El prestatario paga los intereses."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "borrowing",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "endeudamiento, préstamo tomado",
+            "example_en": "Borrowing costs went up.",
+            "example_es": "Los costos del endeudamiento subieron."
+          }
+        ]
+      }
+    },
+    "contrast_es": "borrow = TÚ recibes (pedir prestado). lend = TÚ das (prestar). En español ambos son 'prestar', por eso se confunden: 'Can you lend me...' / 'Can I borrow...'."
+  },
+  {
+    "root": "bound",
+    "slots": {
+      "verb": {
+        "form": "bound",
+        "inflections": {
+          "third": "bounds",
+          "ing": "bounding",
+          "past": "bounded",
+          "participle": "bounded"
+        },
+        "meanings": [
+          {
+            "translation_es": "delimitar, acotar",
+            "example_en": "The region is bounded by two curves.",
+            "example_es": "La región está delimitada por dos curvas.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "boundary",
+        "inflections": {
+          "plural": "boundaries"
+        },
+        "meanings": [
+          {
+            "translation_es": "frontera, límite",
+            "example_en": "Set the boundary conditions first.",
+            "example_es": "Define primero las condiciones de frontera.",
+            "register": "técnico"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "bounded",
+        "meanings": [
+          {
+            "translation_es": "acotado, limitado",
+            "example_en": "The error stays bounded.",
+            "example_es": "El error se mantiene acotado."
+          },
+          {
+            "translation_es": "ilimitado, sin límites (boundless)",
+            "example_en": "She has boundless energy.",
+            "example_es": "Tiene una energía sin límites."
+          }
+        ],
+        "variants": [
+          "boundless"
+        ]
+      }
+    },
+    "notes_es": "Cuidado: 'bound' también es el pasado de bind (atar) y el adjetivo 'bound to' = destinado a / obligado a. 'It's bound to fail' = seguro que falla."
+  },
+  {
+    "root": "brief",
+    "slots": {
+      "verb": {
+        "form": "brief",
+        "meanings": [
+          {
+            "translation_es": "informar, poner al tanto",
+            "example_en": "He briefed the team before the test.",
+            "example_es": "Puso al tanto al equipo antes de la prueba."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "brief",
+        "meanings": [
+          {
+            "translation_es": "resumen, instrucciones",
+            "example_en": "The design brief is two pages long.",
+            "example_es": "El resumen de diseño tiene dos páginas."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "brief",
+        "meanings": [
+          {
+            "translation_es": "breve, corto",
+            "example_en": "Keep the report brief.",
+            "example_es": "Mantén el informe breve."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "briefly",
+        "meanings": [
+          {
+            "translation_es": "brevemente",
+            "example_en": "Briefly, the seal failed.",
+            "example_es": "En resumen, el sello falló."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "briefing",
+        "inflections": {
+          "plural": "briefings"
+        },
+        "meanings": [
+          {
+            "translation_es": "reunión informativa",
+            "example_en": "There's a safety briefing at 8.",
+            "example_es": "Hay una reunión informativa de seguridad a las 8."
+          }
+        ]
+      }
+    },
+    "notes_es": "El sustantivo abstracto es 'brevity' (brevedad), que ya no se parece a brief."
+  },
+  {
+    "root": "cheap",
+    "slots": {
+      "verb": {
+        "form": "cheapen",
+        "meanings": [
+          {
+            "translation_es": "abaratar; devaluar",
+            "example_en": "Mass production cheapened the product.",
+            "example_es": "La producción masiva abarató el producto."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "cheap",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "barato; de mala calidad",
+            "example_en": "It's cheap, but it won't last.",
+            "example_es": "Es barato, pero no va a durar."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "cheaply",
+        "meanings": [
+          {
+            "translation_es": "de forma barata",
+            "example_en": "We built it cheaply.",
+            "example_es": "Lo construimos de forma barata."
+          }
+        ]
+      }
+    },
+    "notes_es": "cheap tiene carga negativa (barato = malo). Si solo quieres decir 'de bajo precio' usa inexpensive o affordable."
+  },
+  {
+    "root": "cheer",
+    "slots": {
+      "verb": {
+        "form": "cheer",
+        "meanings": [
+          {
+            "translation_es": "animar, vitorear",
+            "example_en": "The crowd cheered when it lifted off.",
+            "example_es": "La multitud vitoreó cuando despegó."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "cheer",
+        "meanings": [
+          {
+            "translation_es": "ovación, ánimo",
+            "example_en": "A cheer went up from the workshop.",
+            "example_es": "Se oyó una ovación desde el taller."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "cheerful",
+        "meanings": [
+          {
+            "translation_es": "alegre, animado",
+            "example_en": "She's always cheerful in the morning.",
+            "example_es": "Siempre está alegre en la mañana."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "cheerfully",
+        "meanings": [
+          {
+            "translation_es": "alegremente",
+            "example_en": "He cheerfully agreed to redo it.",
+            "example_es": "Aceptó rehacerlo alegremente."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "cheering",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "vítores; alentador",
+            "example_en": "The cheering lasted a minute.",
+            "example_es": "Los vítores duraron un minuto."
+          }
+        ]
+      }
+    },
+    "phrasals": [
+      {
+        "phrase": "cheer up",
+        "meaning_es": "animarse, animar a alguien",
+        "example_en": "Cheer up, the test is tomorrow.",
+        "example_es": "Ánimo, la prueba es mañana."
+      }
+    ]
+  },
+  {
+    "root": "cherish",
+    "slots": {
+      "verb": {
+        "form": "cherish",
+        "meanings": [
+          {
+            "translation_es": "apreciar, atesorar",
+            "example_en": "I cherish those memories.",
+            "example_es": "Atesoro esos recuerdos."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "cherished",
+        "meanings": [
+          {
+            "translation_es": "querido, preciado",
+            "example_en": "It's a cherished tradition.",
+            "example_es": "Es una tradición muy querida."
+          }
+        ]
+      }
+    },
+    "notes_es": "Es más fuerte y emocional que 'like' o 'value'; se usa con recuerdos, personas y valores."
+  },
+  {
+    "root": "claim",
+    "slots": {
+      "verb": {
+        "form": "claim",
+        "meanings": [
+          {
+            "translation_es": "afirmar, sostener",
+            "example_en": "They claim the engine is 20% lighter.",
+            "example_es": "Afirman que el motor es 20% más liviano."
+          },
+          {
+            "translation_es": "reclamar, reivindicar",
+            "example_en": "You can claim the warranty online.",
+            "example_es": "Puedes reclamar la garantía en línea."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "claim",
+        "meanings": [
+          {
+            "translation_es": "afirmación; reclamo",
+            "example_en": "That's a strong claim without data.",
+            "example_es": "Esa es una afirmación fuerte sin datos."
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "claimant",
+        "meanings": [
+          {
+            "translation_es": "demandante, reclamante",
+            "example_en": "The claimant filed on Monday.",
+            "example_es": "El demandante presentó el lunes.",
+            "register": "legal"
+          }
+        ]
+      }
+    },
+    "notes_es": "'claim' implica que la afirmación puede no ser cierta. Si escribes 'the author claims', estás poniendo distancia."
+  },
+  {
+    "root": "classify",
+    "slots": {
+      "verb": {
+        "form": "classify",
+        "inflections": {
+          "third": "classifies",
+          "ing": "classifying",
+          "past": "classified",
+          "participle": "classified"
+        },
+        "meanings": [
+          {
+            "translation_es": "clasificar",
+            "example_en": "We classify failures by root cause.",
+            "example_es": "Clasificamos las fallas por causa raíz."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "classification",
+        "meanings": [
+          {
+            "translation_es": "clasificación",
+            "example_en": "The classification has six categories.",
+            "example_es": "La clasificación tiene seis categorías."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "classified",
+        "meanings": [
+          {
+            "translation_es": "clasificado, confidencial",
+            "example_en": "That report is classified.",
+            "example_es": "Ese informe es confidencial."
+          }
+        ]
+      }
+    },
+    "notes_es": "'classified' en contexto de documentos significa SECRETO, no solo 'ordenado'."
+  },
+  {
+    "root": "clue",
+    "slots": {
+      "noun_thing": {
+        "form": "clue",
+        "meanings": [
+          {
+            "translation_es": "pista, indicio",
+            "example_en": "The vibration was the first clue.",
+            "example_es": "La vibración fue la primera pista."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "clueless",
+        "meanings": [
+          {
+            "translation_es": "despistado, sin idea",
+            "example_en": "I was clueless about the new procedure.",
+            "example_es": "No tenía ni idea del nuevo procedimiento."
+          }
+        ]
+      }
+    },
+    "notes_es": "'I have no clue' = no tengo ni idea. Muy usado en conversación."
+  },
+  {
+    "root": "cluster",
+    "slots": {
+      "verb": {
+        "form": "cluster",
+        "meanings": [
+          {
+            "translation_es": "agrupar(se)",
+            "example_en": "The failures cluster around 80 °C.",
+            "example_es": "Las fallas se agrupan alrededor de 80 °C."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "cluster",
+        "meanings": [
+          {
+            "translation_es": "grupo, agrupación, racimo",
+            "example_en": "There's a cluster of defects near the weld.",
+            "example_es": "Hay un grupo de defectos cerca de la soldadura."
+          }
+        ]
+      },
+      "gerund": {
+        "form": "clustering",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "agrupamiento (técnica)",
+            "example_en": "We used clustering to segment the data.",
+            "example_es": "Usamos agrupamiento para segmentar los datos.",
+            "register": "técnico"
+          }
+        ]
+      }
+    }
+  },
+  {
+    "root": "cold",
+    "slots": {
+      "noun_thing": {
+        "form": "cold",
+        "meanings": [
+          {
+            "translation_es": "frío",
+            "example_en": "The cold affects the seals.",
+            "example_es": "El frío afecta los sellos."
+          },
+          {
+            "translation_es": "resfriado",
+            "example_en": "I caught a cold.",
+            "example_es": "Me dio un resfriado."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "cold",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "frío",
+            "example_en": "The room is too cold for the test.",
+            "example_es": "La sala está muy fría para la prueba."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "coldly",
+        "meanings": [
+          {
+            "translation_es": "fríamente, con frialdad",
+            "example_en": "She responded coldly.",
+            "example_es": "Respondió con frialdad."
+          }
+        ]
+      }
+    },
+    "notes_es": "Ojo: 'I am cold' (tengo frío), no 'I have cold'. Pero 'I have a cold' = estoy resfriado."
+  },
+  {
+    "root": "comfort",
+    "slots": {
+      "verb": {
+        "form": "comfort",
+        "meanings": [
+          {
+            "translation_es": "consolar, reconfortar",
+            "example_en": "He comforted her after the news.",
+            "example_es": "La consoló tras la noticia."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "comfort",
+        "meanings": [
+          {
+            "translation_es": "comodidad; consuelo",
+            "example_en": "The cabin was designed for comfort.",
+            "example_es": "La cabina se diseñó para la comodidad."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "comfortable",
+        "meanings": [
+          {
+            "translation_es": "cómodo",
+            "example_en": "Are you comfortable with that assumption?",
+            "example_es": "¿Te sientes cómodo con ese supuesto?"
+          },
+          {
+            "translation_es": "incómodo (uncomfortable)",
+            "example_en": "The seat is uncomfortable on long trips.",
+            "example_es": "El asiento es incómodo en viajes largos."
+          }
+        ],
+        "variants": [
+          "uncomfortable"
+        ]
+      },
+      "adverb": {
+        "form": "comfortably",
+        "meanings": [
+          {
+            "translation_es": "cómodamente",
+            "example_en": "It fits comfortably in the housing.",
+            "example_es": "Encaja cómodamente en la carcasa."
+          }
+        ]
+      }
+    },
+    "notes_es": "Adjetivo en -able → adverbio en -ably: comfortable → comfortably."
+  },
+  {
+    "root": "commit",
+    "slots": {
+      "verb": {
+        "form": "commit",
+        "inflections": {
+          "third": "commits",
+          "ing": "committing",
+          "past": "committed",
+          "participle": "committed"
+        },
+        "meanings": [
+          {
+            "translation_es": "comprometerse",
+            "example_en": "We committed to a March delivery.",
+            "example_es": "Nos comprometimos a entregar en marzo."
+          },
+          {
+            "translation_es": "cometer (un error, un delito)",
+            "example_en": "They committed the same error twice.",
+            "example_es": "Cometieron el mismo error dos veces."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "commitment",
+        "meanings": [
+          {
+            "translation_es": "compromiso, dedicación",
+            "example_en": "It's a big time commitment.",
+            "example_es": "Es un compromiso grande de tiempo."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "committed",
+        "meanings": [
+          {
+            "translation_es": "comprometido, dedicado",
+            "example_en": "She's committed to the project.",
+            "example_es": "Está comprometida con el proyecto."
+          }
+        ]
+      }
+    },
+    "notes_es": "Dobla la T: commit → committed, committing, commitment (¡pero commitment lleva una sola t antes de -ment!)."
+  },
+  {
+    "root": "companion",
+    "slots": {
+      "noun_thing": {
+        "form": "company",
+        "inflections": {
+          "plural": "companies"
+        },
+        "meanings": [
+          {
+            "translation_es": "compañía (empresa)",
+            "example_en": "The company has 40 employees.",
+            "example_es": "La empresa tiene 40 empleados."
+          },
+          {
+            "translation_es": "compañía (presencia)",
+            "example_en": "I enjoy your company.",
+            "example_es": "Disfruto tu compañía.",
+            "register": "incontable"
+          }
+        ]
+      },
+      "noun_person": {
+        "form": "companion",
+        "meanings": [
+          {
+            "translation_es": "compañero, acompañante",
+            "example_en": "A travel companion makes it easier.",
+            "example_es": "Un compañero de viaje lo hace más fácil."
+          }
+        ]
+      },
+      "verb": {
+        "form": "accompany",
+        "inflections": {
+          "third": "accompanies",
+          "ing": "accompanying",
+          "past": "accompanied",
+          "participle": "accompanied"
+        },
+        "meanings": [
+          {
+            "translation_es": "acompañar",
+            "example_en": "A manual accompanies the device.",
+            "example_es": "Un manual acompaña al dispositivo."
+          }
+        ]
+      }
+    },
+    "notes_es": "Misma raíz latina (compañía). 'company' es a la vez la empresa y la compañía de alguien."
+  },
+  {
+    "root": "comprehensive",
+    "slots": {
+      "verb": {
+        "form": "comprehend",
+        "meanings": [
+          {
+            "translation_es": "comprender, entender",
+            "example_en": "It's hard to comprehend the scale.",
+            "example_es": "Es difícil comprender la escala.",
+            "register": "formal"
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "comprehension",
+        "inflections": {},
+        "meanings": [
+          {
+            "translation_es": "comprensión",
+            "example_en": "Reading comprehension is tested first.",
+            "example_es": "La comprensión lectora se evalúa primero."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "comprehensive",
+        "meanings": [
+          {
+            "translation_es": "completo, exhaustivo",
+            "example_en": "We ran a comprehensive review.",
+            "example_es": "Hicimos una revisión exhaustiva."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "comprehensively",
+        "meanings": [
+          {
+            "translation_es": "exhaustivamente",
+            "example_en": "The theory was comprehensively tested.",
+            "example_es": "La teoría se probó exhaustivamente."
+          }
+        ]
+      }
+    },
+    "contrast_es": "comprehensive = completo, que cubre todo. comprehensible = comprensible, que se entiende. Son distintos y se confunden mucho."
+  },
+  {
+    "root": "consequence",
+    "slots": {
+      "noun_thing": {
+        "form": "consequence",
+        "meanings": [
+          {
+            "translation_es": "consecuencia",
+            "example_en": "Every shortcut has consequences.",
+            "example_es": "Todo atajo tiene consecuencias."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "consequent",
+        "meanings": [
+          {
+            "translation_es": "consiguiente, resultante",
+            "example_en": "The leak and the consequent shutdown cost us a day.",
+            "example_es": "La fuga y el consiguiente paro nos costaron un día.",
+            "register": "formal"
+          }
+        ]
+      },
+      "adverb": {
+        "form": "consequently",
+        "meanings": [
+          {
+            "translation_es": "en consecuencia, por lo tanto",
+            "example_en": "The sensor failed; consequently, the alarm didn't trigger.",
+            "example_es": "El sensor falló; en consecuencia, la alarma no se activó."
+          }
+        ]
+      }
+    },
+    "notes_es": "Como conector, 'consequently' va al inicio de la oración seguido de coma. Equivale a therefore / as a result."
+  },
+  {
+    "root": "converse",
+    "slots": {
+      "noun_thing": {
+        "form": "converse",
+        "meanings": [
+          {
+            "translation_es": "lo contrario, el recíproco",
+            "example_en": "The converse is also true.",
+            "example_es": "Lo recíproco también es cierto.",
+            "register": "formal / matemático"
+          }
+        ]
+      },
+      "adjective": {
+        "form": "converse",
+        "meanings": [
+          {
+            "translation_es": "contrario, inverso",
+            "example_en": "The converse relationship holds at low speed.",
+            "example_es": "La relación inversa se cumple a baja velocidad."
+          }
+        ]
+      },
+      "adverb": {
+        "form": "conversely",
+        "meanings": [
+          {
+            "translation_es": "por el contrario, a la inversa",
+            "example_en": "Conversely, higher pressure reduces the flow.",
+            "example_es": "Por el contrario, más presión reduce el flujo."
+          }
+        ]
+      }
+    },
+    "notes_es": "Ojo: el verbo 'converse' (conversar) es otra palabra distinta aunque se escriba igual. El conector 'conversely' introduce la situación opuesta."
+  },
+  {
+    "root": "crowd",
+    "slots": {
+      "verb": {
+        "form": "crowd",
+        "meanings": [
+          {
+            "translation_es": "amontonarse, apiñarse",
+            "example_en": "People crowded around the prototype.",
+            "example_es": "La gente se amontonó alrededor del prototipo."
+          }
+        ]
+      },
+      "noun_thing": {
+        "form": "crowd",
+        "meanings": [
+          {
+            "translation_es": "multitud, gentío",
+            "example_en": "A crowd gathered outside.",
+            "example_es": "Una multitud se juntó afuera."
+          }
+        ]
+      },
+      "adjective": {
+        "form": "crowded",
+        "meanings": [
+          {
+            "translation_es": "abarrotado, lleno de gente",
+            "example_en": "The workshop was crowded.",
+            "example_es": "El taller estaba abarrotado."
+          }
+        ]
+      }
+    },
+    "notes_es": "'crowded' describe el LUGAR lleno, no a la persona."
+  }
+]

@@ -63,6 +63,18 @@ class Word(Base):
     common_phrases = Column(Text, nullable=True)    # JSON: [{phrase, meaning_es, example_en, example_es}] del lookup
     part_of_speech = Column(String(20), nullable=True)  # categoría gramatical del 1er significado (lista cerrada; para filtrar)
     phonetic = Column(String(60), nullable=True)    # IPA del lookup (opcional, solo display)
+    # ── Familia de palabras (matriz slot × significados) ──
+    # La matriz NO vive en tabla aparte: la carga la palabra "cabeza" de la
+    # familia, así hereda tal cual el SM-2 de abajo y la familia ES la unidad de
+    # repaso (help/helper/helpful = una sola palabra que se repasa).
+    family_root = Column(String(80), nullable=True, index=True)  # raíz léxica ("help"); NULL = sin familia
+    family = Column(Text, nullable=True)            # JSON: services.word_family.normalize() — solo en la cabeza
+    family_head = Column(Integer, default=1)        # 1 = cabeza (repasa y cuenta); 0 = miembro absorbido
+    family_slot = Column(String(20), nullable=True)  # celda que ocupa dentro de su familia (verb, adjective, phrasal…)
+    # Memoria POR CASILLA: {"verb": {"ok": 3, "fail": 1}, "adjective": {...}}.
+    # El SM-2 sigue siendo uno solo para toda la familia (la familia es la
+    # unidad de repaso); esto solo decide QUÉ casilla preguntar: la más floja.
+    slot_stats = Column(Text, nullable=True)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=True)
     difficulty = Column(Integer, default=3)          # 1-5 (dificultad subjetiva del usuario)
     cefr_level = Column(String(2), nullable=True)    # A1..C2 (nivel objetivo, vía cefrpy); NULL si desconocido/frase
