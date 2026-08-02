@@ -408,6 +408,7 @@ function handleSelection(ui, pageEl, viewport) {
                     meanings: full.meanings || [],
                     common_phrases: full.common_phrases || [],
                     phonetic: full.phonetic || null,
+                    family: full.family || null,
                     source_document_id: state.doc ? state.doc.id : null,
                 });
                 state.vocabWords.unshift(created);

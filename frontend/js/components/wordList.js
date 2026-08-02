@@ -209,6 +209,17 @@ export async function render(container) {
                             common_phrases: full.common_phrases || [],
                             phonetic: full.phonetic || null,
                         });
+                        // La familia va por su propio endpoint (valida la matriz
+                        // y absorbe parientes). Si ya existe esa familia en otra
+                        // palabra el backend responde 409: no es un error que
+                        // deba romper el guardado de los significados.
+                        if (full.family && !word.family) {
+                            try {
+                                await api.words.setFamily(word.id, full.family);
+                            } catch (e) {
+                                console.warn('familia no aplicada:', e.message);
+                            }
+                        }
                         toast(`"${word.word}" actualizada con todos sus significados ✓`);
                         loadWords();
                     },

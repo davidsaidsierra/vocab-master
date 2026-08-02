@@ -59,6 +59,7 @@ def _build_out(word_lc: str, data: dict, cached: bool, source: str) -> LookupOut
         phonetic=data.get("phonetic", "") or "",
         meanings=data.get("meanings", []) or [],
         common_phrases=data.get("common_phrases", []) or [],
+        family=data.get("family") or None,
         cached=cached,
         source=source,
     )

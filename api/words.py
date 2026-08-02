@@ -111,6 +111,50 @@ def _attach_to_family(db: Session, w: Word, user: User) -> str | None:
     return None
 
 
+def _apply_family_payload(db: Session, w: Word, raw: dict | None, user: User) -> str | None:
+    """
+    Guarda la matriz que vino del lookup en la palabra recién creada. Devuelve
+    la raíz aplicada, o None si no había matriz o no se pudo usar.
+
+    Nunca crea una familia duplicada: si otra palabra del usuario ya es cabeza
+    de esa raíz, la nueva se cuelga de ella como miembro.
+    """
+    if not raw:
+        return None
+    try:
+        matrix = word_family.normalize(raw)
+    except ValueError:
+        return None   # la IA devolvió una matriz vacía o inservible: se ignora
+
+    # La palabra guardada TIENE que estar dentro de su propia familia. Si la IA
+    # se va por la raíz etimológica (pediste "clarify" y te arma la de "clear"),
+    # la matriz no sirve: dejaría la palabra sin casilla y con una traducción
+    # que no es la suya. Mejor sin familia que con una equivocada.
+    if (w.word or "").strip().lower() not in word_family.absorbable_forms(matrix):
+        return None
+
+    existing = scope_to_owner(
+        db.query(Word).filter(
+            Word.family.isnot(None), Word.family_root == matrix["root"], Word.id != w.id
+        ), Word, user,
+    ).first()
+    if existing:
+        w.family_root = matrix["root"]
+        w.family_head = 0
+        w.family_slot = word_family.slot_of_form(matrix, w.word)
+        return matrix["root"]
+
+    w.family = word_family.dumps(matrix)
+    w.family_root = matrix["root"]
+    w.family_head = 1
+    w.family_slot = word_family.slot_of_form(matrix, w.word)
+    own = word_family.cell_translation(matrix, w.family_slot)
+    if own:
+        w.translation = own
+    _absorb_into_family(db, w, matrix, user)
+    return matrix["root"]
+
+
 @router.get("/", response_model=list[WordOut])
 def list_words(
     category_id: int | None = Query(None),
@@ -463,12 +507,16 @@ def create_word(
     payload = data.model_dump()
     meanings = payload.pop("meanings", None)
     common_phrases = payload.pop("common_phrases", None)
+    family_raw = payload.pop("family", None)
     w = Word(user_id=owner_id(current_user), **payload)
     _apply_lookup_payload(w, meanings, common_phrases, override_translation=True)
     w.cefr_level = cefr.level_for_word(w.word)
     db.add(w)
     db.flush()
-    _attach_to_family(db, w, current_user)  # si ya vive en una familia, se absorbe
+    # Primero, ¿ya pertenece a una familia que existe? Si sí, se absorbe y la
+    # matriz que traiga el lookup sobra. Si no, se estrena con la suya.
+    if not _attach_to_family(db, w, current_user):
+        _apply_family_payload(db, w, family_raw, current_user)
     db.commit()
     db.refresh(w)
     return _word_to_out(w)

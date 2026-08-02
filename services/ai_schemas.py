@@ -162,10 +162,80 @@ class _LookupPhrase(BaseModel):
         return _to_str(v)
 
 
+# ── Familia de palabras devuelta por el lookup ───────────────────────────────
+# Misma forma que las matrices curadas de data/word_families. La validación
+# fuerte (celdas vacías, flexiones calculadas) la hace services.word_family
+# al guardarla; aquí solo se garantizan los tipos para que no se pierda nada.
+class _FamilyMeaning(BaseModel):
+    # `extra="allow"` a propósito: `register` (formal/técnico/incontable) choca
+    # con un atributo heredado de BaseModel si se declara, así que se deja pasar
+    # como campo extra — y de paso sobrevive cualquier clave nueva.
+    model_config = ConfigDict(extra="allow")
+    translation_es: str = ""
+    definition_en: str = ""
+    example_en: str = ""
+    example_es: str = ""
+
+    @field_validator("translation_es", "definition_en", "example_en", "example_es", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)
+
+
+class _FamilyCell(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    form: str = ""
+    variants: list[str] = []
+    meanings: list[_FamilyMeaning] = []
+
+    @field_validator("form", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)
+
+    @field_validator("variants", mode="before")
+    @classmethod
+    def _v(cls, v):
+        return _to_str_list(v)
+
+    @field_validator("meanings", mode="before")
+    @classmethod
+    def _m(cls, v):
+        return _to_dict_list(v)
+
+
+class FamilyResult(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    root: str = ""
+    # Una celda puede venir null: significa que esa función gramatical NO existe
+    # en la familia, y es información válida (stay no tiene adjetivo).
+    slots: dict[str, _FamilyCell | None] = {}
+    phrasals: list[_LookupPhrase] = []
+    contrast_es: str = ""
+    notes_es: str = ""
+
+    @field_validator("root", "contrast_es", "notes_es", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)
+
+    @field_validator("slots", mode="before")
+    @classmethod
+    def _sl(cls, v):
+        return v if isinstance(v, dict) else {}
+
+    @field_validator("phrasals", mode="before")
+    @classmethod
+    def _p(cls, v):
+        return _to_dict_list(v)
+
+
 class LookupResult(BaseModel):
     model_config = ConfigDict(extra="ignore")
     word: str = ""
     phonetic: str = ""
+    # None cuando la palabra no tiene familia (frases, conectores).
+    family: FamilyResult | None = None
     meanings: list[_LookupMeaning] = []
     common_phrases: list[_LookupPhrase] = []
 
@@ -178,6 +248,12 @@ class LookupResult(BaseModel):
     @classmethod
     def _l(cls, v):
         return _to_dict_list(v)
+
+    @field_validator("family", mode="before")
+    @classmethod
+    def _fam(cls, v):
+        # La IA a veces manda "" o [] en vez de null cuando no hay familia.
+        return v if isinstance(v, dict) and v else None
 
 
 # ── Lookup contextual (lector de PDF) ────────────────────────────────────────

@@ -388,7 +388,24 @@ Return a JSON object with this EXACT structure and nothing else:
       "example_en": "example sentence using the phrase",
       "example_es": "traducción al español del ejemplo"
     }}
-  ]
+  ],
+  "family": {{
+    "root": "the base lexical root of the word family, lowercased (for 'helpful' → 'help'; for 'decision' → 'decide')",
+    "slots": {{
+      "verb":        {{"form": "help",       "meanings": [{{"translation_es": "ayudar", "definition_en": "to make it easier for someone", "example_en": "Can you help me?", "example_es": "¿Me puedes ayudar?"}}]}},
+      "noun_thing":  {{"form": "help",       "meanings": [{{"translation_es": "ayuda", "example_en": "Thanks for your help.", "example_es": "Gracias por tu ayuda.", "register": "incontable"}}]}},
+      "noun_person": {{"form": "helper",     "meanings": [{{"translation_es": "ayudante", "example_en": "We hired a helper.", "example_es": "Contratamos un ayudante."}}]}},
+      "adjective":   {{"form": "helpful",    "variants": ["helpless"], "meanings": [{{"translation_es": "útil, servicial", "example_en": "Your feedback was helpful.", "example_es": "Tu comentario fue útil."}}]}},
+      "adverb":      {{"form": "helpfully",  "meanings": [{{"translation_es": "de forma servicial", "example_en": "She helpfully pointed it out.", "example_es": "Ella, servicial, lo señaló."}}]}},
+      "gerund":      null,
+      "participle":  null
+    }},
+    "phrasals": [
+      {{"phrase": "help out", "meaning_es": "echar una mano", "example_en": "He helped out with the setup.", "example_es": "Echó una mano con la instalación."}}
+    ],
+    "contrast_es": "",
+    "notes_es": ""
+  }}
 }}
 
 Rules:
@@ -404,6 +421,45 @@ Rules:
 - `common_phrases` should list idioms and collocations (max 5).
 - Spanish translations must be natural Spanish (Latin American / neutral).
 - If the word has only one meaning, return only one item in `meanings`.
+
+WORD FAMILY (`family`) — the most important part for this student. He is a C1
+speaker with strong fluency but weak formal grammar, so the family table is
+what teaches him to move between word classes (succeed → success → successful
+→ successfully). Follow these rules EXACTLY:
+- `root` is the lexical root the whole family derives from, NOT necessarily the
+  word asked. Asked "decision" → root is "decide". Asked "helpful" → "help".
+- CRITICAL: the word asked MUST appear inside the family, as the `form` of one
+  slot or inside that slot's `variants`. The student is saving THAT word, so a
+  table that does not contain it is useless. If the word does not fit the
+  family you were about to build, build the family of the word itself instead:
+  asked "clarify" → root "clarify" (clarify / clarification / clarifying), NOT
+  the family of "clear".
+- Fill a slot ONLY if that word REALLY EXISTS in English. If it does not, set
+  the slot to null. NEVER invent a form to fill the table: "to happy" does not
+  exist (happy has no verb), "stay" has no adjective and no adverb. An empty
+  slot is correct, useful information — a made-up word is a serious error.
+- Derivations are LEXICAL, not mechanical: succeed → success (never
+  "succeedment"), decide → decision, maintain → maintenance, rely → reliable,
+  threaten → threat. Give the real dictionary word.
+- `variants` (optional, per slot): OTHER real words of the SAME slot, above all
+  the negatives and compounds — helpful/helpless, reliable/unreliable,
+  known/unknown, repair/irreparable, break/groundbreaking. Only real words.
+- Do NOT include inflections (plurals, -s, -ing, -ed): the app computes them.
+- Every meaning needs `translation_es` plus `example_en` and `example_es`.
+  Add `register` only when it matters: "técnico", "formal", "legal",
+  "incontable", "británico".
+- `phrasals`: phrasal verbs of the root (stay up, help out). They go here, NOT
+  as a slot. Max 5.
+- `contrast_es`: fill it ONLY when the same slot has a real -ing / -ed pair
+  (interesting vs interested, boring vs bored). Explain in Spanish that the
+  -ing form describes what CAUSES the feeling and the -ed form who FEELS it.
+  Leave it as "" otherwise.
+- `notes_es`: one short Spanish note when there is something worth warning
+  about — irregular derivation, false friend, tricky spelling, a meaning that
+  changes by field. Leave "" if there is nothing useful to say.
+- If the asked item is a phrase, an idiom or a function word (however, besides,
+  in spite of), there is no family: return "family": null.
+
 - Return ONLY valid JSON. Do not include markdown, code fences or any
   explanation text.
 """

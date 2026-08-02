@@ -183,6 +183,9 @@ export async function render(container) {
                     meanings: full.meanings || [],
                     common_phrases: full.common_phrases || [],
                     phonetic: full.phonetic || null,
+                    // La matriz de familia viene en la MISMA respuesta del
+                    // lookup: guardarla aquí no cuesta ninguna llamada extra.
+                    family: full.family || null,
                 });
                 const n = (full.meanings || []).length;
                 toast(`"${w}" guardada con ${n} significado${n !== 1 ? 's' : ''} ✓`);

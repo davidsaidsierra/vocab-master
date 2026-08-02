@@ -46,6 +46,9 @@ class LookupOut(BaseModel):
     phonetic: str = ""
     meanings: list[LookupMeaning] = []
     common_phrases: list[LookupPhrase] = []
+    # Matriz de familia generada por la IA en la MISMA llamada (sin round-trip
+    # extra). None si la palabra no tiene familia: frases, conectores…
+    family: dict | None = None
     cached: bool = False  # true if served from DB cache
     source: str = "gemini"
 
@@ -106,6 +109,7 @@ class WordCreate(BaseModel):
     part_of_speech: str | None = None
     phonetic: str | None = None
     source_document_id: int | None = None
+    family: FamilyMatrix | None = None   # matriz que vino del lookup
 
 class WordUpdate(BaseModel):
     word: str | None = None
