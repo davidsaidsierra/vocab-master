@@ -65,8 +65,9 @@ _VOWELS = "aeiou"
 # Irregulares frecuentes: (past, participle). Solo los que de verdad aparecen;
 # no pretende ser exhaustivo, y el JSON curado siempre puede sobrescribirlos.
 IRREGULAR_VERBS: dict[str, tuple[str, str]] = {
-    "be": ("was", "been"), "bear": ("bore", "borne"), "become": ("became", "become"),
-    "begin": ("began", "begun"),
+    "be": ("was", "been"), "bear": ("bore", "borne"), "beat": ("beat", "beaten"),
+    "become": ("became", "become"), "begin": ("began", "begun"), "bend": ("bent", "bent"),
+    "bite": ("bit", "bitten"), "bleed": ("bled", "bled"), "blow": ("blew", "blown"),
     "break": ("broke", "broken"), "bring": ("brought", "brought"), "build": ("built", "built"),
     "buy": ("bought", "bought"), "catch": ("caught", "caught"), "choose": ("chose", "chosen"),
     "come": ("came", "come"), "cost": ("cost", "cost"), "cut": ("cut", "cut"),
@@ -86,6 +87,25 @@ IRREGULAR_VERBS: dict[str, tuple[str, str]] = {
     "teach": ("taught", "taught"), "tell": ("told", "told"), "think": ("thought", "thought"),
     "understand": ("understood", "understood"), "undertake": ("undertook", "undertaken"),
     "wear": ("wore", "worn"), "win": ("won", "won"), "write": ("wrote", "written"),
+    # Segunda tanda: irregulares que aparecen al generar familias con IA. Sin
+    # ellos la regla produce engendros como "beated" o "sinked".
+    "deal": ("dealt", "dealt"), "dig": ("dug", "dug"), "drink": ("drank", "drunk"),
+    "fall": ("fell", "fallen"), "feed": ("fed", "fed"), "fight": ("fought", "fought"),
+    "fly": ("flew", "flown"), "forbid": ("forbade", "forbidden"),
+    "forgive": ("forgave", "forgiven"), "freeze": ("froze", "frozen"),
+    "hang": ("hung", "hung"), "hide": ("hid", "hidden"), "hit": ("hit", "hit"),
+    "hurt": ("hurt", "hurt"), "lay": ("laid", "laid"), "lend": ("lent", "lent"),
+    "let": ("let", "let"), "light": ("lit", "lit"), "quit": ("quit", "quit"),
+    "rid": ("rid", "rid"), "ride": ("rode", "ridden"), "ring": ("rang", "rung"),
+    "rise": ("rose", "risen"), "seek": ("sought", "sought"), "shake": ("shook", "shaken"),
+    "shine": ("shone", "shone"), "shoot": ("shot", "shot"), "shut": ("shut", "shut"),
+    "sing": ("sang", "sung"), "sink": ("sank", "sunk"), "slide": ("slid", "slid"),
+    "split": ("split", "split"), "spread": ("spread", "spread"),
+    "steal": ("stole", "stolen"), "stick": ("stuck", "stuck"),
+    "strike": ("struck", "struck"), "swear": ("swore", "sworn"),
+    "sweep": ("swept", "swept"), "swim": ("swam", "swum"), "swing": ("swung", "swung"),
+    "throw": ("threw", "thrown"), "wake": ("woke", "woken"), "weave": ("wove", "woven"),
+    "wind": ("wound", "wound"), "withdraw": ("withdrew", "withdrawn"),
 }
 
 # Verbos de una sílaba que NO doblan la consonante final aunque la regla CVC lo

@@ -22,7 +22,7 @@ from api.auth import get_current_user, require_role
 from api.quota import require_ai_access, consume_ai_quota
 from database.connection import get_db
 from database.models import WordLookup, User
-from services import word_lookup
+from services import word_lookup, word_family
 
 logger = logging.getLogger(__name__)
 
@@ -53,13 +53,28 @@ def _sanitize_context(raw: str) -> str:
     return cleaned[:500]
 
 
+def _normalized_family(raw) -> dict | None:
+    """
+    Devuelve la matriz ya normalizada: con las flexiones calculadas y las celdas
+    vacías descartadas. Se hace aquí para que el frontend reciba exactamente lo
+    mismo que se guardará (si no, no puede saber que "beats" pertenece a la
+    familia de "beat", porque las flexiones las calcula el backend).
+    """
+    if not isinstance(raw, dict) or not raw:
+        return None
+    try:
+        return word_family.normalize(raw)
+    except ValueError:
+        return None
+
+
 def _build_out(word_lc: str, data: dict, cached: bool, source: str) -> LookupOut:
     return LookupOut(
         word=data.get("word") or word_lc,
         phonetic=data.get("phonetic", "") or "",
         meanings=data.get("meanings", []) or [],
         common_phrases=data.get("common_phrases", []) or [],
-        family=data.get("family") or None,
+        family=_normalized_family(data.get("family")),
         cached=cached,
         source=source,
     )

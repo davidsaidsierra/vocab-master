@@ -434,6 +434,10 @@ what teaches him to move between word classes (succeed → success → successfu
   family you were about to build, build the family of the word itself instead:
   asked "clarify" → root "clarify" (clarify / clarification / clarifying), NOT
   the family of "clear".
+- Compounds and words with no derivations: if the word asked is a compound
+  (treadmill, workflow, payload, turnstile) or simply has no word family, do
+  NOT return the family of one of its parts. "treadmill" is NOT part of the
+  "tread" family for this purpose. In that case return "family": null.
 - Fill a slot ONLY if that word REALLY EXISTS in English. If it does not, set
   the slot to null. NEVER invent a form to fill the table: "to happy" does not
   exist (happy has no verb), "stay" has no adjective and no adverb. An empty

@@ -193,6 +193,27 @@ export function phrasalItems(family) {
     }));
 }
 
+/**
+ * ¿La familia contiene realmente esta palabra? El backend descarta las matrices
+ * que no la contienen (pedir "treadmill" y recibir la familia de "tread" deja la
+ * palabra sin casilla), así que el frontend usa la misma regla para no mostrar
+ * como válida una matriz que luego no se va a guardar.
+ */
+export function familyHasWord(family, word) {
+    const w = String(word || '').trim().toLowerCase();
+    if (!w || !family) return false;
+    if (String(family.root || '').toLowerCase() === w) return true;
+    for (const cell of Object.values(family.slots || {})) {
+        if (!cell) continue;
+        if (String(cell.form).toLowerCase() === w) return true;
+        if ((cell.variants || []).some(v => String(v).toLowerCase() === w)) return true;
+        // Las flexiones vienen calculadas por el backend (beat → beats), así que
+        // una palabra guardada en plural o en pasado también cuenta.
+        if (Object.values(cell.inflections || {}).some(v => String(v).toLowerCase() === w)) return true;
+    }
+    return false;
+}
+
 /** Todas las preguntas posibles de una familia, por tipo. */
 export function questionsFor(family, kind) {
     if (!family) return [];

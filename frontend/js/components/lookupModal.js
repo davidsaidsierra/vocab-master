@@ -1,6 +1,7 @@
 // ── Lookup modal — shows Gemini-powered contextual meanings ─
 import * as api from '../api.js';
 import { toast } from '../utils/helpers.js';
+import { familyMatrixHTML, familyHasWord } from './familyMatrix.js';
 
 function esc(str) {
     return String(str ?? '')
@@ -58,21 +59,24 @@ export function openLookupModal(word, opts = {}) {
     const body = overlay.querySelector('#lookup-body');
     const phonetic = overlay.querySelector('#lookup-phonetic');
 
-    api.lookup.get(word)
-        .then((data) => renderLookup(data, body, phonetic, opts, close))
-        .catch((err) => {
-            body.innerHTML = `
-                <div class="text-center py-6">
-                    <p class="text-red-400 text-sm mb-2">⚠️ ${esc(err.message)}</p>
-                    <p class="text-xs text-slate-500">
-                        Revisa que <code>GEMINI_API_KEY</code> esté configurada en el backend.
-                    </p>
-                </div>
-            `;
-        });
+    function cargar() {
+        return api.lookup.get(word)
+            .then((data) => renderLookup(data, body, phonetic, opts, close, cargar, word))
+            .catch((err) => {
+                body.innerHTML = `
+                    <div class="text-center py-6">
+                        <p class="text-red-400 text-sm mb-2">⚠️ ${esc(err.message)}</p>
+                        <p class="text-xs text-slate-500">
+                            Revisa que <code>GEMINI_API_KEY</code> esté configurada en el backend.
+                        </p>
+                    </div>
+                `;
+            });
+    }
+    cargar();
 }
 
-function renderLookup(data, body, phonetic, opts, close) {
+function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
     if (data.phonetic) {
         phonetic.textContent = `${data.phonetic}${data.cached ? '  •  💾 cache' : '  •  ✨ nuevo'}`;
     } else {
@@ -125,6 +129,59 @@ function renderLookup(data, body, phonetic, opts, close) {
         </div>
     ` : '';
 
+    // ── Familia de palabras ─────────────────────────────
+    // Los lookups guardados antes de que la IA generara la matriz no la traen.
+    // En vez de dejarlos así para siempre, se ofrece regenerar ese lookup: borra
+    // la entrada de cache y vuelve a preguntar (gasta UNA llamada de IA, y solo
+    // cuando tú lo pides).
+    // Una matriz que no contiene la palabra consultada no sirve (pedir
+    // "treadmill" y recibir la de "tread"): el backend la rechaza, así que aquí
+    // tampoco se muestra como válida ni se manda a guardar.
+    // Se compara contra la palabra PEDIDA (la que se va a guardar), no contra la
+    // que devolvió la IA: si escribiste "affort", la IA responde sobre "afford"
+    // y su familia no te sirve — es justo lo que el backend rechaza al guardar.
+    const objetivo = (pedida || data.word || '').trim().toLowerCase();
+    const familiaAjena = data.family && !familyHasWord(data.family, objetivo);
+    if (familiaAjena) data.family = null;
+
+    // Si la IA respondió sobre otra palabra, casi siempre es un typo tuyo.
+    // Merece decirlo: explica por qué no hay familia y te deja corregirlo.
+    const respondida = (data.word || '').trim().toLowerCase();
+    const otraPalabra = objetivo && respondida && objetivo !== respondida;
+    const avisoTypo = otraPalabra ? `
+        <div class="mt-4 p-3 rounded-lg" style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.25)">
+          <p class="text-xs font-semibold text-red-400 mb-1">⚠️ ¿Error de escritura?</p>
+          <p class="text-xs text-slate-400">
+            Consultaste <strong>${esc(pedida)}</strong>, pero la IA respondió sobre
+            <strong>${esc(data.word)}</strong>. Si es un typo, corrige la palabra con ✏️
+            y vuelve a consultarla: así también podrá tener su familia.
+          </p>
+        </div>` : '';
+
+    const avisoRegenerar = `
+        <div class="mt-5 p-3 rounded-lg" style="background:rgba(148,163,184,0.08);border:1px solid rgba(148,163,184,0.2)">
+          <p class="text-xs text-slate-400">
+            Esta consulta se guardó antes de que la app generara familias, así que
+            no trae matriz. Puedes regenerarla: gasta una llamada de IA.
+          </p>
+          <button id="lookup-regen" class="btn-secondary mt-2" style="padding:0.4rem 0.9rem;font-size:0.8rem">🧬 Generar familia</button>
+        </div>`;
+
+    const avisoAjena = `
+        <div class="mt-5 p-3 rounded-lg" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25)">
+          <p class="text-xs text-amber-400 font-semibold mb-1">🧬 Sin familia utilizable</p>
+          <p class="text-xs text-slate-400">
+            La IA devolvió una familia que no incluye "${esc(data.word)}", así que no se
+            puede usar. Suele pasar con compuestos (treadmill, workflow) y con palabras
+            que simplemente no tienen familia: no es un error, es que no aplica.
+          </p>
+        </div>`;
+
+    const familyHTML = data.family
+        ? `<h4 class="text-sm font-semibold text-slate-300 mt-5 mb-2">🧬 Familia de palabras</h4>
+           <div class="card" style="padding:0.75rem">${familyMatrixHTML(data.family)}</div>`
+        : (familiaAjena ? avisoAjena : avisoRegenerar);
+
     const saveAllHTML = opts.onSaveAll ? `
         <div class="flex items-center justify-between gap-3 mb-4 p-3 rounded-lg" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25)">
             <p class="text-xs text-slate-400">Guarda esta palabra con <strong class="text-slate-200">todos</strong> sus significados y su categoría gramatical.</p>
@@ -132,7 +189,22 @@ function renderLookup(data, body, phonetic, opts, close) {
         </div>
     ` : '';
 
-    body.innerHTML = saveAllHTML + meaningsHTML + phrasesHTML;
+    body.innerHTML = saveAllHTML + avisoTypo + meaningsHTML + phrasesHTML + familyHTML;
+
+    // Regenerar: invalida la cache (solo admin) y vuelve a consultar.
+    const regenBtn = body.querySelector('#lookup-regen');
+    regenBtn?.addEventListener('click', async () => {
+        regenBtn.disabled = true;
+        regenBtn.textContent = 'Consultando a la IA…';
+        try {
+            await api.lookup.invalidate(data.word);
+            await recargar();
+        } catch (err) {
+            regenBtn.disabled = false;
+            regenBtn.textContent = '🧬 Generar familia';
+            toast(err.message || 'No se pudo regenerar', 'error');
+        }
+    });
 
     // Botón "Guardar palabra" — guarda el payload completo (sin IA extra).
     if (opts.onSaveAll) {
