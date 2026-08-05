@@ -47,6 +47,7 @@ from services.prompts import (
     TOEFL_EMAIL_GRADING_PROMPT,
     TOEFL_DISCUSSION_GRADING_PROMPT,
     TOEFL_QUESTION_GEN_PROMPT,
+    VOCAB_WRITING_PROMPT,
     INJECTION_GUARD,
     wrap_untrusted,
 )
@@ -424,3 +425,77 @@ def correct_writing_v2(
     # El validador ya normalizó grammar_topic_usage.used a yes|no|partial.
     data["grammar_used_correctly"] = data["grammar_topic_usage"]["used"] in ("yes", "partial")
     return data
+
+
+def evaluate_vocab_writing(
+    *,
+    topic: str,
+    words_block: str,
+    total: int,
+    required: int,
+    detected: list[str],
+    missing: list[str],
+    spell_candidates: list[str],
+    word_count: int,
+    user_text: str,
+) -> dict[str, Any]:
+    """
+    Evalúa el ejercicio "Escribir un texto" del repaso. UN solo round-trip.
+
+    Todo lo determinista (detección de uso y candidatos a error ortográfico) ya
+    viene resuelto desde services/vocab_writing.py y se le pasa al modelo como
+    hechos; aquí solo se le pide juicio semántico y la nota 0.0–5.0.
+    """
+    client = _ensure_client()
+    prompt = VOCAB_WRITING_PROMPT.format(
+        injection_guard=INJECTION_GUARD,
+        topic=topic.strip() or "(free topic)",
+        total=total,
+        required=required,
+        words_block=words_block.strip() or "(none)",
+        detected_list=", ".join(detected) if detected else "(none)",
+        missing_list=", ".join(missing) if missing else "(none)",
+        spell_list=", ".join(spell_candidates) if spell_candidates else "(none)",
+        word_count=word_count,
+        user_text=wrap_untrusted(user_text.strip()),
+    )
+
+    # max_tokens explícito y ajustado al free tier de Groq (8000 tokens/minuto,
+    # y el cupo cuenta prompt + respuesta). El prompt más grande de este
+    # ejercicio (42 palabras + 500 de texto) ronda los 2 200 tokens, así que
+    # 4 000 de respuesta dejan margen sin arriesgar un 413.
+    # Con el cupo por defecto la respuesta se cortaba a medias y Groq devolvía
+    # 400 (json_validate_failed); por eso además el prompt pide reportar SOLO
+    # los problemas y no las 35 palabras una por una.
+    try:
+        resp = _create(
+            client,
+            model=_MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}],
+            response_format={"type": "json_object"},
+            temperature=0.2,
+            max_tokens=4000,
+        )
+    except AIRateLimitError:
+        raise
+    except Exception as exc:  # noqa: BLE001
+        msg = str(exc)
+        # 413 / TPM agotado: mismo trato que un 429, se reintenta en un momento.
+        if "rate_limit_exceeded" in msg or "Request too large" in msg:
+            raise AIRateLimitError(msg) from exc
+        # Un JSON truncado o inválido llega como 400 del propio Groq; se traduce
+        # a ValueError para que la API responda 502 en español y no un 500 seco.
+        if "json_validate_failed" in msg or "Failed to generate JSON" in msg:
+            raise ValueError("el modelo no logró cerrar el JSON de la evaluación") from exc
+        raise
+
+    text = (resp.choices[0].message.content or "").strip()
+    if not text:
+        raise RuntimeError("Groq devolvió una respuesta vacía")
+
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Groq devolvió JSON inválido: {exc}") from exc
+
+    return ai_schemas.validate(ai_schemas.VocabWritingEvaluation, data)

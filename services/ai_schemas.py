@@ -441,3 +441,99 @@ def validate(model: type[BaseModel], data: Any) -> dict:
         return model.model_validate(data).model_dump()
     except ValidationError as exc:
         raise ValueError(f"estructura inesperada del modelo de IA: {exc.error_count()} campo(s) inválido(s)") from exc
+
+
+# ── Repaso: "Escribir un texto" (evaluación de uso de vocabulario) ───────────
+_VERDICTS = {"correct", "awkward", "wrong", "not_found"}
+
+
+def _to_float(v: Any) -> float:
+    """Nota 0–5 con un decimal. Tolera '3,4', '3.4', 4 o basura (→ 0.0)."""
+    if isinstance(v, bool):
+        return 0.0
+    if isinstance(v, (int, float)):
+        f = float(v)
+    elif isinstance(v, str):
+        try:
+            f = float(v.strip().replace(",", ".").split()[0])
+        except (ValueError, IndexError):
+            return 0.0
+    else:
+        return 0.0
+    return round(min(5.0, max(0.0, f)), 1)
+
+
+class VocabWritingWordVerdict(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    word: str = ""
+    verdict: str = "correct"   # correct | awkward | wrong | not_found
+    comment_es: str = ""
+
+    @field_validator("word", "verdict", "comment_es", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)
+
+    @field_validator("verdict")
+    @classmethod
+    def _v(cls, v: str) -> str:
+        v = v.strip().lower()
+        return v if v in _VERDICTS else "correct"
+
+
+class VocabWritingSpellVerdict(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    word: str = ""
+    is_error: bool = True
+    suggestion: str = ""
+
+    @field_validator("word", "suggestion", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)
+
+    @field_validator("is_error", mode="before")
+    @classmethod
+    def _b(cls, v):
+        return _to_bool(v)
+
+
+class VocabWritingRealWordError(BaseModel):
+    """Palabra bien escrita pero equivocada (their/there): lo que ningún
+    diccionario offline puede detectar, y el error típico de un hispanohablante."""
+    model_config = ConfigDict(extra="ignore")
+    wrong: str = ""
+    right: str = ""
+    comment_es: str = ""
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)
+
+
+class VocabWritingEvaluation(BaseModel):
+    """Respuesta de services.groq.evaluate_vocab_writing (un solo round-trip)."""
+    model_config = ConfigDict(extra="ignore")
+    words: list[VocabWritingWordVerdict] = []
+    spelling: list[VocabWritingSpellVerdict] = []
+    real_word_errors: list[VocabWritingRealWordError] = []
+    score: float = 0.0
+    score_reason_es: str = ""
+    feedback_es: str = ""
+    encouragement_es: str = "¡Sigue así!"
+
+    @field_validator("words", "spelling", "real_word_errors", mode="before")
+    @classmethod
+    def _l(cls, v):
+        return _to_dict_list(v)
+
+    @field_validator("score", mode="before")
+    @classmethod
+    def _f(cls, v):
+        return _to_float(v)
+
+    @field_validator("score_reason_es", "feedback_es", "encouragement_es", mode="before")
+    @classmethod
+    def _s(cls, v):
+        return _to_str(v)

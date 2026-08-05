@@ -6,6 +6,7 @@ import {
     openFamilyModal, SLOT_LABELS, filledSlots, cellFor,
     cellTranslation, cellExample, cellDefinition, questionsFor,
 } from './familyMatrix.js';
+import { mount as mountVocabWriting } from './vocabWriting.js';
 
 // ── Web Speech API pronunciation ──────────────────────────────
 function speak(text, lang = 'en-US') {
@@ -370,7 +371,13 @@ export async function render(container) {
                 </div>
             </div>
         </div>
+        <div id="vw-mount"></div>
     `;
+
+    // Ejercicio "Escribir un texto" (components/vocabWriting.js): tarjeta aparte
+    // al final del repaso. Va sin await y con try/catch para que, si algo suyo
+    // falla, el repaso normal siga funcionando igual.
+    try { mountVocabWriting(container.querySelector('#vw-mount'))?.catch?.(() => {}); } catch { /* noop */ }
 
     const filterCat        = container.querySelector('#review-filter-cat');
     const filterDays       = container.querySelector('#review-filter-days');

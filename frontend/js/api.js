@@ -179,3 +179,15 @@ export const grammar = {
     topic:      (slug) => request(`/grammar/topics/${encodeURIComponent(slug)}`),
     categories: () => request('/grammar/categories'),
 };
+
+// ── Repaso: "Escribir un texto" (vocabulario propio → mastery) ──────────────
+export const vocabWriting = {
+    topics:  () => request('/vocab-writing/topics'),
+    session: (perType = 5, topicId = null) => {
+        const qs = new URLSearchParams({ per_type: String(perType) });
+        if (topicId) qs.set('topic_id', String(topicId));
+        return request(`/vocab-writing/session?${qs.toString()}`);
+    },
+    submit:  (data) => request('/vocab-writing/submit', { method: 'POST', body: JSON.stringify(data) }),
+    history: (limit = 10) => request(`/vocab-writing/history?limit=${limit}`),
+};

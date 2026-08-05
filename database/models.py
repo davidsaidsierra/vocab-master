@@ -318,3 +318,33 @@ class GrammarTopic(Base):
     usage_es = Column(Text, nullable=True)          # 1 frase en español: para qué se usa este punto gramatical
     created_at = Column(DateTime, default=_utcnow)
     updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow)
+
+
+class VocabWritingSession(Base):
+    """
+    Un envío del ejercicio "Escribir un texto" del repaso: el usuario recibe un
+    tema y N palabras de su propio repositorio (repartidas por categoría
+    gramatical) y escribe un texto reusándolas para subir su mastery_level.
+
+    Tabla NUEVA: `create_all` la crea sola en SQLite y en Neon, sin ALTER ni
+    backfill sobre nada existente.
+
+    `evaluation` guarda el JSON completo: lo determinista
+    (services/vocab_writing.py) y el veredicto de la IA, para poder releer un
+    envío sin volver a llamar a Groq.
+    """
+    __tablename__ = "vocab_writing_sessions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
+    topic = Column(String(300), nullable=False)
+    per_type = Column(Integer, nullable=False, default=5)   # 3 | 4 | 5 | 6
+    shown_words = Column(Text, nullable=False)   # JSON: [{"id","word","pos"}]
+    user_text = Column(Text, nullable=False)
+    word_count = Column(Integer, default=0)      # palabras escritas (máx 500)
+    total_shown = Column(Integer, default=0)     # cuántas palabras se mostraron
+    required = Column(Integer, default=0)        # total_shown // 2
+    used_count = Column(Integer, default=0)      # usadas y confirmadas por la IA
+    score = Column(Float, default=0.0)           # 0.0–5.0, un decimal
+    evaluation = Column(Text, nullable=False)    # JSON: determinista + IA
+    created_at = Column(DateTime, default=_utcnow, index=True)

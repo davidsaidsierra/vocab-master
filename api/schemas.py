@@ -515,3 +515,95 @@ class ExamHistoryItem(BaseModel):
 
 class ExamHistoryOut(BaseModel):
     attempts: list[ExamHistoryItem] = []
+
+
+# ── Repaso: "Escribir un texto" (subir mastery usando el vocabulario propio) ──
+class VocabWritingTopic(BaseModel):
+    id: int
+    area: str
+    title: str
+    hint_es: str
+
+class VocabWritingTopicsOut(BaseModel):
+    topics: list[VocabWritingTopic] = []
+
+class VocabWritingWord(BaseModel):
+    id: int
+    word: str
+    translations: list[str] = []   # todas las acepciones guardadas
+    mastery_level: float = 0.0
+    cefr_level: str | None = None
+    # Detección exportada como datos (services.vocab_writing.match_spec): el
+    # frontend marca en vivo qué palabras ya se usaron SIN reimplementar la
+    # morfología, así las dos implementaciones no pueden divergir.
+    match: dict = {}
+
+class VocabWritingBucket(BaseModel):
+    pos: str                        # noun | verb | adjective | adverb | conjunction | preposition | phrase
+    label: str                      # etiqueta en español
+    icon: str
+    words: list[VocabWritingWord] = []
+
+class VocabWritingSessionOut(BaseModel):
+    topic: VocabWritingTopic
+    per_type: int
+    buckets: list[VocabWritingBucket] = []
+    total: int                      # palabras realmente mostradas
+    required: int                   # total // 2 — el mínimo obligatorio
+    max_words: int                  # tope de palabras del texto
+    daily_used: int
+    daily_limit: int
+
+class VocabWritingSubmitIn(BaseModel):
+    topic: str = ""
+    topic_id: int | None = None
+    per_type: int = 5
+    word_ids: list[int] = []
+    user_text: str
+    attempt: int = 1        # 1 = primer envío; 2 = reintento tras ver dónde falló
+
+class VocabWritingWordResult(BaseModel):
+    id: int
+    word: str
+    pos: str = ""
+    translations: list[str] = []
+    status: str                     # correct | awkward | wrong | missing
+    comment_es: str = ""
+    # mastery_old/new solo vienen si esta sesión movió el SM-2 de la palabra;
+    # None = usada pero sin boost (ya se había practicado hoy).
+    mastery_old: float | None = None
+    mastery_new: float | None = None
+
+class VocabWritingSpellError(BaseModel):
+    word: str
+    suggestion: str = ""
+    note_es: str = ""      # solo en errores de palabra-real (their/there)
+
+class VocabWritingSubmitOut(BaseModel):
+    score: float                    # 0.0–5.0 con un decimal
+    score_reason_es: str = ""
+    feedback_es: str = ""
+    encouragement_es: str = ""
+    word_count: int = 0
+    total_shown: int = 0
+    required: int = 0
+    used_count: int = 0
+    coverage_met: bool = False
+    words: list[VocabWritingWordResult] = []
+    spelling_errors: list[VocabWritingSpellError] = []
+    spelling_checked: int = 0       # cuántos tokens sospechosos se revisaron
+    daily_used: int = 0
+    daily_limit: int = 0
+
+class VocabWritingHistoryItem(BaseModel):
+    id: int
+    created_at: datetime
+    topic: str
+    score: float
+    used_count: int
+    required: int
+    total_shown: int
+    word_count: int
+
+class VocabWritingHistoryOut(BaseModel):
+    items: list[VocabWritingHistoryItem] = []
