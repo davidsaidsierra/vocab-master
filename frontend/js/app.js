@@ -10,6 +10,8 @@ import { render as renderWriting }      from './components/writingChallenge.js';
 import { render as renderExams }        from './components/internationalExams.js';
 import { render as renderAdminUsers }   from './components/adminUsers.js';
 import { render as renderPdfReader }    from './components/pdfReader.js';
+import { render as renderSettings }     from './components/settings.js';
+import { initTheme }                    from './utils/theme.js';
 import {
     loadCurrentUser, applyRoleVisibility, initLoginForm,
     showLogin, logout, getRole,
@@ -27,6 +29,7 @@ const routes = {
     '/exams':        renderExams,
     '/admin':        renderAdminUsers,
     '/reading':      renderPdfReader,
+    '/settings':     renderSettings,
 };
 
 const app = document.getElementById('app');
@@ -54,8 +57,17 @@ function navigate() {
 
 window.addEventListener('hashchange', navigate);
 
+// Al cambiar el tema, repintar la vista actual: los gráficos de Chart.js
+// fijan sus colores al dibujarse y no se enteran solos.
+window.addEventListener('theme:changed', () => {
+    try { navigate(); } catch (_) { /* silent */ }
+});
+
 // ── Arranque: cargar sesión antes de enrutar ────────────────
 async function boot() {
+    // Tema: reaplica lo guardado y queda escuchando el modo del sistema.
+    try { initTheme(); } catch (_) { /* la app sigue en claro */ }
+
     initLoginForm(() => { applyRoleVisibility(); navigate(); });
 
     // Si una llamada devuelve 401 en cualquier momento → mostrar login.

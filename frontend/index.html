@@ -3,20 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="light only">
+    <meta name="color-scheme" content="light dark">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <title>VocabMaster</title>
+    <!-- Tema: se aplica ANTES de pintar para que no haya destello blanco.
+         Duplica la lógica mínima de js/utils/theme.js a propósito: ese módulo
+         carga tarde (es un ES module) y aquí necesitamos algo síncrono. -->
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('vocabmaster_theme') || 'system';
+                var dark = saved === 'dark' || (saved === 'system' &&
+                    window.matchMedia('(prefers-color-scheme: dark)').matches);
+                document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+            } catch (_) {
+                document.documentElement.setAttribute('data-theme', 'light');
+            }
+        })();
+    </script>
     <!-- Critical inline styles (run before any cached CSS) -->
     <style>
-        :root { color-scheme: light only !important; }
-        html { background-color: #f5f5f7 !important; color-scheme: light only !important; }
-        body { background-color: #f5f5f7 !important; color: #1d1d1f !important; }
+        :root { --boot-bg: #f5f5f7; --boot-card: #fff; --boot-border: #e5e5e7; }
+        :root[data-theme="dark"] { --boot-bg: #0f0f11; --boot-card: #1c1c1e; --boot-border: #2f2f33; }
+        html, body { background-color: var(--boot-bg); }
         /* Login overlay: oculto por defecto, full-screen cuando .visible */
         #login-overlay { display: none; position: fixed; inset: 0; z-index: 100;
-            background: #f5f5f7; align-items: center; justify-content: center; padding: 1rem; }
+            background: var(--boot-bg); align-items: center; justify-content: center; padding: 1rem; }
         #login-overlay.visible { display: flex; }
-        #login-overlay .login-card { background: #fff; border: 1px solid #e5e5e7;
+        #login-overlay .login-card { background: var(--boot-card); border: 1px solid var(--boot-border);
             border-radius: 16px; padding: 2rem; width: 100%; max-width: 360px;
             box-shadow: 0 10px 40px rgba(0,0,0,.08); }
     </style>
@@ -43,7 +58,7 @@
         window.pdfjsLib = pdfjsLib;
     </script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/static/css/styles.css?v=11">
+    <link rel="stylesheet" href="/static/css/styles.css?v=12">
 </head>
 <body class="min-h-screen flex">
 
@@ -117,6 +132,10 @@
             <a href="#/exams" class="nav-link" data-page="exams">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a5 5 0 100-10 5 5 0 000 10z M8.5 13.5L7 21l5-3 5 3-1.5-7.5"/></svg>
                 International Exams
+            </a>
+            <a href="#/settings" class="nav-link" data-page="settings">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Ajustes
             </a>
         </div>
         <div class="p-4" style="border-top:1px solid var(--border)">
@@ -195,6 +214,6 @@
     </button>
 
     <!-- ── JavaScript modules ───────────────────────────── -->
-    <script type="module" src="/static/js/app.js?v=11"></script>
+    <script type="module" src="/static/js/app.js?v=12"></script>
 </body>
 </html>

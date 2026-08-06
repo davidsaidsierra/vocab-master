@@ -1,5 +1,5 @@
 import * as api from '../api.js';
-import { masteryColor, formatDate } from '../utils/helpers.js';
+import { masteryColor, formatDate, cssVar } from '../utils/helpers.js';
 
 const LEVEL_COLORS = {
     A1: '#34c759', A2: '#34c759',
@@ -268,7 +268,7 @@ function renderDistributionChart(data) {
         options: {
             responsive: true,
             plugins: {
-                legend: { position: 'bottom', labels: { color: '#6e6e73', padding: 16, font: { size: 12 } } },
+                legend: { position: 'bottom', labels: { color: cssVar('--text-secondary'), padding: 16, font: { size: 12 } } },
             },
         },
     });
@@ -302,8 +302,8 @@ function renderActivityChart(data) {
         options: {
             responsive: true,
             scales: {
-                x: { ticks: { color: '#86868b', maxRotation: 45, font: { size: 10 } }, grid: { display: false } },
-                y: { ticks: { color: '#86868b', stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.05)' }, beginAtZero: true },
+                x: { ticks: { color: cssVar('--text-tertiary'), maxRotation: 45, font: { size: 10 } }, grid: { display: false } },
+                y: { ticks: { color: cssVar('--text-tertiary'), stepSize: 1 }, grid: { color: cssVar('--track') }, beginAtZero: true },
             },
             plugins: { legend: { display: false } },
         },
@@ -348,19 +348,19 @@ function renderWritingProgressChart(historyItems) {
             responsive: true,
             interaction: { mode: 'index', intersect: false },
             scales: {
-                x: { ticks: { color: '#86868b', font: { size: 10 }, maxRotation: 45 }, grid: { display: false } },
+                x: { ticks: { color: cssVar('--text-tertiary'), font: { size: 10 }, maxRotation: 45 }, grid: { display: false } },
                 y: {
                     position: 'left', min: 0, max: 100,
-                    ticks: { color: '#86868b' }, grid: { color: 'rgba(0,0,0,0.05)' },
-                    title: { display: true, text: 'Puntaje', color: '#86868b', font: { size: 11 } },
+                    ticks: { color: cssVar('--text-tertiary') }, grid: { color: cssVar('--track') },
+                    title: { display: true, text: 'Puntaje', color: cssVar('--text-tertiary'), font: { size: 11 } },
                 },
                 y1: {
                     position: 'right', min: 0,
-                    ticks: { color: '#86868b' }, grid: { display: false },
-                    title: { display: true, text: 'Errores/100', color: '#86868b', font: { size: 11 } },
+                    ticks: { color: cssVar('--text-tertiary') }, grid: { display: false },
+                    title: { display: true, text: 'Errores/100', color: cssVar('--text-tertiary'), font: { size: 11 } },
                 },
             },
-            plugins: { legend: { position: 'bottom', labels: { color: '#6e6e73', font: { size: 11 } } } },
+            plugins: { legend: { position: 'bottom', labels: { color: cssVar('--text-secondary'), font: { size: 11 } } } },
         },
     });
 }
@@ -388,8 +388,8 @@ function renderExamProgressChart(attempts) {
         options: {
             responsive: true,
             scales: {
-                x: { ticks: { color: '#86868b', font: { size: 10 }, maxRotation: 45 }, grid: { display: false } },
-                y: { min: 1, max: 6, ticks: { color: '#86868b', stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                x: { ticks: { color: cssVar('--text-tertiary'), font: { size: 10 }, maxRotation: 45 }, grid: { display: false } },
+                y: { min: 1, max: 6, ticks: { color: cssVar('--text-tertiary'), stepSize: 1 }, grid: { color: cssVar('--track') } },
             },
             plugins: { legend: { display: false } },
         },

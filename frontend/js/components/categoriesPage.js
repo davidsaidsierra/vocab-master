@@ -21,7 +21,7 @@ export async function render(container) {
                         <label class="block text-xs text-slate-500 mb-1">Color</label>
                         <div class="flex gap-2 flex-wrap" id="color-picker">
                             ${PRESET_COLORS.map((c, i) => `
-                                <button type="button" class="w-8 h-8 rounded-full transition-transform color-opt ${i === 0 ? 'is-selected' : ''}" style="background:${c};border:2px solid ${i === 0 ? '#1d1d1f' : 'transparent'};${i === 0 ? 'transform:scale(1.1);' : ''}" data-color="${c}"></button>
+                                <button type="button" class="w-8 h-8 rounded-full transition-transform color-opt ${i === 0 ? 'is-selected' : ''}" style="background:${c};border:2px solid ${i === 0 ? 'var(--text-primary)' : 'transparent'};${i === 0 ? 'transform:scale(1.1);' : ''}" data-color="${c}"></button>
                             `).join('')}
                         </div>
                         <input type="hidden" name="color" value="${PRESET_COLORS[0]}">
@@ -56,7 +56,7 @@ export async function render(container) {
             b.style.border = '2px solid transparent';
             b.style.transform = 'scale(1)';
         });
-        btn.style.border = '2px solid #1d1d1f';
+        btn.style.border = '2px solid var(--text-primary)';
         btn.style.transform = 'scale(1.1)';
         colorInput.value = btn.dataset.color;
     });

@@ -42,3 +42,15 @@ export function truncate(str, max = 60) {
     if (!str) return '';
     return str.length > max ? str.slice(0, max) + '…' : str;
 }
+
+// ── Valor actual de un token CSS ─────────────────────────────
+// Chart.js necesita colores literales, no var(--x); esto los resuelve en el
+// momento de dibujar, así los gráficos siguen el tema activo.
+export function cssVar(name, fallback = '#86868b') {
+    try {
+        const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        return v || fallback;
+    } catch (_) {
+        return fallback;
+    }
+}
