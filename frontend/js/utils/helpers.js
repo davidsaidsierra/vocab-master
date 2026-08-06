@@ -1,8 +1,19 @@
 // ── Toast notifications ──────────────────────────────────────
-export function toast(message, type = 'success') {
+// `opts.actionLabel` + `opts.onAction` añaden un enlace al aviso (p. ej.
+// "Ver" tras guardar una palabra desde la barra superior). Opcional: las
+// llamadas de dos argumentos siguen funcionando igual.
+export function toast(message, type = 'success', opts = {}) {
     const el = document.createElement('div');
     el.className = `toast toast-${type}`;
     el.textContent = message;
+    if (opts.actionLabel && typeof opts.onAction === 'function') {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'toast-action';
+        btn.textContent = opts.actionLabel;
+        btn.addEventListener('click', () => { opts.onAction(); el.remove(); });
+        el.appendChild(btn);
+    }
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 3000);
 }

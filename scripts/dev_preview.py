@@ -24,7 +24,10 @@ import json
 from datetime import datetime, timedelta, timezone
 
 from database.connection import init_db, SessionLocal
-from database.models import Word, Category, WritingChallenge, ExamAttempt, ExamTaskResult
+from database.models import (
+    Word, Category, WritingChallenge, ExamAttempt, ExamTaskResult,
+    DictionaryEntry, DictionaryEntryEs,
+)
 from services import cefr
 
 # Historial de Writing Challenge: score subiendo, errores bajando (para ver el
@@ -150,8 +153,37 @@ _LEGACY = [
 ]
 
 
+# Muestra mínima del diccionario offline en ambas direcciones, para poder
+# probar el autocompletado bilingüe de la barra superior. El diccionario real
+# (60k + 80k entradas) se importa con scripts/import_dictionary*.py; aquí sólo
+# hacen falta unas cuantas.
+_DICT_EN = [
+    ("hard", "duro, difícil", 1), ("hardly", "apenas", 2), ("hardware", "ferretería", 3),
+    ("indeed", "en efecto", 1), ("index", "índice", 2),
+    ("thorough", "minucioso", 1), ("though", "aunque", 2),
+    ("whereas", "mientras que", 1),
+]
+_DICT_ES = [
+    ("apenas", "hardly, barely", 1), ("apellido", "surname", 2), ("apertura", "opening", 3),
+    ("aunque", "although, though", 1), ("ejemplo", "example", 1),
+    ("minucioso", "thorough", 1), ("mientras", "while", 2),
+]
+
+
+def _seed_dictionary() -> None:
+    with SessionLocal() as db:
+        if db.query(DictionaryEntry).count() == 0:
+            for word, tr, rank in _DICT_EN:
+                db.add(DictionaryEntry(word=word, translation=tr, rank=rank))
+        if db.query(DictionaryEntryEs).count() == 0:
+            for word, tr, rank in _DICT_ES:
+                db.add(DictionaryEntryEs(word=word, translation=tr, rank=rank))
+        db.commit()
+
+
 def _seed() -> None:
     init_db()
+    _seed_dictionary()
     with SessionLocal() as db:
         if db.query(Word).count() == 0:
             cat = Category(name="Engineering", color="#0071e3", icon="🛠️")

@@ -758,6 +758,19 @@ body.desktop-shell.sidebar-collapsed #nav-links { padding-left: 0.5rem; padding-
 }
 .toast-success { background: var(--green); }
 .toast-error   { background: var(--red); }
+.toast-action {
+    margin-left: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+}
+.toast-action:hover { background: rgba(255, 255, 255, 0.18); }
 @keyframes toastIn { from { opacity: 0; transform: translateY(1rem); } to { opacity: 1; transform: translateY(0); } }
 @keyframes toastOut { to { opacity: 0; transform: translateY(1rem); } }
 
