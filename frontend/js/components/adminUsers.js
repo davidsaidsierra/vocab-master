@@ -12,11 +12,11 @@ export async function render(container, opts = {}) {
         <div class="page-enter">
             ${emb ? '' : `
             <h2 class="text-2xl font-bold mb-1">Usuarios</h2>
-            <p class="text-sm text-slate-500 mb-6">Solo tú (admin) puedes crear cuentas y asignar roles.</p>`}
+            <p class="text-sm txt-secondary mb-6">Solo tú (admin) puedes crear cuentas y asignar roles.</p>`}
 
             <!-- Crear usuario -->
             <div class="${emb ? 'mb-5' : 'card mb-6'} max-w-lg">
-                <h3 class="text-sm font-semibold text-slate-400 mb-3">Nuevo usuario</h3>
+                <h3 class="text-sm font-semibold txt-secondary mb-3">Nuevo usuario</h3>
                 <form id="user-form" class="space-y-3">
                     <input type="email" name="email" class="form-input" placeholder="email@ejemplo.com" required>
                     <input type="password" name="password" class="form-input" placeholder="Contraseña (mín. 6)" minlength="6" required>
@@ -31,7 +31,7 @@ export async function render(container, opts = {}) {
 
             <!-- Lista -->
             <div id="user-list">
-                <p class="text-slate-500">Cargando…</p>
+                <p class="txt-secondary">Cargando…</p>
             </div>
         </div>
     `;
@@ -65,7 +65,7 @@ export async function render(container, opts = {}) {
                 <div class="card flex items-center gap-4 ${u.is_active ? '' : 'opacity-50'}">
                     <div class="flex-1 min-w-0">
                         <h4 class="font-semibold truncate">${u.email}</h4>
-                        <p class="text-xs text-slate-500">IA hoy: ${u.ai_calls_today} · ${u.is_active ? 'activo' : 'inactivo'}</p>
+                        <p class="text-xs txt-secondary">IA hoy: ${u.ai_calls_today} · ${u.is_active ? 'activo' : 'inactivo'}</p>
                     </div>
                     <select class="form-input role-sel" data-id="${u.id}" style="width:auto">
                         ${ROLES.map(r => `<option value="${r}" ${r === u.role ? 'selected' : ''}>${r}</option>`).join('')}

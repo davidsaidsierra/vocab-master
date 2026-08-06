@@ -37,7 +37,7 @@ function buildSummaryPhrase(overview, byLevel) {
 }
 
 export async function render(container) {
-    container.innerHTML = '<div class="page-enter" id="dash-page"><p class="text-slate-500">Loading…</p></div>';
+    container.innerHTML = '<div class="page-enter" id="dash-page"><p class="txt-secondary">Loading…</p></div>';
     const page = container.querySelector('#dash-page');
 
     try {
@@ -58,8 +58,12 @@ export async function render(container) {
         const hasExamBands = examAttempts.some(a => a.section_band != null);
 
         page.innerHTML = `
-            <h2 class="text-2xl font-bold mb-1">Dashboard</h2>
-            ${summaryPhrase ? `<p class="dash-summary-phrase">${summaryPhrase}</p>` : ''}
+            <div class="page-header">
+                <div>
+                    <h2>Dashboard</h2>
+                    ${summaryPhrase ? `<p class="dash-summary-phrase">${summaryPhrase}</p>` : ''}
+                </div>
+            </div>
 
             <!-- KPIs -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8 mt-4">
@@ -74,13 +78,13 @@ export async function render(container) {
 
             <!-- Vocabulario por nivel -->
             <div class="card mb-6">
-                <h3 class="text-sm font-semibold text-slate-400 mb-4">Tu vocabulario por nivel (CEFR)</h3>
+                <h3 class="text-sm font-semibold txt-secondary mb-4">Tu vocabulario por nivel (CEFR)</h3>
                 ${byLevelChartHTML(byLevel)}
             </div>
 
             <!-- Progreso: dominio por nivel -->
             <div class="card mb-8">
-                <h3 class="text-sm font-semibold text-slate-400 mb-1">Progreso: dominio por nivel</h3>
+                <h3 class="text-sm font-semibold txt-secondary mb-1">Progreso: dominio por nivel</h3>
                 <p class="dash-legend">
                     <span style="color:#34c759">■</span> dominadas (≥80%) &nbsp;
                     <span style="color:#ff9500">■</span> en progreso &nbsp;
@@ -92,36 +96,36 @@ export async function render(container) {
             <!-- Progreso de escritura / exámenes -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <div class="card">
-                    <h3 class="text-sm font-semibold text-slate-400 mb-4">Progreso — Writing Challenge</h3>
+                    <h3 class="text-sm font-semibold txt-secondary mb-4">Progreso — Writing Challenge</h3>
                     ${writingItems.length
                         ? '<canvas id="chart-writing-progress" height="200"></canvas>'
-                        : '<p class="text-slate-500 text-sm">Aún no tienes retos de escritura. <a href="#/writing" class="text-brand-400 hover:underline">Empieza uno</a>.</p>'}
+                        : '<p class="txt-secondary text-sm">Aún no tienes retos de escritura. <a href="#/writing" class="text-brand-400 hover:underline">Empieza uno</a>.</p>'}
                 </div>
                 <div class="card">
-                    <h3 class="text-sm font-semibold text-slate-400 mb-4">Progreso — Exámenes (TOEFL)</h3>
+                    <h3 class="text-sm font-semibold txt-secondary mb-4">Progreso — Exámenes (TOEFL)</h3>
                     ${hasExamBands
                         ? '<canvas id="chart-exam-progress" height="200"></canvas>'
-                        : '<p class="text-slate-500 text-sm">Aún no tienes exámenes completados. <a href="#/exams" class="text-brand-400 hover:underline">Practica uno</a>.</p>'}
+                        : '<p class="txt-secondary text-sm">Aún no tienes exámenes completados. <a href="#/exams" class="text-brand-400 hover:underline">Practica uno</a>.</p>'}
                 </div>
             </div>
 
             <!-- Charts row -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <div class="card">
-                    <h3 class="text-sm font-semibold text-slate-400 mb-4">Mastery Distribution</h3>
+                    <h3 class="text-sm font-semibold txt-secondary mb-4">Mastery Distribution</h3>
                     <canvas id="chart-distribution" height="200"></canvas>
                 </div>
                 <div class="card">
-                    <h3 class="text-sm font-semibold text-slate-400 mb-4">Activity (Last 30 Days)</h3>
+                    <h3 class="text-sm font-semibold txt-secondary mb-4">Activity (Last 30 Days)</h3>
                     <canvas id="chart-activity" height="200"></canvas>
                 </div>
             </div>
 
             <!-- Categories breakdown -->
             <div class="card">
-                <h3 class="text-sm font-semibold text-slate-400 mb-4">Categories</h3>
+                <h3 class="text-sm font-semibold txt-secondary mb-4">Categories</h3>
                 ${byCat.length === 0
-                    ? '<p class="text-slate-600 text-sm">No categories yet. Add words to see your breakdown.</p>'
+                    ? '<p class="txt-tertiary text-sm">No categories yet. Add words to see your breakdown.</p>'
                     : `<div class="space-y-3">${byCat.map(c => categoryRow(c)).join('')}</div>`
                 }
             </div>
@@ -189,7 +193,7 @@ function categoryRow(c) {
             <div class="flex-1 min-w-0">
                 <div class="flex justify-between text-sm mb-1">
                     <span class="font-medium">${c.name}</span>
-                    <span class="text-slate-400">${c.word_count} words · ${c.avg_mastery}%</span>
+                    <span class="txt-secondary">${c.word_count} words · ${c.avg_mastery}%</span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" style="width:${pct}%;background:${c.color}"></div>

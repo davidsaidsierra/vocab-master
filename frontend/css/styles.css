@@ -197,7 +197,16 @@ h1, h2, h3, h4 {
     color: var(--text-tertiary);
 }
 
-/* Tailwind slate-X overrides — keep components readable on light bg */
+/* Color de texto por token. Sustituye a las clases .text-slate-* de Tailwind,
+   que venían de un diseño oscuro y sólo funcionaban porque este archivo las
+   pisaba con !important. */
+.txt-primary   { color: var(--text-primary); }
+.txt-secondary { color: var(--text-secondary); }
+.txt-tertiary  { color: var(--text-tertiary); }
+.txt-hover     { cursor: pointer; transition: color 0.15s ease; }
+.txt-hover:hover { color: var(--text-primary); }
+
+/* Se dejan por compatibilidad: quedan usos sueltos en páginas no tocadas. */
 .text-slate-100, .text-slate-200, .text-slate-300 { color: var(--text-primary) !important; }
 .text-slate-400 { color: var(--text-secondary) !important; }
 .text-slate-500 { color: var(--text-secondary) !important; }
@@ -454,41 +463,49 @@ body.desktop-shell.sidebar-collapsed #nav-links { padding-left: 0.5rem; padding-
 }
 
 /* ── Stat cards ───────────────────────────────────────────── */
+/* Sin riel de acento: el color de cada tarjeta no significaba nada. Lo que
+   importa es la cifra, así que se le da todo el peso y la etiqueta baja a
+   micro-mayúscula. El icono conserva el tinte como identificador. */
 .stat-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
+    border-radius: var(--radius);
+    padding: var(--space-4);
     position: relative;
-    overflow: hidden;
     box-shadow: var(--shadow-sm);
     color: var(--text-primary);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 .stat-card:hover {
     box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    border-color: var(--border-strong);
 }
-.stat-card::before {
-    content: '';
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 4px;
-    background: var(--stat-from, var(--accent));
-    border-radius: 4px 0 0 4px;
-}
-.stat-card::after { display: none; }
 .stat-card .text-2xl {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 0.625rem;
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
+    border-radius: var(--radius-sm);
     background: color-mix(in srgb, var(--stat-from, var(--accent)) 12%, transparent);
 }
-.stat-card .text-3xl { color: var(--text-primary); font-weight: 700; }
-.stat-card .text-sm  { color: var(--text-secondary); opacity: 1; }
+.stat-card .text-3xl {
+    color: var(--text-primary);
+    font-weight: 650;
+    font-size: var(--text-3xl);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+}
+.stat-card .text-sm {
+    color: var(--text-tertiary);
+    opacity: 1;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
 
 /* ── Flashcard flip animation ─────────────────────────────── */
 .flashcard-container { perspective: 1200px; }
@@ -553,33 +570,92 @@ body.desktop-shell.sidebar-collapsed #nav-links { padding-left: 0.5rem; padding-
     background: var(--accent);
 }
 
-/* ── Word cards grid ──────────────────────────────────────── */
+/* ── Word cards grid ──────────────────────────────────────────
+   La franja de la izquierda codifica urgencia de repaso (vencida / hoy /
+   al día). Antes era el color de la categoría, que ya se ve en su propia
+   etiqueta: un color que no significa nada, fuera. */
 .word-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 1.25rem;
-    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    border-radius: var(--radius);
+    padding: var(--space-3) var(--space-4);
+    padding-left: calc(var(--space-4) - 1px);
+    border-left: 3px solid transparent;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
     position: relative;
-    overflow: hidden;
     box-shadow: var(--shadow-sm);
     color: var(--text-primary);
 }
 .word-card:hover {
     border-color: var(--border-strong);
     box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
 }
-.word-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--card-accent, var(--accent));
+/* Después de :hover a propósito: así la franja conserva su color al pasar
+   el mouse (misma especificidad, gana la regla posterior). */
+.word-card[data-urgency="due"]   { border-left-color: var(--red); }
+.word-card[data-urgency="today"] { border-left-color: var(--orange); }
+
+.wcard-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-3);
 }
-.word-card h3 { color: var(--text-primary); }
+.wcard-lead { min-width: 0; }
+.wcard-word {
+    font-size: var(--text-lg);
+    font-weight: 650;
+    line-height: 1.25;
+    color: var(--text-primary);
+    overflow-wrap: anywhere;
+}
+.wcard-tr {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    margin-top: 0.1rem;
+}
+.wcard-actions {
+    display: flex;
+    gap: 0.25rem;
+    flex: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+.word-card:hover .wcard-actions,
+.word-card:focus-within .wcard-actions { opacity: 1; }
+/* Sin hover (táctil) los botones tienen que verse siempre */
+@media (hover: none) {
+    .wcard-actions { opacity: 1; }
+}
+.wcard-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: var(--space-2);
+}
+.wcard-badge-quiet  { background: var(--bg-hover); color: var(--text-tertiary); }
+.wcard-badge-family { background: color-mix(in srgb, var(--green) 16%, transparent); color: var(--green-text); }
+.wcard-example {
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--text-tertiary);
+    margin-top: var(--space-2);
+    overflow-wrap: anywhere;
+}
+.wcard-foot {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-3);
+}
+.wcard-foot .progress-bar { flex: 1; height: 4px; }
+.wcard-mastery {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    min-width: 2.4rem;
+    text-align: right;
+}
 
 /* ── Badge ────────────────────────────────────────────────── */
 .badge {
@@ -1986,7 +2062,8 @@ body.force-desktop #floating-view-toggle {
 /* ══════════════════════════════════════════════════════════════
    International Exams (TOEFL Writing) — prefijo .ie-
    ══════════════════════════════════════════════════════════════ */
-.ie-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+.ie-head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: var(--space-5); }
+.ie-head h2 { font-size: var(--text-2xl); line-height: 1.2; margin: 0; }
 .ie-back { white-space: nowrap; }
 
 /* ── Landing: tarjetas de examen ── */

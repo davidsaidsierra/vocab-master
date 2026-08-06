@@ -57,10 +57,12 @@ export function render(container) {
 
     container.innerHTML = `
         <div class="page-enter">
-            <h2 class="text-2xl font-bold mb-1">Ajustes</h2>
-            <p class="text-sm mb-6" style="color:var(--text-tertiary)">
-                Preferencias de la interfaz. Se guardan en este navegador.
-            </p>
+            <div class="page-header">
+                <div>
+                    <h2>Ajustes</h2>
+                    <p class="ph-sub">Preferencias de la interfaz. Se guardan en este navegador.</p>
+                </div>
+            </div>
 
             <div class="card mb-4 max-w-2xl">
                 <h3 class="text-sm font-semibold mb-1">Apariencia</h3>

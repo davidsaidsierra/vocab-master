@@ -33,15 +33,15 @@ export function openLookupModal(word, opts = {}) {
         <div class="modal-content" style="max-width:640px;max-height:85vh;overflow-y:auto">
             <div class="flex items-center justify-between mb-4">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-100">
+                    <h3 class="text-xl font-bold txt-primary">
                         🔍 <span id="lookup-title">${esc(word)}</span>
                     </h3>
-                    <p class="text-xs text-slate-500 mt-0.5" id="lookup-phonetic"></p>
+                    <p class="text-xs txt-secondary mt-0.5" id="lookup-phonetic"></p>
                 </div>
-                <button class="text-slate-500 hover:text-slate-300 text-xl" id="lookup-close">✕</button>
+                <button class="txt-secondary txt-hover text-xl" id="lookup-close">✕</button>
             </div>
             <div id="lookup-body">
-                <div class="text-center py-8 text-slate-400">
+                <div class="text-center py-8 txt-secondary">
                     <div class="animate-spin inline-block w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full mb-3"></div>
                     <p class="text-sm">Buscando significados contextuales…</p>
                 </div>
@@ -66,7 +66,7 @@ export function openLookupModal(word, opts = {}) {
                 body.innerHTML = `
                     <div class="text-center py-6">
                         <p class="text-red-400 text-sm mb-2">⚠️ ${esc(err.message)}</p>
-                        <p class="text-xs text-slate-500">
+                        <p class="text-xs txt-secondary">
                             Revisa que <code>GEMINI_API_KEY</code> esté configurada en el backend.
                         </p>
                     </div>
@@ -97,7 +97,7 @@ function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
     const phrases  = data.common_phrases || [];
 
     if (meanings.length === 0 && phrases.length === 0) {
-        body.innerHTML = `<p class="text-slate-400 text-center py-6 text-sm">No se encontraron significados.</p>`;
+        body.innerHTML = `<p class="txt-secondary text-center py-6 text-sm">No se encontraron significados.</p>`;
         return;
     }
 
@@ -110,29 +110,29 @@ function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
                 </div>
                 ${opts.onPickMeaning ? `<button class="btn-edit text-xs use-meaning" data-idx="${i}" title="Usar esta traducción">⤵ Usar</button>` : ''}
             </div>
-            ${m.definition_en ? `<p class="text-xs text-slate-400 mb-1"><strong class="text-slate-300">EN:</strong> ${esc(m.definition_en)}</p>` : ''}
-            ${m.definition_es ? `<p class="text-xs text-slate-400 mb-2"><strong class="text-slate-300">ES:</strong> ${esc(m.definition_es)}</p>` : ''}
+            ${m.definition_en ? `<p class="text-xs txt-secondary mb-1"><strong class="txt-primary">EN:</strong> ${esc(m.definition_en)}</p>` : ''}
+            ${m.definition_es ? `<p class="text-xs txt-secondary mb-2"><strong class="txt-primary">ES:</strong> ${esc(m.definition_es)}</p>` : ''}
             ${(m.examples || []).map(ex => `
                 <div class="mt-2 pl-3 border-l-2 border-brand-500/40">
-                    <p class="text-sm text-slate-200">"${esc(ex.en)}"</p>
-                    <p class="text-xs text-slate-500 italic">${esc(ex.es)}</p>
+                    <p class="text-sm txt-primary">"${esc(ex.en)}"</p>
+                    <p class="text-xs txt-secondary italic">${esc(ex.es)}</p>
                 </div>
             `).join('')}
         </div>
     `).join('');
 
     const phrasesHTML = phrases.length ? `
-        <h4 class="text-sm font-semibold text-slate-300 mt-4 mb-2">💬 Frases y expresiones comunes</h4>
+        <h4 class="text-sm font-semibold txt-primary mt-4 mb-2">💬 Frases y expresiones comunes</h4>
         <div class="space-y-2">
             ${phrases.map(p => `
                 <div class="card p-3" style="padding:0.75rem">
                     <div class="flex items-center justify-between">
-                        <span class="font-semibold text-slate-100 text-sm">${esc(p.phrase)}</span>
+                        <span class="font-semibold txt-primary text-sm">${esc(p.phrase)}</span>
                         <span class="text-xs text-brand-400">${esc(p.meaning_es)}</span>
                     </div>
                     ${p.example_en ? `
-                        <p class="text-xs text-slate-400 mt-1">"${esc(p.example_en)}"</p>
-                        <p class="text-xs text-slate-500 italic">${esc(p.example_es)}</p>
+                        <p class="text-xs txt-secondary mt-1">"${esc(p.example_en)}"</p>
+                        <p class="text-xs txt-secondary italic">${esc(p.example_es)}</p>
                     ` : ''}
                 </div>
             `).join('')}
@@ -162,7 +162,7 @@ function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
     const avisoTypo = otraPalabra ? `
         <div class="mt-4 p-3 rounded-lg" style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.25)">
           <p class="text-xs font-semibold text-red-400 mb-1">⚠️ ¿Error de escritura?</p>
-          <p class="text-xs text-slate-400">
+          <p class="text-xs txt-secondary">
             Consultaste <strong>${esc(pedida)}</strong>, pero la IA respondió sobre
             <strong>${esc(data.word)}</strong>. Si no era eso lo que buscabas, corrige
             la palabra y vuelve a consultarla.
@@ -171,7 +171,7 @@ function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
 
     const avisoRegenerar = `
         <div class="mt-5 p-3 rounded-lg" style="background:rgba(148,163,184,0.08);border:1px solid rgba(148,163,184,0.2)">
-          <p class="text-xs text-slate-400">
+          <p class="text-xs txt-secondary">
             Esta consulta se guardó antes de que la app generara familias, así que
             no trae matriz. Puedes regenerarla: gasta una llamada de IA.
           </p>
@@ -181,7 +181,7 @@ function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
     const avisoAjena = `
         <div class="mt-5 p-3 rounded-lg" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25)">
           <p class="text-xs text-amber-400 font-semibold mb-1">🧬 Sin familia utilizable</p>
-          <p class="text-xs text-slate-400">
+          <p class="text-xs txt-secondary">
             La IA devolvió una familia que no incluye "${esc(data.word)}", así que no se
             puede usar. Suele pasar con compuestos (treadmill, workflow) y con palabras
             que simplemente no tienen familia: no es un error, es que no aplica.
@@ -189,13 +189,13 @@ function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
         </div>`;
 
     const familyHTML = data.family
-        ? `<h4 class="text-sm font-semibold text-slate-300 mt-5 mb-2">🧬 Familia de palabras</h4>
+        ? `<h4 class="text-sm font-semibold txt-primary mt-5 mb-2">🧬 Familia de palabras</h4>
            <div class="card" style="padding:0.75rem">${familyMatrixHTML(data.family)}</div>`
         : (familiaAjena ? avisoAjena : avisoRegenerar);
 
     const saveAllHTML = opts.onSaveAll ? `
         <div class="flex items-center justify-between gap-3 mb-4 p-3 rounded-lg" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25)">
-            <p class="text-xs text-slate-400">Guarda esta palabra con <strong class="text-slate-200">todos</strong> sus significados y su categoría gramatical.</p>
+            <p class="text-xs txt-secondary">Guarda esta palabra con <strong class="txt-primary">todos</strong> sus significados y su categoría gramatical.</p>
             <button id="lookup-save-all" class="btn-primary" style="white-space:nowrap;padding:0.5rem 1rem">💾 Guardar palabra</button>
         </div>
     ` : '';

@@ -316,11 +316,13 @@ function pageHTML() {
 
     return `
         <div class="page-enter" style="max-width:1100px;margin:0 auto">
-            <div style="margin-bottom:1.5rem">
-                <h2 class="text-2xl font-bold" style="margin-bottom:0.4rem">Writing Challenge</h2>
-                <p style="color:var(--text-secondary);font-size:0.9rem">
-                    Escribe un texto corto usando una estructura gramatical de tu clase y las palabras objetivo. La IA lo corrige y sube tu mastery por cada palabra usada correctamente.
-                </p>
+            <div class="page-header">
+                <div>
+                    <h2>Writing Challenge</h2>
+                    <p class="ph-sub">
+                        Escribe un texto corto usando una estructura gramatical de tu clase y las palabras objetivo. La IA lo corrige y sube tu mastery por cada palabra usada correctamente.
+                    </p>
+                </div>
             </div>
 
             ${dailyCounterHTML()}

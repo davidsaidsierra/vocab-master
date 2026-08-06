@@ -248,11 +248,11 @@ function meaningHTML(m) {
         <div class="mt-2 pl-3 border-l-2 border-brand-500/40">
             <p class="text-sm font-semibold text-brand-400">
                 ${esc(m.translation_es)}
-                ${m.register ? `<span class="text-xs text-slate-500 font-normal">· ${esc(m.register)}</span>` : ''}
+                ${m.register ? `<span class="text-xs txt-secondary font-normal">· ${esc(m.register)}</span>` : ''}
             </p>
-            ${m.definition_en ? `<p class="text-xs text-slate-400">${esc(m.definition_en)}</p>` : ''}
-            ${m.example_en ? `<p class="text-sm text-slate-200 mt-1">"${esc(m.example_en)}"</p>` : ''}
-            ${m.example_es ? `<p class="text-xs text-slate-500 italic">${esc(m.example_es)}</p>` : ''}
+            ${m.definition_en ? `<p class="text-xs txt-secondary">${esc(m.definition_en)}</p>` : ''}
+            ${m.example_en ? `<p class="text-sm txt-primary mt-1">"${esc(m.example_en)}"</p>` : ''}
+            ${m.example_es ? `<p class="text-xs txt-secondary italic">${esc(m.example_es)}</p>` : ''}
         </div>
     `;
 }
@@ -275,15 +275,15 @@ function rowHTML(slot, cell, stats = {}) {
         // Celda vacía explícita: la familia no tiene esa función gramatical.
         return `
             <div class="flex items-start gap-3 py-2 opacity-40">
-                <div class="w-40 shrink-0 text-xs text-slate-500">${esc(label)}</div>
-                <div class="text-xs text-slate-600">— no existe en esta familia —</div>
+                <div class="w-40 shrink-0 text-xs txt-secondary">${esc(label)}</div>
+                <div class="text-xs txt-tertiary">— no existe en esta familia —</div>
             </div>
         `;
     }
     return `
         <div class="flex items-start gap-3 py-3 border-t border-slate-700/40">
             <div class="w-40 shrink-0">
-                <p class="text-xs text-slate-500">${esc(label)} ${statsHTML(stats[slot])}</p>
+                <p class="text-xs txt-secondary">${esc(label)} ${statsHTML(stats[slot])}</p>
                 <p class="text-base font-bold" style="color:var(--text-primary)">${esc(cell.form)}</p>
                 ${(cell.variants || []).length ? `
                     <p class="text-xs mt-0.5" style="color:#4ade80" title="Otras palabras de la misma casilla (negativos, compuestos)">
@@ -301,16 +301,16 @@ function rowHTML(slot, cell, stats = {}) {
 function phrasesHTML(title, icon, items) {
     if (!items || !items.length) return '';
     return `
-        <h4 class="text-sm font-semibold text-slate-300 mt-5 mb-2">${icon} ${title}</h4>
+        <h4 class="text-sm font-semibold txt-primary mt-5 mb-2">${icon} ${title}</h4>
         <div class="space-y-2">
             ${items.map(p => `
                 <div class="card" style="padding:0.75rem">
                     <div class="flex items-center justify-between gap-3 flex-wrap">
-                        <span class="font-semibold text-slate-100 text-sm">${esc(p.phrase)}</span>
+                        <span class="font-semibold txt-primary text-sm">${esc(p.phrase)}</span>
                         <span class="text-xs text-brand-400">${esc(p.meaning_es)}</span>
                     </div>
-                    ${p.example_en ? `<p class="text-xs text-slate-400 mt-1">"${esc(p.example_en)}"</p>` : ''}
-                    ${p.example_es ? `<p class="text-xs text-slate-500 italic">${esc(p.example_es)}</p>` : ''}
+                    ${p.example_en ? `<p class="text-xs txt-secondary mt-1">"${esc(p.example_en)}"</p>` : ''}
+                    ${p.example_es ? `<p class="text-xs txt-secondary italic">${esc(p.example_es)}</p>` : ''}
                 </div>
             `).join('')}
         </div>
@@ -325,14 +325,14 @@ export function familyMatrixHTML(family, stats = {}) {
         ${family.contrast_es ? `
             <div class="p-3 rounded-lg mb-3" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25)">
                 <p class="text-xs font-semibold text-amber-400 mb-1">⚠️ Contraste que suele fallar</p>
-                <p class="text-xs text-slate-300">${esc(family.contrast_es)}</p>
+                <p class="text-xs txt-primary">${esc(family.contrast_es)}</p>
             </div>` : ''}
         <div>${SLOT_ORDER.map(slot => rowHTML(slot, slots[slot], stats)).join('')}</div>
         ${phrasesHTML('Phrasal verbs', '🔗', family.phrasals)}
         ${phrasesHTML('Expresiones', '💬', family.expressions)}
         ${family.notes_es ? `
             <div class="p-3 rounded-lg mt-4" style="background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25)">
-                <p class="text-xs text-slate-300">📌 ${esc(family.notes_es)}</p>
+                <p class="text-xs txt-primary">📌 ${esc(family.notes_es)}</p>
             </div>` : ''}
     `;
 }
@@ -351,18 +351,18 @@ export function openFamilyModal(word) {
         <div class="modal-content" style="max-width:760px;max-height:88vh;overflow-y:auto">
             <div class="flex items-start justify-between mb-4">
                 <div>
-                    <h3 class="text-xl font-bold text-slate-100">🧬 Familia: ${esc(family?.root || word.word)}</h3>
-                    <p class="text-xs text-slate-500 mt-0.5">
+                    <h3 class="text-xl font-bold txt-primary">🧬 Familia: ${esc(family?.root || word.word)}</h3>
+                    <p class="text-xs txt-secondary mt-0.5">
                         Todas estas formas cuentan como <strong>una sola palabra</strong>; el progreso lo lleva la familia.
                         El porcentaje de cada casilla es tu acierto en ella: el repaso insiste en la más floja.
                     </p>
                 </div>
-                <button class="text-slate-500 hover:text-slate-300 text-xl" id="family-close">✕</button>
+                <button class="txt-secondary txt-hover text-xl" id="family-close">✕</button>
             </div>
             <div id="family-body">
                 ${family
                     ? familyMatrixHTML(family, word.slot_stats || {})
-                    : `<p class="text-slate-400 text-sm py-6 text-center">Esta palabra todavía no tiene familia.</p>`}
+                    : `<p class="txt-secondary text-sm py-6 text-center">Esta palabra todavía no tiene familia.</p>`}
             </div>
         </div>
     `;

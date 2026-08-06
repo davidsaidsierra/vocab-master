@@ -17,11 +17,11 @@ export async function render(container, opts = {}) {
 
             <!-- Add category form -->
             <div class="card mb-6 max-w-lg">
-                <h3 class="text-sm font-semibold text-slate-400 mb-3">New Category</h3>
+                <h3 class="text-sm font-semibold txt-secondary mb-3">New Category</h3>
                 <form id="cat-form" class="space-y-3">
                     <input type="text" name="name" class="form-input" placeholder="Category name…" required>
                     <div>
-                        <label class="block text-xs text-slate-500 mb-1">Color</label>
+                        <label class="block text-xs txt-secondary mb-1">Color</label>
                         <div class="flex gap-2 flex-wrap" id="color-picker">
                             ${PRESET_COLORS.map((c, i) => `
                                 <button type="button" class="w-8 h-8 rounded-full transition-transform color-opt ${i === 0 ? 'is-selected' : ''}" style="background:${c};border:2px solid ${i === 0 ? 'var(--text-primary)' : 'transparent'};${i === 0 ? 'transform:scale(1.1);' : ''}" data-color="${c}"></button>
@@ -30,7 +30,7 @@ export async function render(container, opts = {}) {
                         <input type="hidden" name="color" value="${PRESET_COLORS[0]}">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-500 mb-1">Icon</label>
+                        <label class="block text-xs txt-secondary mb-1">Icon</label>
                         <div class="flex gap-2 flex-wrap" id="icon-picker">
                             ${PRESET_ICONS.map((ic, i) => `
                                 <button type="button" class="w-9 h-9 rounded-lg text-lg flex items-center justify-center transition-all icon-opt" style="background:${i === 0 ? 'var(--accent-soft)' : 'var(--bg-hover)'};border:1px solid ${i === 0 ? 'var(--accent)' : 'var(--border)'}" data-icon="${ic}">${ic}</button>
@@ -44,7 +44,7 @@ export async function render(container, opts = {}) {
 
             <!-- Existing categories -->
             <div id="cat-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <p class="text-slate-500">Loading…</p>
+                <p class="txt-secondary">Loading…</p>
             </div>
         </div>
     `;
@@ -101,7 +101,7 @@ export async function render(container, opts = {}) {
         const cats = await api.categories.list();
         const list = container.querySelector('#cat-list');
         if (cats.length === 0) {
-            list.innerHTML = '<p class="text-slate-600 text-sm">No categories yet.</p>';
+            list.innerHTML = '<p class="txt-tertiary text-sm">No categories yet.</p>';
             return;
         }
         list.innerHTML = cats.map(c => `
@@ -111,7 +111,7 @@ export async function render(container, opts = {}) {
                 </div>
                 <div class="flex-1">
                     <h4 class="font-semibold">${c.name}</h4>
-                    <p class="text-xs text-slate-500">${c.word_count} word${c.word_count !== 1 ? 's' : ''}</p>
+                    <p class="text-xs txt-secondary">${c.word_count} word${c.word_count !== 1 ? 's' : ''}</p>
                 </div>
                 <button class="btn-danger delete-cat" data-id="${c.id}">Delete</button>
             </div>

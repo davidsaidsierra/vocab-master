@@ -87,36 +87,41 @@ export async function render(container) {
 
     container.innerHTML = `
         <div class="page-enter max-w-2xl mx-auto">
-            <h2 class="text-2xl font-bold mb-6">Add New Word</h2>
+            <div class="page-header">
+                <div>
+                    <h2>Add New Word</h2>
+                    <p class="ph-sub">El formulario completo. Para una sola palabra, usa la barra de arriba.</p>
+                </div>
+            </div>
             <form id="word-form" class="card space-y-5">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm text-slate-400 mb-1">Word / Phrase *</label>
+                        <label class="block text-sm txt-secondary mb-1">Word / Phrase *</label>
                         <div class="flex gap-2">
                             <input type="text" name="word" autocomplete="off" class="form-input flex-1" placeholder="e.g. serendipity" required>
                             <button type="button" id="lookup-btn" class="btn-secondary" title="Buscar significados con IA" style="padding:0.75rem 0.9rem">🔍</button>
                         </div>
-                        <p class="text-xs text-slate-500 mt-1">Mientras escribes verás sugerencias del diccionario. Pulsa 🔍 para significados completos con IA.</p>
+                        <p class="text-xs txt-secondary mt-1">Mientras escribes verás sugerencias del diccionario. Pulsa 🔍 para significados completos con IA.</p>
                     </div>
                     <div>
-                        <label class="block text-sm text-slate-400 mb-1">Translation *</label>
+                        <label class="block text-sm txt-secondary mb-1">Translation *</label>
                         <input type="text" name="translation" class="form-input" placeholder="e.g. serendipia" required>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm text-slate-400 mb-1">Definition</label>
+                    <label class="block text-sm txt-secondary mb-1">Definition</label>
                     <input type="text" name="definition" class="form-input" placeholder="Finding good things by chance">
                 </div>
                 <div>
-                    <label class="block text-sm text-slate-400 mb-1">Example sentence</label>
+                    <label class="block text-sm txt-secondary mb-1">Example sentence</label>
                     <textarea name="example" rows="2" class="form-input" placeholder="It was pure serendipity that we met at the café."></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm text-slate-400 mb-1">Notes</label>
+                    <label class="block text-sm txt-secondary mb-1">Notes</label>
                     <textarea name="notes" rows="2" class="form-input" placeholder="Any personal notes…"></textarea>
                 </div>
                 <div>
-                    <label class="block text-sm text-slate-400 mb-1">Category</label>
+                    <label class="block text-sm txt-secondary mb-1">Category</label>
                     <select name="category_id" class="form-input">
                         <option value="">No category</option>
                         ${cats.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('')}
@@ -130,13 +135,13 @@ export async function render(container) {
 
             <!-- Quick capture (modo clase) -->
             <div class="card mt-6" id="quick-capture-card">
-                <h3 class="text-sm font-semibold text-slate-400 mb-1">⚡ Captura rápida (modo clase)</h3>
-                <p class="text-xs text-slate-500 mb-3">Escribe una palabra y pulsa <kbd>Enter</kbd> (o elige una sugerencia): se guarda al instante con traducción offline. La IA completa cada ${5} palabras.</p>
+                <h3 class="text-sm font-semibold txt-secondary mb-1">⚡ Captura rápida (modo clase)</h3>
+                <p class="text-xs txt-secondary mb-3">Escribe una palabra y pulsa <kbd>Enter</kbd> (o elige una sugerencia): se guarda al instante con traducción offline. La IA completa cada ${5} palabras.</p>
                 <div class="qc-input-wrap">
                     <input type="text" id="qc-input" autocomplete="off" class="form-input" placeholder="Escribe en inglés y Enter…">
                 </div>
                 <div class="qc-status mt-3">
-                    <span class="text-xs text-slate-400">Pendientes de enriquecer: <strong id="qc-pending">0</strong> / 5</span>
+                    <span class="text-xs txt-secondary">Pendientes de enriquecer: <strong id="qc-pending">0</strong> / 5</span>
                     <button id="qc-enrich-btn" class="btn-secondary" style="padding:0.4rem 0.8rem;font-size:0.8rem">✨ Enriquecer ahora</button>
                 </div>
                 <ul id="qc-recent" class="qc-recent mt-3"></ul>
@@ -144,8 +149,8 @@ export async function render(container) {
 
             <!-- Quick add (pegar varias) -->
             <div class="card mt-6">
-                <h3 class="text-sm font-semibold text-slate-400 mb-3">📋 Quick Add (pegar lista)</h3>
-                <p class="text-xs text-slate-500 mb-3">Pega varias palabras (una por línea: <code class="text-brand-400">word — translation</code>)</p>
+                <h3 class="text-sm font-semibold txt-secondary mb-3">📋 Quick Add (pegar lista)</h3>
+                <p class="text-xs txt-secondary mb-3">Pega varias palabras (una por línea: <code class="text-brand-400">word — translation</code>)</p>
                 <textarea id="quick-add-input" rows="4" class="form-input mb-3" placeholder="serendipity — serendipia&#10;ephemeral — efímero&#10;ubiquitous — ubicuo"></textarea>
                 <button id="quick-add-btn" class="btn-primary">Add All</button>
             </div>

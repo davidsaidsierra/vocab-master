@@ -154,15 +154,18 @@ export async function render(container) {
 
     container.innerHTML = `
         <div class="page-enter max-w-xl mx-auto">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold">Review</h2>
+            <div class="page-header">
+                <div>
+                    <h2>Review</h2>
+                    <p class="ph-sub">Sesión del día con cupo fijo.</p>
+                </div>
             </div>
 
             <!-- ── Filters ────────────────────────────── -->
             <div class="card mb-6" style="padding:1rem 1.25rem">
                 <!-- Review type -->
                 <div class="mb-3">
-                    <label class="block text-xs text-slate-500 mb-1.5">Review type</label>
+                    <label class="block text-xs txt-secondary mb-1.5">Review type</label>
                     <!-- Con 8 formatos ya no caben en una fila: se envuelven en
                          varias y cada botón lleva su propio borde. Antes era un
                          inline-flex único y el texto se partía dentro del botón. -->
@@ -180,14 +183,14 @@ export async function render(container) {
                 <div class="flex flex-wrap gap-3 items-end">
                   <div class="flex flex-wrap gap-3 items-end flex-1" id="filters-grid">
                     <div class="flex-1 min-w-[140px]">
-                        <label class="block text-xs text-slate-500 mb-1">Category</label>
+                        <label class="block text-xs txt-secondary mb-1">Category</label>
                         <select id="review-filter-cat" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                             <option value="">All categories</option>
                             ${cats.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('')}
                         </select>
                     </div>
                     <div class="flex-1 min-w-[160px]">
-                        <label class="block text-xs text-slate-500 mb-1">Added in the last…</label>
+                        <label class="block text-xs txt-secondary mb-1">Added in the last…</label>
                         <select id="review-filter-days" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                             <option value="">All time</option>
                             <option value="0">Today</option>
@@ -203,7 +206,7 @@ export async function render(container) {
                         </select>
                     </div>
                     <div class="flex-1 min-w-[140px]">
-                        <label class="block text-xs text-slate-500 mb-1">Level (CEFR)</label>
+                        <label class="block text-xs txt-secondary mb-1">Level (CEFR)</label>
                         <select id="review-filter-level" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                             <option value="">All levels</option>
                             <option value="A1">🟢 A1 · básico</option>
@@ -215,7 +218,7 @@ export async function render(container) {
                         </select>
                     </div>
                     <div class="flex-1 min-w-[150px]">
-                        <label class="block text-xs text-slate-500 mb-1">Mastery level</label>
+                        <label class="block text-xs txt-secondary mb-1">Mastery level</label>
                         <select id="review-filter-mastery" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                             <option value="">All levels</option>
                             <option value="25">🔴 Worst (0–25%)</option>
@@ -224,20 +227,20 @@ export async function render(container) {
                         </select>
                     </div>
                     <div class="flex-1 min-w-[150px]">
-                        <label class="block text-xs text-slate-500 mb-1">Categoría gramatical</label>
+                        <label class="block text-xs txt-secondary mb-1">Categoría gramatical</label>
                         <select id="review-filter-pos" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                             ${optionsHTML(POS_OPTIONS)}
                         </select>
                     </div>
                     <!-- Custom days input (hidden by default) -->
                     <div class="flex-1 min-w-[100px] hidden" id="custom-days-wrapper">
-                        <label class="block text-xs text-slate-500 mb-1">How many days?</label>
+                        <label class="block text-xs txt-secondary mb-1">How many days?</label>
                         <input type="number" id="custom-days-input" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem" min="0" max="365" placeholder="e.g. 10">
                     </div>
                   </div>
                   <!-- Panel de sesión diaria (sustituye a los filtros) -->
                   <div class="hidden flex-1 min-w-[180px]" id="daily-panel">
-                        <label class="block text-xs text-slate-500 mb-1">Palabras por sesión</label>
+                        <label class="block text-xs txt-secondary mb-1">Palabras por sesión</label>
                         <select id="daily-size" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem;max-width:200px">
                             <option value="30">30 · sostenible</option>
                             <option value="50" selected>50 · ritmo normal</option>
@@ -251,7 +254,7 @@ export async function render(container) {
 
                 <!-- Mode toggle -->
                 <div class="flex items-center gap-2 mt-3 pt-3 border-t border-slate-800/60" id="study-mode-row">
-                    <span class="text-xs text-slate-500">Study mode:</span>
+                    <span class="text-xs txt-secondary">Study mode:</span>
                     <div class="flex rounded-lg overflow-hidden border border-slate-700" style="font-size:0.75rem">
                         <button id="mode-normal" class="mode-btn active px-3 py-1.5 font-medium transition-colors" style="background:rgba(139,92,246,0.2);color:#a78bfa">
                             🇬🇧 EN → ES
@@ -260,20 +263,20 @@ export async function render(container) {
                             🇪🇸 ES → EN
                         </button>
                     </div>
-                    <span class="text-xs text-slate-600" id="mode-label">See the word, recall the translation</span>
+                    <span class="text-xs txt-tertiary" id="mode-label">See the word, recall the translation</span>
                 </div>
-                <p class="text-xs text-slate-600 mt-2" id="word-count-label">Loading…</p>
+                <p class="text-xs txt-tertiary mt-2" id="word-count-label">Loading…</p>
                 <div id="synonym-tools" class="hidden mt-2 flex items-center gap-3 flex-wrap">
                     <button class="btn-secondary" id="gen-synonyms-btn" style="padding:0.35rem 0.9rem;font-size:0.75rem">✨ Generar sinónimos faltantes (usa IA)</button>
-                    <span class="text-xs text-slate-500" id="gen-synonyms-status"></span>
+                    <span class="text-xs txt-secondary" id="gen-synonyms-status"></span>
                 </div>
             </div>
 
             <!-- ── Flashcard area (hidden until Start) ── -->
             <div id="review-area" class="hidden">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm text-slate-400" id="review-progress"></span>
-                    <span class="text-xs text-slate-500" id="session-score"></span>
+                    <span class="text-sm txt-secondary" id="review-progress"></span>
+                    <span class="text-xs txt-secondary" id="session-score"></span>
                 </div>
 
                 <!-- Progress bar -->
@@ -312,13 +315,13 @@ export async function render(container) {
                         <div class="flex items-center justify-center gap-2 mb-3" id="typing-badges"></div>
                         <p class="text-xs uppercase tracking-wider mb-2" id="typing-label" style="color:#a5b4fc">Escribe la traducción</p>
                         <p class="text-3xl font-bold mb-1" id="typing-prompt"></p>
-                        <p class="text-sm text-slate-500 mb-1" id="typing-hint"></p>
+                        <p class="text-sm txt-secondary mb-1" id="typing-hint"></p>
                         <p class="text-sm italic mb-4 px-4 leading-relaxed" id="typing-example" style="color:#a5b4fc"></p>
                         <input type="text" id="typing-input" class="form-input" style="text-align:center;max-width:320px;margin:0 auto" placeholder="Escribe aquí…" autocomplete="off" autocapitalize="off" spellcheck="false">
                         <div class="mt-4 flex items-center justify-center gap-4" id="typing-actions">
                             <button class="btn-primary" id="typing-submit" style="padding:0.5rem 1.5rem">Check</button>
                             <button class="btn-secondary" id="typing-noidea" style="padding:0.5rem 1.25rem;font-size:0.8rem">🤷 No idea</button>
-                            <button class="text-xs text-slate-500 hover:text-slate-400 transition-colors" id="typing-skip" title="No cuenta para el algoritmo — úsalo solo si la palabra está mal guardada">⏭ Skip</button>
+                            <button class="text-xs txt-secondary txt-hover transition-colors" id="typing-skip" title="No cuenta para el algoritmo — úsalo solo si la palabra está mal guardada">⏭ Skip</button>
                         </div>
                         <div id="typing-feedback" class="hidden mt-4" style="max-width:360px;margin-left:auto;margin-right:auto"></div>
                     </div>
@@ -330,7 +333,7 @@ export async function render(container) {
                         <div class="flex items-center justify-center gap-2 mb-3" id="choice-badges"></div>
                         <p class="text-xs uppercase tracking-wider mb-3" id="choice-label" style="color:#a5b4fc">Elige la palabra correcta</p>
                         <p class="text-lg font-medium mb-1 px-2 leading-relaxed" id="choice-prompt"></p>
-                        <p class="text-sm text-slate-500 mb-4" id="choice-hint"></p>
+                        <p class="text-sm txt-secondary mb-4" id="choice-hint"></p>
                         <div class="grid grid-cols-2 gap-2" id="choice-options" style="max-width:420px;margin:0 auto"></div>
                         <div id="choice-feedback" class="hidden mt-4" style="max-width:380px;margin-left:auto;margin-right:auto"></div>
                     </div>
@@ -343,7 +346,7 @@ export async function render(container) {
                 </div>
 
                 <div id="rating-panel" class="hidden">
-                    <p class="text-xs text-slate-500 text-center mb-3">Did you know it? <span class="text-slate-600">(← / →)</span></p>
+                    <p class="text-xs txt-secondary text-center mb-3">Did you know it? <span class="txt-tertiary">(← / →)</span></p>
                     <div class="flex gap-4">
                         <button class="binary-btn binary-incorrect" id="btn-incorrect">
                             <span class="text-2xl">✗</span>
@@ -357,7 +360,7 @@ export async function render(container) {
                         </button>
                     </div>
                     <div class="text-center mt-3">
-                        <button class="text-xs text-slate-600 hover:text-slate-400 transition-colors" id="btn-skip">⏭ Skip word</button>
+                        <button class="text-xs txt-tertiary txt-hover transition-colors" id="btn-skip">⏭ Skip word</button>
                     </div>
                 </div>
             </div>
@@ -366,8 +369,8 @@ export async function render(container) {
             <div id="empty-state" class="hidden">
                 <div class="empty-state card">
                     <div class="text-5xl mb-4">📭</div>
-                    <p class="text-lg font-medium text-slate-700">No words found</p>
-                    <p class="text-sm text-slate-500 mt-2">No words match your filters.<br>Try a wider range or add more words.</p>
+                    <p class="text-lg font-medium txt-tertiary">No words found</p>
+                    <p class="text-sm txt-secondary mt-2">No words match your filters.<br>Try a wider range or add more words.</p>
                 </div>
             </div>
         </div>
@@ -765,8 +768,8 @@ export async function render(container) {
     // El ejemplo de la pregunta, ya sin tapar: refuerza la forma correcta.
     function qExampleHTML(q) {
         if (!q || !q.example) return '';
-        return `<div class="text-xs text-slate-400 italic mt-2">"${esc(q.example.en)}"</div>`
-             + (q.example.es ? `<div class="text-xs text-slate-500 italic">${esc(q.example.es)}</div>` : '');
+        return `<div class="text-xs txt-secondary italic mt-2">"${esc(q.example.en)}"</div>`
+             + (q.example.es ? `<div class="text-xs txt-secondary italic">${esc(q.example.es)}</div>` : '');
     }
 
     // La nota de contraste es LO que se está enseñando (interesting vs
@@ -1106,7 +1109,7 @@ export async function render(container) {
                 <div class="font-semibold text-sm" style="color:${ok ? '#34c759' : '#ff3b30'}">${ok ? '✓ Correcto' : '✗ Incorrecto'}</div>
                 ${ok ? '' : `<div class="text-sm mt-1" style="color:var(--text-primary)">Respuesta: <span class="font-bold">${esc(v.word)}</span></div>`}
                 <div class="text-sm mt-1" style="color:var(--text-primary)">${esc(v.translation || '')}</div>
-                ${v.example ? `<div class="text-xs text-slate-500 italic mt-1">"${esc(v.example)}"</div>` : ''}
+                ${v.example ? `<div class="text-xs txt-secondary italic mt-1">"${esc(v.example)}"</div>` : ''}
             </div>
             <button class="btn-primary mt-3 w-full" id="choice-next" style="padding:0.5rem 1.5rem">Next →</button>
         `;
@@ -1186,7 +1189,7 @@ export async function render(container) {
                 <div class="font-semibold text-sm" style="color:${ok ? '#34c759' : '#ff3b30'}">${head}</div>
                 ${revealAnswer}
                 ${synList}
-                ${qExampleHTML(q) || (curView().example ? `<div class="text-xs text-slate-500 italic mt-1">"${esc(curView().example)}"</div>` : '')}
+                ${qExampleHTML(q) || (curView().example ? `<div class="text-xs txt-secondary italic mt-1">"${esc(curView().example)}"</div>` : '')}
                 ${qNoteHTML(q)}
                 ${override}
             </div>
@@ -1225,7 +1228,7 @@ export async function render(container) {
         const pct = total > 0 ? Math.round((sessionCorrect / total) * 100) : 0;
         // En sesión diaria el objetivo es cerrar el cupo, no vaciar el repositorio.
         const dailyNote = (reviewType === 'daily' && dailyMeta)
-            ? `<p class="text-sm text-slate-500 mb-4">${dailyMeta.due_remaining
+            ? `<p class="text-sm txt-secondary mb-4">${dailyMeta.due_remaining
                   ? `Objetivo del día cumplido. Quedan ${dailyMeta.due_remaining} vencidas: se reparten en los próximos días.`
                   : 'Objetivo del día cumplido. No queda nada vencido — vuelve mañana.'}</p>`
             : '';
@@ -1233,20 +1236,20 @@ export async function render(container) {
             <div class="page-enter text-center mt-8">
                 <div class="text-6xl mb-4">${pct >= 70 ? '🏆' : pct >= 40 ? '💪' : '📖'}</div>
                 <h3 class="text-2xl font-bold mb-2">Session Complete!</h3>
-                <p class="text-slate-400 mb-4">You practiced ${total} ${reviewType === 'daily' ? 'ejercicio' : 'word'}${total > 1 ? 's' : ''}.</p>
+                <p class="txt-secondary mb-4">You practiced ${total} ${reviewType === 'daily' ? 'ejercicio' : 'word'}${total > 1 ? 's' : ''}.</p>
                 ${dailyNote}
                 <div class="flex justify-center gap-8 mb-6">
                     <div class="text-center">
                         <div class="text-3xl font-bold text-emerald-400">${sessionCorrect}</div>
-                        <div class="text-xs text-slate-500">Correct</div>
+                        <div class="text-xs txt-secondary">Correct</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold text-red-400">${sessionIncorrect}</div>
-                        <div class="text-xs text-slate-500">Incorrect</div>
+                        <div class="text-xs txt-secondary">Incorrect</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold text-brand-400">${pct}%</div>
-                        <div class="text-xs text-slate-500">Accuracy</div>
+                        <div class="text-xs txt-secondary">Accuracy</div>
                     </div>
                 </div>
                 <div class="flex justify-center gap-3">

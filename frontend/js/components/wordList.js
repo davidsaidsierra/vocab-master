@@ -7,6 +7,18 @@ import { POS_OPTIONS, CEFR_OPTIONS, DAYS_OPTIONS, MASTERY_OPTIONS, optionsHTML }
 
 let categoriesCache = [];
 
+// Urgencia de repaso — es lo que colorea la franja de la tarjeta. El color
+// aquí significa algo: vencida, para hoy, o al día.
+function urgencia(nextReview) {
+    if (!nextReview) return 'ok';
+    const fecha = new Date(nextReview);
+    if (Number.isNaN(fecha.getTime())) return 'ok';
+    const ahora = new Date();
+    if (fecha <= ahora) return 'due';
+    if (fecha.toDateString() === ahora.toDateString()) return 'today';
+    return 'ok';
+}
+
 export async function render(container) {
     container.innerHTML = `
         <div class="page-enter" id="words-page">
@@ -25,38 +37,38 @@ export async function render(container) {
             <!-- ── Filtros (mismos que en Repaso) ─────────── -->
             <div class="flex flex-wrap gap-3 items-end mb-6">
                 <div class="min-w-[150px]">
-                    <label class="block text-xs text-slate-500 mb-1">Category</label>
+                    <label class="block text-xs txt-secondary mb-1">Category</label>
                     <select id="filter-category" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                         <option value="">All Categories</option>
                     </select>
                 </div>
                 <div class="min-w-[150px]">
-                    <label class="block text-xs text-slate-500 mb-1">Added in the last…</label>
+                    <label class="block text-xs txt-secondary mb-1">Added in the last…</label>
                     <select id="filter-days" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                         ${optionsHTML(DAYS_OPTIONS)}
                     </select>
                 </div>
                 <div class="min-w-[140px]">
-                    <label class="block text-xs text-slate-500 mb-1">Level (CEFR)</label>
+                    <label class="block text-xs txt-secondary mb-1">Level (CEFR)</label>
                     <select id="filter-level" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                         ${optionsHTML(CEFR_OPTIONS)}
                     </select>
                 </div>
                 <div class="min-w-[150px]">
-                    <label class="block text-xs text-slate-500 mb-1">Mastery level</label>
+                    <label class="block text-xs txt-secondary mb-1">Mastery level</label>
                     <select id="filter-mastery" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                         ${optionsHTML(MASTERY_OPTIONS)}
                     </select>
                 </div>
                 <div class="min-w-[150px]">
-                    <label class="block text-xs text-slate-500 mb-1">Categoría gramatical</label>
+                    <label class="block text-xs txt-secondary mb-1">Categoría gramatical</label>
                     <select id="filter-pos" class="form-input" style="padding:0.5rem 0.75rem;font-size:0.8rem">
                         ${optionsHTML(POS_OPTIONS)}
                     </select>
                 </div>
             </div>
             <div id="words-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                <p class="text-slate-500">Loading…</p>
+                <p class="txt-secondary">Loading…</p>
             </div>
         </div>
     `;
@@ -195,41 +207,38 @@ export async function render(container) {
                 ? Object.values(w.family.slots || {}).filter(Boolean).length
                 : 0;
             const famBadge = w.family
-                ? `<span class="badge" style="background:rgba(34,197,94,0.15);color:#4ade80" title="Familia de palabras: ${famSlots} formas + ${(w.family.phrasals || []).length} phrasals">🧬 ${famSlots} formas</span>`
+                ? `<span class="badge wcard-badge-family" title="Familia de palabras: ${famSlots} formas + ${(w.family.phrasals || []).length} phrasals">🧬 ${famSlots}</span>`
                 : '';
             const catBadge = w.category_name
                 ? `<span class="badge" style="background:${w.category_color}22;color:${w.category_color}">${w.category_icon} ${w.category_name}</span>`
                 : '';
             return `
-                <div class="word-card" style="--card-accent:${w.category_color || '#8b5cf6'}">
-                    <div class="flex items-start justify-between mb-2">
-                        <div>
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h3 class="text-lg font-bold" style="color:var(--text-primary)">${w.word}</h3>
-                                ${cefrBadgeHTML(w.cefr_level)}
-                                ${w.part_of_speech ? `<span class="badge" style="background:rgba(139,92,246,0.15);color:#a78bfa">${w.part_of_speech}</span>` : ''}
-                                ${(w.meanings && w.meanings.length > 1) ? `<span class="badge" style="background:rgba(148,163,184,0.15);color:#94a3b8" title="Significados guardados">${w.meanings.length} sig.</span>` : ''}
-                                ${famBadge}
-                            </div>
-                            <p class="text-sm text-slate-400">${w.translation}</p>
+                <div class="word-card" data-urgency="${urgencia(w.next_review)}">
+                    <div class="wcard-top">
+                        <div class="wcard-lead">
+                            <h3 class="wcard-word">${w.word}</h3>
+                            <p class="wcard-tr">${w.translation}</p>
                         </div>
-                        <div class="flex gap-1">
+                        <div class="wcard-actions">
                             ${w.family ? `<button class="btn-edit text-xs family-word" data-id="${w.id}" title="Ver la familia completa">🧬</button>` : ''}
                             <button class="btn-edit text-xs lookup-word" data-id="${w.id}" title="Ver significados">🔍</button>
-                            <button class="btn-edit text-xs edit-word" data-id="${w.id}" title="Edit">✏️</button>
-                            <button class="btn-danger text-xs delete-word" data-id="${w.id}" title="Delete">✕</button>
+                            <button class="btn-edit text-xs edit-word" data-id="${w.id}" title="Editar">✏️</button>
+                            <button class="btn-danger text-xs delete-word" data-id="${w.id}" title="Borrar">✕</button>
                         </div>
                     </div>
-                    ${w.example ? `<p class="text-xs text-slate-500 italic mt-2 mb-2">"${truncate(w.example, 80)}"</p>` : ''}
-                    ${catBadge ? `<div class="mt-3">${catBadge}</div>` : ''}
-                    <div class="mt-3">
-                        <div class="flex justify-between text-xs text-slate-500 mb-1">
-                            <span>Mastery</span>
-                            <span style="color:${color}">${w.mastery_level}%</span>
-                        </div>
+                    <div class="wcard-meta">
+                        ${w.part_of_speech ? `<span class="eyebrow">${w.part_of_speech}</span>` : ''}
+                        ${cefrBadgeHTML(w.cefr_level)}
+                        ${(w.meanings && w.meanings.length > 1) ? `<span class="badge wcard-badge-quiet" title="Significados guardados">${w.meanings.length} sig.</span>` : ''}
+                        ${famBadge}
+                        ${catBadge}
+                    </div>
+                    ${w.example ? `<p class="wcard-example">"${truncate(w.example, 80)}"</p>` : ''}
+                    <div class="wcard-foot">
                         <div class="progress-bar">
                             <div class="progress-fill" style="width:${w.mastery_level}%;background:${color}"></div>
                         </div>
+                        <span class="wcard-mastery tnum" style="color:${color}" title="Nivel de dominio">${Math.round(w.mastery_level)}%</span>
                     </div>
                 </div>
             `;
@@ -343,33 +352,33 @@ function openEditModal(word, onSave) {
         <div class="modal-content">
             <div class="flex items-center justify-between mb-5">
                 <h3 class="text-lg font-bold">Edit Word</h3>
-                <button class="text-slate-500 hover:text-slate-300 text-xl" id="modal-close">✕</button>
+                <button class="txt-secondary txt-hover text-xl" id="modal-close">✕</button>
             </div>
             <form id="edit-form" class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Word *</label>
+                        <label class="block text-xs txt-secondary mb-1">Word *</label>
                         <input type="text" name="word" class="form-input" value="${escHtml(word.word)}" required>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-400 mb-1">Translation *</label>
+                        <label class="block text-xs txt-secondary mb-1">Translation *</label>
                         <input type="text" name="translation" class="form-input" value="${escHtml(word.translation)}" required>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Definition</label>
+                    <label class="block text-xs txt-secondary mb-1">Definition</label>
                     <input type="text" name="definition" class="form-input" value="${escHtml(word.definition || '')}">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Example</label>
+                    <label class="block text-xs txt-secondary mb-1">Example</label>
                     <textarea name="example" rows="2" class="form-input">${escHtml(word.example || '')}</textarea>
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Notes</label>
+                    <label class="block text-xs txt-secondary mb-1">Notes</label>
                     <textarea name="notes" rows="2" class="form-input">${escHtml(word.notes || '')}</textarea>
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-400 mb-1">Category</label>
+                    <label class="block text-xs txt-secondary mb-1">Category</label>
                     <select name="category_id" class="form-input">
                         <option value="" ${!word.category_id ? 'selected' : ''}>None</option>
                         ${catOptions}

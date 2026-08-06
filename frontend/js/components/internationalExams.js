@@ -86,8 +86,8 @@ function headerHTML(title, subtitle, backTo) {
         <div class="ie-head">
             ${backTo ? `<button class="btn-ghost ie-back" data-back="${backTo}">← Volver</button>` : ''}
             <div>
-                <h2 class="text-2xl font-bold" style="margin-bottom:0.2rem">${esc(title)}</h2>
-                ${subtitle ? `<p style="color:var(--text-secondary);font-size:0.9rem;margin:0">${esc(subtitle)}</p>` : ''}
+                <h2>${esc(title)}</h2>
+                ${subtitle ? `<p class="ph-sub">${esc(subtitle)}</p>` : ''}
             </div>
         </div>`;
 }
