@@ -12,6 +12,7 @@ import { render as renderAdminUsers }   from './components/adminUsers.js';
 import { render as renderPdfReader }    from './components/pdfReader.js';
 import { render as renderSettings }     from './components/settings.js';
 import { initTheme }                    from './utils/theme.js';
+import { initShell }                    from './shell.js';
 import {
     loadCurrentUser, applyRoleVisibility, initLoginForm,
     showLogin, logout, getRole,
@@ -67,6 +68,9 @@ window.addEventListener('theme:changed', () => {
 async function boot() {
     // Tema: reaplica lo guardado y queda escuchando el modo del sistema.
     try { initTheme(); } catch (_) { /* la app sigue en claro */ }
+
+    // Shell de escritorio (barra superior + colapso de la lateral).
+    initShell();
 
     initLoginForm(() => { applyRoleVisibility(); navigate(); });
 

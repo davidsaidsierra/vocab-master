@@ -7,21 +7,22 @@
    ──────────────────────────────────────────────────────────── */
 :root {
     color-scheme: light;
-    --bg-app:        #f5f5f7;
+    /* Neutros con sesgo tinta: un gris puro se lee heredado, éste se lee elegido */
+    --bg-app:        #f3f4f7;
     --bg-card:       #ffffff;
     --bg-elevated:   #ffffff;
-    --bg-subtle:     #fafafa;
-    --bg-hover:      #f2f2f4;
-    --bg-hover-strong: #ebebed;
+    --bg-subtle:     #f8f9fb;
+    --bg-hover:      #edeff3;
+    --bg-hover-strong: #e3e6ec;
     --bg-translucent: rgba(255, 255, 255, 0.9);
 
-    --text-primary:    #1d1d1f;
-    --text-secondary:  #6e6e73;
-    --text-tertiary:   #86868b;
-    --text-quaternary: #aeaeb2;
+    --text-primary:    #0e1116;
+    --text-secondary:  #5a6472;
+    --text-tertiary:   #838c99;
+    --text-quaternary: #a8b0bb;
 
-    --border:        rgba(0, 0, 0, 0.08);
-    --border-strong: rgba(0, 0, 0, 0.14);
+    --border:        rgba(14, 17, 22, 0.09);
+    --border-strong: rgba(14, 17, 22, 0.16);
 
     --accent:        #0071e3;
     --accent-hover:  #0077ed;
@@ -39,42 +40,68 @@
     --red-text:    #c0392b;
     --orange-text: #b45309;
 
-    --scrim:                rgba(0, 0, 0, 0.35);
-    --track:                rgba(0, 0, 0, 0.06);
-    --scrollbar-thumb:      rgba(0, 0, 0, 0.18);
-    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.28);
-    --star-empty:           #d2d2d7;
-    --heading-gradient:     linear-gradient(135deg, #1d1d1f, #4a4a4f);
+    --scrim:                rgba(14, 17, 22, 0.35);
+    --track:                rgba(14, 17, 22, 0.07);
+    --scrollbar-thumb:      rgba(14, 17, 22, 0.18);
+    --scrollbar-thumb-hover: rgba(14, 17, 22, 0.28);
+    --star-empty:           #ccd2db;
+    --heading-gradient:     linear-gradient(135deg, #0e1116, #3c4653);
 
-    --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.06);
-    --shadow-lg:  0 12px 32px rgba(0, 0, 0, 0.08);
-    --shadow-xl:  0 24px 48px rgba(0, 0, 0, 0.12);
+    --shadow-sm:  0 1px 2px rgba(14, 17, 22, 0.05);
+    --shadow-md:  0 4px 16px rgba(14, 17, 22, 0.07);
+    --shadow-lg:  0 12px 32px rgba(14, 17, 22, 0.09);
+    --shadow-xl:  0 24px 48px rgba(14, 17, 22, 0.13);
 
     --radius-sm: 0.5rem;
     --radius:    0.75rem;
     --radius-lg: 1rem;
     --radius-xl: 1.25rem;
+
+    /* ── Escala tipográfica ──────────────────────────────────
+       Un solo juego de tamaños para toda la app. Los componentes
+       viejos siguen con sus rem sueltos hasta que se refactoran. */
+    --text-3xl:  2rem;
+    --text-2xl:  1.5rem;
+    --text-xl:   1.25rem;
+    --text-lg:   1.125rem;
+    --text-base: 0.9375rem;
+    --text-sm:   0.8125rem;
+    --text-xs:   0.6875rem;
+
+    /* ── Espaciado (base 4px) ───────────────────────────────── */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 2.5rem;
+    --space-8: 3rem;
+
+    /* ── Shell (barra superior + barra lateral) ─────────────── */
+    --topbar-h:      56px;
+    --sidebar-w:     14.75rem;
+    --sidebar-w-rail: 4rem;
 }
 
 /* ── Tema oscuro ───────────────────────────────────────────── */
 :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg-app:        #0f0f11;
-    --bg-card:       #1c1c1e;
-    --bg-elevated:   #242426;
-    --bg-subtle:     #161618;
-    --bg-hover:      #2a2a2d;
-    --bg-hover-strong: #35353a;
-    --bg-translucent: rgba(24, 24, 26, 0.88);
+    --bg-app:        #0e1116;
+    --bg-card:       #171b21;
+    --bg-elevated:   #1e232b;
+    --bg-subtle:     #12161b;
+    --bg-hover:      #232830;
+    --bg-hover-strong: #2e343e;
+    --bg-translucent: rgba(18, 22, 27, 0.88);
 
-    --text-primary:    #f5f5f7;
-    --text-secondary:  #a1a1a6;
-    --text-tertiary:   #86868b;
-    --text-quaternary: #6b6b70;
+    --text-primary:    #e8eaed;
+    --text-secondary:  #9aa3af;
+    --text-tertiary:   #7a828e;
+    --text-quaternary: #5c646f;
 
-    --border:        rgba(255, 255, 255, 0.10);
-    --border-strong: rgba(255, 255, 255, 0.20);
+    --border:        rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(255, 255, 255, 0.18);
 
     --accent:        #0a84ff;
     --accent-hover:  #3d9bff;
@@ -95,8 +122,8 @@
     --track:                rgba(255, 255, 255, 0.10);
     --scrollbar-thumb:      rgba(255, 255, 255, 0.20);
     --scrollbar-thumb-hover: rgba(255, 255, 255, 0.32);
-    --star-empty:           #48484c;
-    --heading-gradient:     linear-gradient(135deg, #f5f5f7, #a1a1a6);
+    --star-empty:           #3a414b;
+    --heading-gradient:     linear-gradient(135deg, #e8eaed, #9aa3af);
 
     --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.45);
@@ -126,6 +153,48 @@ h1, h2, h3, h4 {
     color: var(--text-primary);
     letter-spacing: -0.022em;
     font-weight: 600;
+    text-wrap: balance;
+}
+
+/* ── Encabezado de página ─────────────────────────────────────
+   Un solo encabezado para todas las páginas: título, subtítulo de una
+   línea y zona de acciones a la derecha. Antes cada página inventaba
+   el suyo, y de ahí venía buena parte del desorden. */
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+}
+.page-header h2 {
+    font-size: var(--text-2xl);
+    line-height: 1.2;
+    margin: 0;
+}
+.ph-sub {
+    margin-top: 0.15rem;
+    font-size: var(--text-sm);
+    color: var(--text-tertiary);
+}
+.ph-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+/* Cifras alineadas en columna (dominio, días, contadores) */
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* Micro-etiqueta de metadato */
+.eyebrow {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
 }
 
 /* Tailwind slate-X overrides — keep components readable on light bg */
@@ -133,6 +202,202 @@ h1, h2, h3, h4 {
 .text-slate-400 { color: var(--text-secondary) !important; }
 .text-slate-500 { color: var(--text-secondary) !important; }
 .text-slate-600 { color: var(--text-tertiary) !important; }
+
+/* ══════════════════════════════════════════════════════════════
+   SHELL DE ESCRITORIO — barra superior + barra lateral colapsable
+
+   La clase `body.desktop-shell` la pone frontend/js/shell.js con la
+   MISMA lógica que decide el modo móvil (viewport ≤768px, .force-mobile,
+   .force-desktop). Así todo el chrome de escritorio cuelga de un único
+   selector y no hay que duplicar reglas por media query, ni se puede
+   activar por accidente en móvil.
+   ══════════════════════════════════════════════════════════════ */
+
+/* Anchura de la lateral y hueco del contenido. Fuera de .desktop-shell a
+   propósito: así el layout ya está bien en el primer pintado, antes de
+   que corra el JS. Los bloques móviles lo pisan con !important. */
+#sidebar {
+    width: var(--sidebar-w);
+    height: 100%;
+    transition: width 0.18s ease;
+}
+#app {
+    margin-left: var(--sidebar-w);
+    transition: margin-left 0.18s ease;
+}
+
+/* La lateral arranca bajo la barra superior */
+body.desktop-shell #sidebar {
+    top: var(--topbar-h);
+    height: calc(100% - var(--topbar-h));
+}
+body.desktop-shell #app {
+    padding-top: calc(var(--topbar-h) + var(--space-6));
+}
+/* Ítems que sólo existen en el cajón móvil (Add Word, Categorías, …) */
+body.desktop-shell [data-mobile-only] { display: none !important; }
+
+/* ── Modo rail: la lateral encogida a iconos ───────────────── */
+body.desktop-shell.sidebar-collapsed { --sidebar-w: var(--sidebar-w-rail); }
+body.desktop-shell.sidebar-collapsed .sb-hide-collapsed,
+body.desktop-shell.sidebar-collapsed .nav-label { display: none; }
+body.desktop-shell.sidebar-collapsed .nav-link,
+body.desktop-shell.sidebar-collapsed .sb-toggle {
+    justify-content: center;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+body.desktop-shell.sidebar-collapsed .sb-toggle svg { transform: rotate(180deg); }
+body.desktop-shell.sidebar-collapsed .sb-user { justify-content: center; }
+body.desktop-shell.sidebar-collapsed #nav-links { padding-left: 0.5rem; padding-right: 0.5rem; }
+
+/* ── Barra superior ────────────────────────────────────────── */
+#topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: var(--topbar-h);
+    z-index: 45;                 /* sobre la lateral (30), bajo los modales (50) */
+    align-items: center;
+    gap: var(--space-4);
+    padding-right: var(--space-5);
+    background: var(--bg-translucent);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+.tb-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: var(--sidebar-w);
+    flex: 0 0 var(--sidebar-w);
+    padding-left: var(--space-5);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: var(--text-base);
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    transition: width 0.18s ease, flex-basis 0.18s ease;
+}
+.tb-brand-mark { color: var(--accent); font-size: 1.05rem; }
+
+/* Caja de captura: lo que más se usa, así que ocupa el centro */
+.tb-capture {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    max-width: 34rem;
+}
+.tb-input {
+    width: 100%;
+    padding: 0.5rem 5.5rem 0.5rem 0.9rem;
+    background: var(--bg-app);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: var(--text-base);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+.tb-input:focus {
+    background: var(--bg-card);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.tb-input::placeholder { color: var(--text-quaternary); }
+.tb-kbd {
+    position: absolute;
+    right: 2.4rem;
+    font-family: inherit;
+    font-size: var(--text-xs);
+    color: var(--text-quaternary);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.1rem 0.3rem;
+    pointer-events: none;
+    transition: opacity 0.15s;
+}
+.tb-input:focus ~ .tb-kbd { opacity: 0; }
+.tb-search {
+    position: absolute;
+    right: 0.3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+.tb-search:hover { background: var(--bg-hover); color: var(--accent); }
+.tb-search:disabled { opacity: 0.45; cursor: progress; }
+.tb-capture .dict-suggest { top: calc(100% + 4px); left: 0; right: 0; }
+
+.tb-right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-left: auto;
+}
+.tb-new { white-space: nowrap; text-decoration: none; }
+.tb-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+.tb-icon-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+}
+/* Sol en tema oscuro (lleva a claro), luna en claro (lleva a oscuro) */
+.tb-ico-sun { display: none; }
+:root[data-theme="dark"] .tb-ico-sun  { display: block; }
+:root[data-theme="dark"] .tb-ico-moon { display: none; }
+
+/* ── Pie de la barra lateral ───────────────────────────────── */
+.sb-footer {
+    padding: var(--space-3);
+    border-top: 1px solid var(--border);
+}
+.sb-user {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+}
+.sb-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-tertiary);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+.sb-toggle:hover { background: var(--bg-hover); color: var(--text-primary); }
+.sb-toggle svg { flex: none; transition: transform 0.18s ease; }
 
 /* ── Sidebar ─────────────────────────────────────────────── */
 #sidebar {
@@ -154,6 +419,8 @@ h1, h2, h3, h4 {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
     padding: 0.625rem 0.875rem;
     border-radius: var(--radius-sm);
     color: var(--text-secondary);
@@ -345,40 +612,51 @@ h1, h2, h3, h4 {
 }
 .form-input::placeholder { color: var(--text-quaternary); }
 
-/* ── Buttons ──────────────────────────────────────────────── */
+/* ── Buttons ──────────────────────────────────────────────────
+   Definición ÚNICA. Antes había una segunda copia más abajo (en el
+   bloque de Writing Challenge) que ganaba la cascada y contradecía a
+   ésta: el botón real no era el que decía este spec. Consolidado
+   aquí, en la forma compacta que ya se venía viendo en pantalla. */
+.btn-primary, .btn-secondary, .btn-ghost {
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25;
+    padding: 0.55rem 1.1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease,
+                color 0.15s ease, opacity 0.15s ease;
+}
 .btn-primary {
-    padding: 0.75rem 1.5rem;
     background: var(--accent);
     color: #ffffff;
-    border: none;
-    border-radius: 9999px;
     font-weight: 600;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
-    font-family: inherit;
     letter-spacing: -0.01em;
 }
-.btn-primary:hover {
-    background: var(--accent-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 18px rgba(0, 113, 227, 0.25);
-}
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
 .btn-secondary {
-    padding: 0.625rem 1.25rem;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-color: var(--border-strong);
+}
+.btn-secondary:hover:not(:disabled) { background: var(--bg-hover); }
+.btn-ghost {
+    background: transparent;
+    color: var(--text-secondary);
+}
+.btn-ghost:hover:not(:disabled) {
     background: var(--bg-hover);
     color: var(--text-primary);
-    border: 1px solid var(--border);
-    border-radius: 9999px;
-    font-weight: 500;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: background-color 0.15s, border-color 0.15s;
-    font-family: inherit;
 }
-.btn-secondary:hover {
-    background: var(--bg-hover-strong);
-    border-color: var(--border-strong);
+.btn-primary:disabled, .btn-secondary:disabled, .btn-ghost:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.btn-primary:focus-visible, .btn-secondary:focus-visible, .btn-ghost:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 .btn-danger {
     padding: 0.5rem 1rem;
@@ -672,9 +950,12 @@ h1, h2, h3, h4 {
 #mobile-header,
 #sidebar-overlay,
 #bottom-nav,
-#floating-view-toggle {
+#floating-view-toggle,
+#topbar {
     display: none;
 }
+/* La barra superior sólo existe en escritorio (ver bloque SHELL más arriba) */
+body.desktop-shell #topbar { display: flex; }
 
 /* ── Mobile header ─────────────────────────────────────────── */
 #mobile-header {
@@ -807,61 +1088,9 @@ h1, h2, h3, h4 {
      - O body tiene .force-mobile
    ══════════════════════════════════════════════════════════════ */
 
-/* Reglas comunes (reutilizadas por ambos modos) */
-.vm-mobile-active #mobile-header { display: flex !important; }
-.vm-mobile-active #bottom-nav    { display: flex !important; }
-.vm-mobile-active #floating-view-toggle { display: none !important; }
-.vm-mobile-active #sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
-    top: 0;
-    height: 100%;
-    z-index: 30;
-}
-.vm-mobile-active #sidebar.open {
-    transform: translateX(0);
-    box-shadow: var(--shadow-xl);
-}
-.vm-mobile-active #app {
-    margin-left: 0 !important;
-    padding: 1rem !important;
-    padding-top: calc(56px + 1rem) !important;
-    padding-bottom: calc(62px + 1rem) !important;
-}
-/* Stack Tailwind grid responsive classes */
-.vm-mobile-active .sm\:grid-cols-2,
-.vm-mobile-active .md\:grid-cols-2,
-.vm-mobile-active .md\:grid-cols-3,
-.vm-mobile-active .md\:grid-cols-4,
-.vm-mobile-active .lg\:grid-cols-2,
-.vm-mobile-active .lg\:grid-cols-3,
-.vm-mobile-active .lg\:grid-cols-4,
-.vm-mobile-active .xl\:grid-cols-2,
-.vm-mobile-active .xl\:grid-cols-3,
-.vm-mobile-active .xl\:grid-cols-4 {
-    grid-template-columns: 1fr !important;
-}
-/* Keep tiny 2-col internal grids (stats inside word cards) */
-.vm-mobile-active .grid.grid-cols-2.gap-3 {
-    grid-template-columns: repeat(2, 1fr) !important;
-}
-.vm-mobile-active .flashcard { min-height: 280px; }
-.vm-mobile-active .flashcard-face { padding: 1.75rem 1.25rem; }
-.vm-mobile-active .btn-primary,
-.vm-mobile-active .btn-secondary {
-    padding: 0.875rem 1.5rem;
-    font-size: 1rem;
-}
-.vm-mobile-active .binary-btn { padding: 1rem 0.75rem; }
-.vm-mobile-active .form-input { padding: 0.875rem 1rem; font-size: 1rem; }
-.vm-mobile-active .toast {
-    bottom: calc(62px + 1rem);
-    right: 1rem;
-    left: 1rem;
-    text-align: center;
-}
-.vm-mobile-active h1.text-3xl { font-size: 1.5rem !important; }
-.vm-mobile-active h2.text-2xl { font-size: 1.25rem !important; }
+/* Aquí vivía una tercera copia de estas reglas, colgada de `.vm-mobile-active`.
+   Ningún JS aplicaba nunca esa clase (verificado en todo el repo), así que era
+   código muerto que sólo confundía: los dos bloques que siguen son los reales. */
 
 /* Activación automática por viewport (cuando NO hay force-desktop) */
 @media (max-width: 768px) {
@@ -1212,37 +1441,8 @@ body.force-desktop #floating-view-toggle {
     gap: 0.6rem;
     margin-top: 0.85rem;
 }
-.btn-primary, .btn-secondary, .btn-ghost {
-    font: inherit;
-    font-size: 0.875rem;
-    font-weight: 500;
-    padding: 0.55rem 1.1rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
-}
-.btn-primary {
-    background: var(--accent);
-    color: #fff;
-}
-.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-secondary {
-    background: var(--bg-card);
-    color: var(--text-primary);
-    border-color: var(--border-strong);
-}
-.btn-secondary:hover:not(:disabled) { background: var(--bg-hover); }
-.btn-ghost {
-    background: transparent;
-    color: var(--text-secondary);
-}
-.btn-ghost:hover:not(:disabled) {
-    background: var(--bg-hover);
-    color: var(--text-primary);
-}
-.btn-ghost:disabled { opacity: 0.5; cursor: not-allowed; }
+/* (Los botones .btn-primary/.btn-secondary/.btn-ghost se definen una sola
+   vez, en la sección "Buttons" de arriba. Aquí había una copia duplicada.) */
 
 .wc-error-msg {
     margin-top: 0.75rem;
