@@ -233,6 +233,9 @@ class FamilyResult(BaseModel):
 class LookupResult(BaseModel):
     model_config = ConfigDict(extra="ignore")
     word: str = ""
+    # Idioma en que se escribió la consulta: "es" significa que `word` es la
+    # traducción al inglés que resolvió el modelo, no lo que tecleó el usuario.
+    query_language: str = "en"
     phonetic: str = ""
     # None cuando la palabra no tiene familia (frases, conectores).
     family: FamilyResult | None = None
@@ -243,6 +246,13 @@ class LookupResult(BaseModel):
     @classmethod
     def _s(cls, v):
         return _to_str(v)
+
+    @field_validator("query_language", mode="before")
+    @classmethod
+    def _lang(cls, v):
+        # Cualquier cosa que no sea un "es" claro se trata como inglés: es el
+        # caso por defecto y el que no cambia ningún comportamiento.
+        return "es" if _to_str(v).strip().lower()[:2] == "es" else "en"
 
     @field_validator("meanings", "common_phrases", mode="before")
     @classmethod

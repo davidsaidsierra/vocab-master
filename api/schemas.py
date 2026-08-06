@@ -42,7 +42,9 @@ class LookupPhrase(BaseModel):
     example_es: str = ""
 
 class LookupOut(BaseModel):
-    word: str
+    word: str            # palabra INGLESA resuelta (aunque se haya buscado en español)
+    query: str = ""      # texto tal como se consultó; difiere de `word` si era español
+    query_language: str = "en"   # "es" → `word` es la traducción, no un typo
     phonetic: str = ""
     meanings: list[LookupMeaning] = []
     common_phrases: list[LookupPhrase] = []

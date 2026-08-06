@@ -362,10 +362,26 @@ LOOKUP_PROMPT = """You are a Spanish-speaking English tutor for a Spanish studen
 learning English. The student asks for the full contextual meaning of the word
 or phrase: "{word}"
 
+THE QUERY MAY BE IN ENGLISH OR IN SPANISH — the student types whichever comes to
+mind first. Before anything else, decide which language it is:
+  - English → work with it as it is.
+  - Spanish → FIRST resolve it to the single most natural English equivalent a
+    native speaker would actually use ("apenas" → "hardly", "por ejemplo" →
+    "for example", "logro" → "achievement", "aunque" → "although"), and then
+    build the ENTIRE response for that English word.
+  - If the string is a valid word in BOTH languages with different meanings
+    (once, red, sin, actual, pie, sea, dice, mayor), assume ENGLISH.
+
+Everything you return — the "word" field, the phonetic transcription, the "en"
+examples and the whole "family" block — ALWAYS describes the resolved ENGLISH
+word. Never put Spanish in the "word" field and never describe the Spanish word
+itself: the student wants the English card, no matter which language they typed.
+
 Return a JSON object with this EXACT structure and nothing else:
 
 {{
-  "word": "the original word/phrase, lowercased",
+  "word": "the resolved ENGLISH word/phrase, lowercased",
+  "query_language": "EXACTLY 'en' or 'es' — the language the student typed in",
   "phonetic": "IPA pronunciation (e.g. /ʃʊər/), empty string if unknown",
   "meanings": [
     {{

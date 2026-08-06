@@ -69,8 +69,12 @@ def _normalized_family(raw) -> dict | None:
 
 
 def _build_out(word_lc: str, data: dict, cached: bool, source: str) -> LookupOut:
+    # `word` es la palabra INGLESA resuelta y `query` lo que se escribió: si se
+    # buscó en español no coinciden, y el frontend muestra "apenas → hardly".
     return LookupOut(
         word=data.get("word") or word_lc,
+        query=word_lc,
+        query_language=data.get("query_language") or "en",
         phonetic=data.get("phonetic", "") or "",
         meanings=data.get("meanings", []) or [],
         common_phrases=data.get("common_phrases", []) or [],
@@ -78,6 +82,32 @@ def _build_out(word_lc: str, data: dict, cached: bool, source: str) -> LookupOut
         cached=cached,
         source=source,
     )
+
+
+def _cache_lookup(db: Session, keys: list[str], data: dict, source: str) -> None:
+    """
+    Guarda el payload bajo cada clave pedida, saltándose las que ya existen.
+
+    Cuando la consulta viene en español se guardan DOS filas con el mismo JSON:
+    la canónica ("hardly") y un alias ("apenas"). Así repetir la búsqueda en
+    español tampoco gasta cuota, y la que llegue en inglés reaprovecha lo mismo.
+    No hace falta migración: `word_lookups` ya es (word único, data).
+    """
+    try:
+        for key in keys:
+            if not key:
+                continue
+            if db.query(WordLookup).filter(WordLookup.word == key).first():
+                continue
+            db.add(WordLookup(
+                word=key,
+                data=json.dumps(data, ensure_ascii=False),
+                source=source,
+            ))
+        db.commit()
+    except Exception:
+        db.rollback()
+        # No es fatal: se devuelve el resultado aunque no se haya podido cachear.
 
 
 @router.get("/{word}", response_model=LookupOut)
@@ -117,17 +147,10 @@ def lookup(
         raise HTTPException(500, "Error inesperado del servidor.") from exc
 
     # ── 4. Persist in cache ─────────────────────────────────
-    try:
-        row = WordLookup(
-            word=word_lc,
-            data=json.dumps(data, ensure_ascii=False),
-            source=source,
-        )
-        db.add(row)
-        db.commit()
-    except Exception:
-        db.rollback()
-        # Non-fatal: still return the result even if caching failed.
+    # Clave canónica = la palabra inglesa que resolvió el modelo. Si se buscó en
+    # español, se guarda además un alias con el texto consultado.
+    canonical = _sanitize_word(data.get("word") or "") or word_lc
+    _cache_lookup(db, [canonical, word_lc], data, source)
 
     return _build_out(word_lc, data, cached=False, source=source)
 

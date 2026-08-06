@@ -77,10 +77,20 @@ export function openLookupModal(word, opts = {}) {
 }
 
 function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
+    // La búsqueda pudo venir en español: el título es SIEMPRE la palabra
+    // inglesa que resolvió el backend, y debajo se deja ver de dónde salió.
+    const title = phonetic.closest('.modal-content')?.querySelector('#lookup-title');
+    const asked = (data.query || pedida || '').trim();
+    const resolved = (data.word || pedida || '').trim();
+    if (title && resolved) title.textContent = resolved;
+
+    const origin = asked && asked.toLowerCase() !== resolved.toLowerCase()
+        ? `«${asked}» → ${resolved}  •  `
+        : '';
     if (data.phonetic) {
-        phonetic.textContent = `${data.phonetic}${data.cached ? '  •  💾 cache' : '  •  ✨ nuevo'}`;
+        phonetic.textContent = `${origin}${data.phonetic}${data.cached ? '  •  💾 cache' : '  •  ✨ nuevo'}`;
     } else {
-        phonetic.textContent = data.cached ? '💾 cache' : '✨ nuevo';
+        phonetic.textContent = `${origin}${data.cached ? '💾 cache' : '✨ nuevo'}`;
     }
 
     const meanings = data.meanings || [];
@@ -137,24 +147,25 @@ function renderLookup(data, body, phonetic, opts, close, recargar, pedida) {
     // Una matriz que no contiene la palabra consultada no sirve (pedir
     // "treadmill" y recibir la de "tread"): el backend la rechaza, así que aquí
     // tampoco se muestra como válida ni se manda a guardar.
-    // Se compara contra la palabra PEDIDA (la que se va a guardar), no contra la
-    // que devolvió la IA: si escribiste "affort", la IA responde sobre "afford"
-    // y su familia no te sirve — es justo lo que el backend rechaza al guardar.
-    const objetivo = (pedida || data.word || '').trim().toLowerCase();
-    const familiaAjena = data.family && !familyHasWord(data.family, objetivo);
+    // Se compara contra la palabra RESUELTA, que es la que se guarda: si la
+    // consulta vino en español ("apenas"), la familia es la de "hardly" y es
+    // correcta; si fue un typo ("affort" → "afford"), también se guarda "afford".
+    const respondida = (data.word || pedida || '').trim().toLowerCase();
+    const familiaAjena = data.family && !familyHasWord(data.family, respondida);
     if (familiaAjena) data.family = null;
 
-    // Si la IA respondió sobre otra palabra, casi siempre es un typo tuyo.
-    // Merece decirlo: explica por qué no hay familia y te deja corregirlo.
-    const respondida = (data.word || '').trim().toLowerCase();
-    const otraPalabra = objetivo && respondida && objetivo !== respondida;
+    // Si la IA respondió sobre otra palabra y NO fue una traducción del español,
+    // casi siempre es un typo. Vale la pena decirlo antes de guardar.
+    const objetivo = (pedida || data.word || '').trim().toLowerCase();
+    const desdeEspanol = data.query_language === 'es';
+    const otraPalabra = !desdeEspanol && objetivo && respondida && objetivo !== respondida;
     const avisoTypo = otraPalabra ? `
         <div class="mt-4 p-3 rounded-lg" style="background:rgba(255,59,48,0.08);border:1px solid rgba(255,59,48,0.25)">
           <p class="text-xs font-semibold text-red-400 mb-1">⚠️ ¿Error de escritura?</p>
           <p class="text-xs text-slate-400">
             Consultaste <strong>${esc(pedida)}</strong>, pero la IA respondió sobre
-            <strong>${esc(data.word)}</strong>. Si es un typo, corrige la palabra con ✏️
-            y vuelve a consultarla: así también podrá tener su familia.
+            <strong>${esc(data.word)}</strong>. Si no era eso lo que buscabas, corrige
+            la palabra y vuelve a consultarla.
           </p>
         </div>` : '';
 

@@ -177,9 +177,12 @@ export async function render(container) {
             // Guardar-todo: crea la palabra con TODAS sus acepciones de una vez.
             onSaveAll: async (full) => {
                 const firstTr = (full.meanings?.[0]?.translation_es) || '';
+                // La palabra que se guarda es la RESUELTA: si escribiste en
+                // español ("apenas"), lo que entra al repositorio es "hardly".
+                const saved = (full.word || w).trim();
                 await api.words.create({
-                    word: w,
-                    translation: firstTr || w,   // el backend la re-deriva uniendo todas
+                    word: saved,
+                    translation: firstTr || saved,   // el backend la re-deriva uniendo todas
                     meanings: full.meanings || [],
                     common_phrases: full.common_phrases || [],
                     phonetic: full.phonetic || null,
@@ -188,7 +191,7 @@ export async function render(container) {
                     family: full.family || null,
                 });
                 const n = (full.meanings || []).length;
-                toast(`"${w}" guardada con ${n} significado${n !== 1 ? 's' : ''} ✓`);
+                toast(`"${saved}" guardada con ${n} significado${n !== 1 ? 's' : ''} ✓`);
                 form.reset();
             },
             // Alternativa: rellenar el formulario a mano con un significado.
