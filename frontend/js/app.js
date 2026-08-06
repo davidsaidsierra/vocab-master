@@ -4,12 +4,15 @@ import { render as renderWordList }     from './components/wordList.js';
 import { render as renderWordForm }     from './components/wordForm.js';
 import { render as renderFlashcards }   from './components/flashcards.js';
 import { render as renderCategories }   from './components/categoriesPage.js';
-import { render as renderQuickSummary } from './components/quickSummary.js';
-import { render as renderEnglishClass } from './components/englishClass.js';
+// quickSummary.js y englishClass.js ya no tienen ruta propia: la primera no
+// aportaba nada que no estuviera en otro lado, y la segunda la reemplaza
+// Apuntes. Los archivos siguen ahí — writingChallenge.js importa WEEKS de
+// englishClass.js para elegir el tema de gramática.
 import { render as renderWriting }      from './components/writingChallenge.js';
 import { render as renderExams }        from './components/internationalExams.js';
 import { render as renderAdminUsers }   from './components/adminUsers.js';
 import { render as renderPdfReader }    from './components/pdfReader.js';
+import { render as renderNotes }        from './components/notes.js';
 import { render as renderSettings }     from './components/settings.js';
 import { initTheme }                    from './utils/theme.js';
 import { initShell }                    from './shell.js';
@@ -23,13 +26,12 @@ const routes = {
     '/words':        renderWordList,
     '/add':          renderWordForm,
     '/review':       renderFlashcards,
-    '/summary':      renderQuickSummary,
     '/categories':   renderCategories,
-    '/english-class': renderEnglishClass,
     '/writing':      renderWriting,
     '/exams':        renderExams,
     '/admin':        renderAdminUsers,
     '/reading':      renderPdfReader,
+    '/notes':        renderNotes,
     '/settings':     renderSettings,
 };
 

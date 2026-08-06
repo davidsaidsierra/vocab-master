@@ -2,6 +2,7 @@ import * as api from '../api.js';
 import { masteryColor, formatDate, truncate, toast, cefrBadgeHTML } from '../utils/helpers.js';
 import { openLookupModal } from './lookupModal.js';
 import { openFamilyModal } from './familyMatrix.js';
+import { render as renderCategories } from './categoriesPage.js';
 import { POS_OPTIONS, CEFR_OPTIONS, DAYS_OPTIONS, MASTERY_OPTIONS, optionsHTML } from '../utils/wordFilters.js';
 
 let categoriesCache = [];
@@ -9,12 +10,16 @@ let categoriesCache = [];
 export async function render(container) {
     container.innerHTML = `
         <div class="page-enter" id="words-page">
-            <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
-                <h2 class="text-2xl font-bold">My Words</h2>
-                <div class="flex gap-3 items-center flex-wrap">
-                    <button id="backfill-levels-btn" class="btn-secondary" title="Asigna el nivel CEFR (A1–C2) a las palabras que aún no lo tienen. Sin IA, no toca nada más." style="padding:0.6rem 1rem;font-size:0.85rem;white-space:nowrap">↻ Actualizar niveles</button>
-                    <button id="link-families-btn" class="btn-secondary" title="Absorbe las palabras sueltas que ya pertenecen a una familia (helpful dentro de help). Sin IA." style="padding:0.6rem 1rem;font-size:0.85rem;white-space:nowrap">🧬 Vincular familias</button>
-                    <input type="text" id="search-input" class="form-input w-56" placeholder="Search words…">
+            <div class="page-header">
+                <div>
+                    <h2>My Words</h2>
+                    <p class="ph-sub" id="words-count">Cargando…</p>
+                </div>
+                <div class="ph-actions">
+                    <input type="text" id="search-input" class="form-input" placeholder="Buscar palabra…" style="padding:0.5rem 0.9rem;font-size:0.85rem;width:13rem">
+                    <button id="categories-btn" class="btn-secondary" title="Crear, ver y borrar categorías" style="white-space:nowrap">🏷️ Categorías</button>
+                    <button id="backfill-levels-btn" class="btn-secondary" title="Asigna el nivel CEFR (A1–C2) a las palabras que aún no lo tienen. Sin IA, no toca nada más." style="white-space:nowrap">↻ Actualizar niveles</button>
+                    <button id="link-families-btn" class="btn-secondary" title="Absorbe las palabras sueltas que ya pertenecen a una familia (helpful dentro de help). Sin IA." style="white-space:nowrap">🧬 Vincular familias</button>
                 </div>
             </div>
             <!-- ── Filtros (mismos que en Repaso) ─────────── -->
@@ -66,6 +71,38 @@ export async function render(container) {
     const backfillBtn = container.querySelector('#backfill-levels-btn');
     const linkFamiliesBtn = container.querySelector('#link-families-btn');
 
+    // ── Categorías: la página completa, dentro de un modal ──────
+    // `categoriesPage.render(contenedor)` no asume nada de dónde vive (todo lo
+    // consulta relativo al contenedor que recibe), así que se monta tal cual.
+    container.querySelector('#categories-btn').addEventListener('click', () => {
+        document.querySelector('.modal-overlay')?.remove();
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        overlay.innerHTML = `
+            <div class="modal-content" style="max-width:720px;max-height:85vh;overflow-y:auto">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold">🏷️ Categorías</h3>
+                    <button class="btn-ghost" id="cats-close" aria-label="Cerrar">✕</button>
+                </div>
+                <div id="cats-host"></div>
+            </div>`;
+        document.body.appendChild(overlay);
+
+        const cerrar = async () => {
+            overlay.remove();
+            document.removeEventListener('keydown', onKey);
+            // Pudieron crearse o borrarse categorías: refrescar filtro y tarjetas.
+            await recargarCategorias();
+            await loadWords();
+        };
+        const onKey = (e) => { if (e.key === 'Escape') cerrar(); };
+        overlay.querySelector('#cats-close').addEventListener('click', cerrar);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) cerrar(); });
+        document.addEventListener('keydown', onKey);
+
+        renderCategories(overlay.querySelector('#cats-host'), { embedded: true });
+    });
+
     // ── Vincular palabras sueltas a las familias existentes (sin IA) ──
     linkFamiliesBtn.addEventListener('click', async () => {
         linkFamiliesBtn.disabled = true;
@@ -105,13 +142,22 @@ export async function render(container) {
     });
 
     // Load categories for filter + edit modal
-    categoriesCache = await api.categories.list();
-    categoriesCache.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = `${c.icon} ${c.name}`;
-        filterCat.appendChild(opt);
-    });
+    async function recargarCategorias() {
+        const previo = filterCat.value;
+        categoriesCache = await api.categories.list();
+        filterCat.innerHTML = '<option value="">All Categories</option>';
+        categoriesCache.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.id;
+            opt.textContent = `${c.icon} ${c.name}`;
+            filterCat.appendChild(opt);
+        });
+        // Conservar el filtro elegido si esa categoría sigue existiendo.
+        if (previo && categoriesCache.some(c => String(c.id) === String(previo))) {
+            filterCat.value = previo;
+        }
+    }
+    await recargarCategorias();
 
     let allWords = [];
 
@@ -124,6 +170,9 @@ export async function render(container) {
         if (filterMastery.value !== '') params.mastery_max = filterMastery.value;
         if (filterPos.value) params.part_of_speech = filterPos.value;
         allWords = await api.words.list(params);
+        const n = allWords.length;
+        const countEl = container.querySelector('#words-count');
+        if (countEl) countEl.textContent = `${n} palabra${n !== 1 ? 's' : ''} en tu repositorio`;
         renderGrid();
     }
 

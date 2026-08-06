@@ -3,6 +3,8 @@
 // interfaz (viven en localStorage, no tocan el backend).
 import { getTheme, setTheme, resolvedTheme } from '../utils/theme.js';
 import { toast } from '../utils/helpers.js';
+import { getRole } from '../auth.js';
+import { render as renderAdminUsers } from './adminUsers.js';
 
 const VIEW_KEY = 'vocabmaster_view_mode';   // mismo que usa app.js
 
@@ -83,6 +85,15 @@ export function render(container) {
                 </div>
             </div>
 
+            <!-- Sólo admin: el servidor también lo bloquea -->
+            <div class="card mb-4 max-w-2xl" id="users-card" style="display:none">
+                <h3 class="text-sm font-semibold mb-1">Usuarios</h3>
+                <p class="text-xs mb-4" style="color:var(--text-tertiary)">
+                    Altas, roles y estado de las cuentas.
+                </p>
+                <div id="users-host"></div>
+            </div>
+
             <div class="card max-w-2xl">
                 <h3 class="text-sm font-semibold mb-1">Acerca de</h3>
                 <p class="text-xs" style="color:var(--text-tertiary)">
@@ -91,6 +102,15 @@ export function render(container) {
             </div>
         </div>
     `;
+
+    // Panel de usuarios incrustado (antes vivía en su propia ruta #/admin, que
+    // se conserva como enlace directo). `adminUsers.render` sólo toca el
+    // contenedor que recibe, así que se monta aquí sin cambios.
+    if (getRole() === 'admin') {
+        const card = container.querySelector('#users-card');
+        card.style.display = '';
+        renderAdminUsers(container.querySelector('#users-host'), { embedded: true });
+    }
 
     container.querySelectorAll('.set-opt').forEach(btn => {
         btn.addEventListener('click', () => {

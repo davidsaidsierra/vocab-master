@@ -7,10 +7,13 @@ const PRESET_COLORS = [
 ];
 const PRESET_ICONS = ['📚', '💼', '🎓', '🗣️', '✍️', '🧪', '🎭', '🌍', '💡', '🔧'];
 
-export async function render(container) {
+// `opts.embedded` la monta sin su propio título: se usa así desde el modal de
+// My Words, que ya trae encabezado. La ruta #/categories la sigue usando sin
+// opciones (el cajón móvil) y se comporta igual que siempre.
+export async function render(container, opts = {}) {
     container.innerHTML = `
         <div class="page-enter">
-            <h2 class="text-2xl font-bold mb-6">Categories</h2>
+            ${opts.embedded ? '' : '<h2 class="text-2xl font-bold mb-6">Categories</h2>'}
 
             <!-- Add category form -->
             <div class="card mb-6 max-w-lg">

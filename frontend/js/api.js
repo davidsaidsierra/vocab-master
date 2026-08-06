@@ -191,3 +191,11 @@ export const vocabWriting = {
     submit:  (data) => request('/vocab-writing/submit', { method: 'POST', body: JSON.stringify(data) }),
     history: (limit = 10) => request(`/vocab-writing/history?limit=${limit}`),
 };
+
+// ── Apuntes (texto plano, por usuario, sin IA) ───────────────
+export const notes = {
+    list:   ()           => request('/notes/'),
+    create: (data)       => request('/notes/', { method: 'POST', body: JSON.stringify(data) }),
+    update: (id, data)   => request(`/notes/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    delete: (id)         => request(`/notes/${id}`, { method: 'DELETE' }),
+};

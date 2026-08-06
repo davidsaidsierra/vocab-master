@@ -220,7 +220,7 @@ def init_db():
     from database.models import (  # noqa: F401
         User, Word, Category, Review, WordLookup, WritingChallenge, GrammarTopic,
         DictionaryEntry, DictionaryEntryEs, ExamQuestion, ExamAttempt, ExamTaskResult,
-        Document, Annotation, VocabWritingSession,
+        Document, Annotation, VocabWritingSession, Note,
     )
     Base.metadata.create_all(bind=engine)
     _migrate_word_columns()

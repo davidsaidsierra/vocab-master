@@ -20,7 +20,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from database.connection import init_db
-from api import words, categories, reviews, stats, lookup, writing, grammar, dictionary, exams, auth, admin, documents, vocab_writing
+from api import words, categories, reviews, stats, lookup, writing, grammar, dictionary, exams, auth, admin, documents, vocab_writing, notes
 from api.auth import get_current_user
 
 BASE_DIR = Path(__file__).parent
@@ -90,6 +90,7 @@ app.include_router(dictionary.router, dependencies=[Depends(get_current_user)])
 app.include_router(exams.router,      dependencies=[Depends(get_current_user)])
 app.include_router(documents.router,  dependencies=[Depends(get_current_user)])
 app.include_router(vocab_writing.router, dependencies=[Depends(get_current_user)])
+app.include_router(notes.router,       dependencies=[Depends(get_current_user)])
 
 # ── Serve frontend ──────────────────────────────────────────
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")

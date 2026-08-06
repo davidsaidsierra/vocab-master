@@ -3,14 +3,19 @@ import { toast } from '../utils/helpers.js';
 
 const ROLES = ['free', 'premium', 'admin'];
 
-export async function render(container) {
+// `opts.embedded` la monta sin título propio ni tarjeta exterior: así se
+// incrusta como sección de Ajustes. La ruta #/admin la sigue usando sin
+// opciones y se ve exactamente igual que antes.
+export async function render(container, opts = {}) {
+    const emb = !!opts.embedded;
     container.innerHTML = `
         <div class="page-enter">
+            ${emb ? '' : `
             <h2 class="text-2xl font-bold mb-1">Usuarios</h2>
-            <p class="text-sm text-slate-500 mb-6">Solo tú (admin) puedes crear cuentas y asignar roles.</p>
+            <p class="text-sm text-slate-500 mb-6">Solo tú (admin) puedes crear cuentas y asignar roles.</p>`}
 
             <!-- Crear usuario -->
-            <div class="card mb-6 max-w-lg">
+            <div class="${emb ? 'mb-5' : 'card mb-6'} max-w-lg">
                 <h3 class="text-sm font-semibold text-slate-400 mb-3">Nuevo usuario</h3>
                 <form id="user-form" class="space-y-3">
                     <input type="email" name="email" class="form-input" placeholder="email@ejemplo.com" required>

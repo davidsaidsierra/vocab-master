@@ -609,3 +609,20 @@ class VocabWritingHistoryItem(BaseModel):
 
 class VocabWritingHistoryOut(BaseModel):
     items: list[VocabWritingHistoryItem] = []
+
+
+# ── Apuntes ────────────────────────────────────────────────
+class NoteCreate(BaseModel):
+    title: str = "Sin título"
+    content: str = ""
+
+class NoteUpdate(BaseModel):
+    title: str | None = None
+    content: str | None = None
+
+class NoteOut(BaseModel):
+    id: int
+    title: str
+    content: str = ""
+    created_at: datetime
+    updated_at: datetime

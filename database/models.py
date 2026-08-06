@@ -348,3 +348,21 @@ class VocabWritingSession(Base):
     score = Column(Float, default=0.0)           # 0.0–5.0, un decimal
     evaluation = Column(Text, nullable=False)    # JSON: determinista + IA
     created_at = Column(DateTime, default=_utcnow, index=True)
+
+
+class Note(Base):
+    """
+    Apuntes personales en texto plano.
+
+    Cada quien aprende inglés a su manera, así que esto es deliberadamente
+    tonto: un título y un cuerpo de texto, sin formato ni estructura impuesta.
+    Por usuario (`user_id`), sin IA y sin cuota.
+    """
+    __tablename__ = "notes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True, index=True)  # dueño
+    title = Column(String(200), nullable=False, default="Sin título")
+    content = Column(Text, nullable=False, default="")
+    created_at = Column(DateTime, default=_utcnow)
+    updated_at = Column(DateTime, default=_utcnow, onupdate=_utcnow, index=True)
